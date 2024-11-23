@@ -107,14 +107,14 @@ class MyColorPicker(ft.Container):
 
 
 # def main(page : ft.page):
-#     color_picker = MyColorPicker()
-#     def cambiar_color():
-#         print(color_picker.set_color(MyColorRGB(100, 10, 10)),"\n"*10)
-#     boton = ft.TextButton(
-#         text = "Cambiar",
-#         on_click= lambda e : cambiar_color()
-#     )
-#     page.add(color_picker, boton)
+#      color_picker = MyColorPicker()
+#      def cambiar_color():
+#          print(color_picker.set_color(MyColorRGB(100, 10, 10)),"\n"*10)
+#      boton = ft.TextButton(
+#          text = "Cambiar",
+#          on_click= lambda e : cambiar_color()
+#      )
+#      page.add(color_picker, boton)
 
 
 # ft.app(target = main)

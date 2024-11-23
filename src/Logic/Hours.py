@@ -54,7 +54,7 @@ class HoursComposition(WeeklyHoursDistribution):
 
     def update_hours_slots(self):
         avaible_hours = get_avaible_hours_slots(
-            self.__minimo, 
+            self.__min, 
             self.__max, 
             self.__total-self.__hours_completed
             )

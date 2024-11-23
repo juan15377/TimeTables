@@ -1,11 +1,11 @@
-from keys import Key
+from Keys import Key
 from abc import ABC, abstractmethod
 import numpy as np
 import random as rn
-from Colors import MYColorRGB
+from Colors import MyColorRGB
 
 
-class PCGMethods:
+class TCGMethods:
     """Handles shared methods for PGA instances."""
 
     def __init__(self, tca) -> None:
@@ -19,7 +19,7 @@ class PCGMethods:
 
     def update_subjects_availability_matrices(self):
         """Updates availability for all associated subjects."""
-        for subject in self.pga.subjects:
+        for subject in self.tca.subjects:
             subject.update_availability_matrix()
 
     def completion_rate(self):
@@ -47,7 +47,7 @@ class SubjectColors:
         red = rn.randint(0, 255)
         green = rn.randint(0, 255)
         blue = rn.randint(0, 255)
-        color = MYColorRGB(red, green, blue)
+        color = MyColorRGB(red, green, blue)
         self.colors[subject] = color
 
     def remove_subject(self, subject):
@@ -63,7 +63,7 @@ class PCG:
         self.subjects = []
         self.key = Key()
         self.availability_matrix = np.full((30, 7), True)
-        self.methods = PCGMethods(self)
+        self.methods = TCGMethods(self)
         self.subject_colors = SubjectColors()
 
     def add_subject(self, subject):
