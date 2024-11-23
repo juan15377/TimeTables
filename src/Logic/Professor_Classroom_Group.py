@@ -8,18 +8,18 @@ from Colors import MyColorRGB
 class TCGMethods:
     """Handles shared methods for PGA instances."""
 
-    def __init__(self, tca) -> None:
-        self.tca = tca
+    def __init__(self, tcg) -> None:
+        self.tcg = tcg
 
     def change_availability_matrix(self, new_availability_matrix):
         """Changes the availability of the PGA and updates associated subjects."""
-        self.tca.availability_matrix = new_availability_matrix
-        for subject in self.pga.subjects:
+        self.tcg.availability_matrix = new_availability_matrix
+        for subject in self.tcg.subjects:
             subject.update_availability_matrix()
 
     def update_subjects_availability_matrices(self):
         """Updates availability for all associated subjects."""
-        for subject in self.tca.subjects:
+        for subject in self.tcg.subjects:
             subject.update_availability_matrix()
 
     def completion_rate(self):
