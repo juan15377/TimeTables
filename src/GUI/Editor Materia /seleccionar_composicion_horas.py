@@ -1,16 +1,13 @@
 import flet as ft
 import sys 
 
-sys.path.append("/src/Logic")
-from materias import CHoras, CBloques
-
-
+sys.path.append("src/Logic/")
+from Subjects import HoursComposition, HoursSlotsComposition
 
 class CounterHours(ft.Container):
 
     def __init__(self):
-
-        txt_number = ft.TextField(value="0", text_align=ft.TextAlign.RIGHT, width=100)
+        txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=60)
 
         def minus_click(e):
             if float(self.txt_number.value) > 0:
@@ -38,37 +35,32 @@ class CounterHours(ft.Container):
     
     def set_value(self, value):
         self.txt_number.value = str(value)
-        #self.txt_number.update()
-
-
 
 class EditorHours(ft.Container):
 
     def __init__(self):
+        total_hours = CounterHours()
+        minimum_hours = CounterHours()
+        maximum_hours = CounterHours()
         
-        horas_totales = CounterHours()
-        horas_minimas = CounterHours()
-        horas_maximas = CounterHours()
+        check = ft.Checkbox(adaptive=True, label="Activate", value=True)
         
-        check = ft.Checkbox(adaptive=True, label="Activar", value=True)
-        
-        diseño = ft.Column(
+        layout = ft.Column(
             controls = [
                 ft.Row(
                     controls = [
                         ft.Text("Total Hours"),
-                        horas_totales,
+                        total_hours,
                         check
                     ],
-                    spacing = 50
                 ),
                 
                 ft.Row(
                     controls = [
-                        ft.Text("Minimun Hours"),
-                        horas_minimas,
-                        ft.Text("Horas maximas"),
-                        horas_maximas
+                        ft.Text("Minimum Hours"),
+                        minimum_hours,
+                        ft.Text("Maximum Hours"),
+                        maximum_hours
                     ],
                     spacing=20
                 )
@@ -76,28 +68,27 @@ class EditorHours(ft.Container):
             spacing= 30
         )
         
-        self.horas_totales = horas_totales
-        self.horas_minimas = horas_minimas
-        self.horas_maximas = horas_maximas
+        self.total_hours = total_hours
+        self.minimum_hours = minimum_hours
+        self.maximum_hours = maximum_hours
         self.check = check
         
         super().__init__(
-            content = diseño,
+            content = layout,
             padding= 30
         )
-        pass
 
     def get(self):
-        return CHoras(
-            self.horas_totales.get_value(),
-            self.horas_minimas.get_value(),
-            self.horas_maximas.get_value(),
+        return HoursComposition(
+            self.total_hours.get_value(),
+            self.minimum_hours.get_value(),
+            self.maximum_hours.get_value(),
         )
         
-    def set_value(self, choras):
-        self.horas_totales.set_value(choras.total())
-        self.horas_minimas.set_value(choras.minimo())
-        self.horas_maximas.set_value(choras.maximo())
+    def set_value(self, hours):
+        self.total_hours.set_value(hours.total())
+        self.minimum_hours.set_value(hours.minimum())
+        self.maximum_hours.set_value(hours.maximum())
     
     def is_active(self):
         return self.check.value
@@ -106,15 +97,12 @@ class EditorHours(ft.Container):
         self.check.value = active
         self.check.update()
 
-
-
-
 class EditorBlocks(ft.Container):
 
     def __init__(self):
         self.blocks = []
         self.counter_hours = CounterHours()
-        self.check =  ft.Checkbox(adaptive=True, label="Activar", value=True)
+        self.check =  ft.Checkbox(adaptive=True, label="Activate", value=True)
         self.drop_blocks = ft.Column(
             width=100,
             height=100,
@@ -122,51 +110,57 @@ class EditorBlocks(ft.Container):
             alignment= ft.alignment.center
         )
         
-        buton_add = ft.TextButton(
-            text="Agregar",
+        button_add = ft.TextButton(
+            text="Add",
             on_click=lambda e : self.add_block(),
         )
         
-        buton_remove = ft.TextButton(
-            text="Quitar",
+        button_remove = ft.TextButton(
+            text="Remove",
             on_click= lambda e : self.remove_block(),
         )
         
-        buton_reset = ft.TextButton(
-            text="Reiniciar",
+        button_reset = ft.TextButton(
+            text="Reset",
             on_click= lambda e : self.reset(),
         )
         
-        diseño = ft.Row(
+        layout = ft.Column(
             controls=[
-                ft.Text("Bloques"),
-                self.counter_hours,
-                self.drop_blocks,
-                buton_add,
-                buton_remove,
-                buton_reset,
-                self.check,
+                ft.Row(
+                    controls = [
+                        ft.Text("Blocks"),
+                        self.counter_hours,
+                        self.drop_blocks,
+                    ]
+                ),
+                ft.Row(
+                    controls = [
+                        button_add,
+                        button_remove,
+                        button_reset,
+                        self.check,
+                    ]
+                )
             ],
-            spacing=20
+            spacing= 10
         )
         
         super().__init__(
-            content = diseño
+            content = layout
         )
         
-
     def add_block(self):
-        length_block = self.counter_hours.get_value()
-        if length_block == 0 :
-            return None # no se aceptan bloques de tamaño cero
-        self.drop_blocks.controls.append(ft.Text(str(length_block), text_align= ft.alignment.center))
-        self.blocks.append(length_block)
+        block_length = self.counter_hours.get_value()
+        if block_length == 0:
+            return None  # blocks of size zero are not allowed
+        self.drop_blocks.controls.append(ft.Text(str(block_length), text_align= ft.alignment.center))
+        self.blocks.append(block_length)
         self.drop_blocks.update()
-
 
     def remove_block(self):
         if len(self.blocks) == 0:
-            return None # si ya esta vacia no se le puede quitar uno 
+            return None  # cannot remove if the list is empty
         self.drop_blocks.controls.pop()
         self.blocks.pop()
         self.drop_blocks.update()
@@ -177,72 +171,68 @@ class EditorBlocks(ft.Container):
         self.counter_hours.set_value(0)
         self.drop_blocks.update()
 
-
-    def get(self) -> CBloques:
-        return CBloques(self.blocks) 
+    def get(self) -> HoursSlotsComposition:
+        return HoursSlotsComposition(self.blocks) 
     
-    def set_blocks(self, cbloques):
-        self.blocks = cbloques.get()
+    def set_blocks(self, blocks):
+        self.blocks = blocks.get()
         self.drop_blocks.controls.clear()
         for block in self.blocks:
             self.drop_blocks.controls.append(ft.Text(str(block), text_align= ft.alignment.center))
         self.drop_blocks.update()
 
-    def set_activate(self, active : bool):
+    def set_activate(self, active: bool):
         self.check.value = active
         self.check.update()
-    
-
 
 class SelectorComHours(ft.Container):
 
-    def __init__(self, comphours = CHoras(0,0,0)):
+    def __init__(self, comp_hours = HoursComposition(0, 0, 0)):
 
         self.selector_hours = EditorHours()
         self.selector_blocks = EditorBlocks()
 
-        if type(comphours) == CHoras:
-            self.selector_hours.set_value(comphours)
+        if isinstance(comp_hours, HoursComposition):
+            self.selector_hours.set_value(comp_hours)
             self.selector_hours.check.value = True
             self.selector_blocks.check.value = False
         else:
-            self.selector_blocks.set_blocks(comphours) # is type of CBloques
+            self.selector_blocks.set_blocks(comp_hours)  # it is a type of CBloques
             self.selector_blocks.check.value = True
             self.selector_hours.check.value = False
 
         def change_selection_hours(e):
             self.selector_blocks.set_activate(not self.selector_hours.check.value)
 
-
         def change_selection_blocks(e):
             self.selector_hours.set_activate(not self.selector_blocks.check.value)
 
-
-            
         self.selector_blocks.check.on_change = change_selection_blocks
         self.selector_hours.check.on_change = change_selection_hours
 
-        T = ft.Tabs(
+        tabs = ft.Tabs(
             selected_index=1,
             animation_duration=300,
             tabs=[
                 ft.Tab(
-                    text="Composicion por Horas",
+                    text="Hours Composition",
                     content=ft.Container(
-                        content=self.selector_hours, alignment=ft.alignment.center
-                    ),
+                        content=self.selector_hours, 
+                        alignment=ft.alignment.center
+                        )
                 ),
                 ft.Tab(
-                    text = "Composicion por bloques",
-                    content=self.selector_blocks,
+                    text="Blocks Composition",
+                    content=ft.Container(
+                        content = self.selector_blocks, 
+                        alignment=ft.alignment.center
+                        )
                 ),
-
             ],
-            expand=1,
         )
 
         super().__init__(
-            content=T,
+            content=tabs,
             width=800,
             height=600,
             padding=30
@@ -254,21 +244,17 @@ class SelectorComHours(ft.Container):
         else:
             return self.selector_blocks.get()
 
-
-
-
-def main(page : ft.Page):
-    fila = SelectorComHours()
+def main(page: ft.Page):
+    selector = SelectorComHours()
     
-    def imprimir(e):
-        print(fila.get())
+    def print_selection(e):
+        print(selector.get())
         
-    boton = ft.TextButton(
-        text = "Imprimir",
-        on_click = imprimir
+    button = ft.TextButton(
+        text="Print",
+        on_click=print_selection
     )
     
-    page.add(fila, boton )
+    page.add(selector, button)
 
 ft.app(target=main)
-
