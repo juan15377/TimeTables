@@ -185,7 +185,7 @@ class EditorBlocks(ft.Container):
         self.check.value = active
         self.check.update()
 
-class SelectorComHours(ft.Container):
+class SelectorDistributionHours(ft.Container):
 
     def __init__(self, comp_hours = HoursComposition(0, 0, 0)):
 
@@ -245,7 +245,7 @@ class SelectorComHours(ft.Container):
             return self.selector_blocks.get()
 
 def main(page: ft.Page):
-    selector = SelectorComHours()
+    selector = SelectorDistributionHours()
     
     def print_selection(e):
         print(selector.get())

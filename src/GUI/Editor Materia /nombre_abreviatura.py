@@ -19,14 +19,14 @@ class name_and_abrevation(ft.Container):
             label="Nombre",
             border=ft.InputBorder.UNDERLINE,
             filled=True,
-            hint_text="Enter text here",
+            hint_text="Insertar Nombre Materia",
             on_change = change_name,
             max_length = 50
         )
 
         abrevation_textfield = ft.TextField(
             value = self.abrevation,
-            label="Abreviatura",
+            label="Codigo",
             border=ft.InputBorder.UNDERLINE,
             filled=True,
             hint_text = "Enter text here",
