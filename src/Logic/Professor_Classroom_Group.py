@@ -5,30 +5,30 @@ import random as rn
 from Colors import MyColorRGB
 
 
-class TCGMethods:
+class PCGMethods:
     """Handles shared methods for PGA instances."""
 
-    def __init__(self, tcg) -> None:
-        self.tcg = tcg
+    def __init__(self, pcg) -> None:
+        self.pcg = pcg
 
     def change_availability_matrix(self, new_availability_matrix):
         """Changes the availability of the PGA and updates associated subjects."""
-        self.tcg.availability_matrix = new_availability_matrix
-        for subject in self.tcg.subjects:
+        self.pcg.availability_matrix = new_availability_matrix
+        for subject in self.pcg.subjects:
             subject.update_availability_matrix()
 
     def update_subjects_availability_matrices(self):
         """Updates availability for all associated subjects."""
-        for subject in self.tcg.subjects:
+        for subject in self.pcg.subjects:
             subject.update_availability_matrix()
 
     def completion_rate(self):
         """Calculates the completion rate of assigned hours."""
         total_hours = 0
         missing_hours = 0
-        for subject in self.pga.subjects:
-            total_hours += subject.hour_composition.total()
-            missing_hours += subject.hour_composition.missing()
+        for subject in self.pcg.subjects:
+            total_hours += subject.hours_distribution.total()
+            missing_hours += subject.hours_distribution.remaining()
         return 1 - missing_hours / total_hours if total_hours != 0 else 1
 
 
@@ -63,7 +63,7 @@ class PCG:
         self.subjects = []
         self.key = Key()
         self.availability_matrix = np.full((30, 7), True)
-        self.methods = TCGMethods(self)
+        self.methods = PCGMethods(self)
         self.subject_colors = SubjectColors()
 
     def add_subject(self, subject):

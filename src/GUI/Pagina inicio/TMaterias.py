@@ -1,19 +1,19 @@
 
 import sys  
 
-sys.path.append("/home/juandejesus/Escritorio/Programacion/Proyectos/Horarios/Software/Logica Principal")
-sys.path.append("/home/juandejesus/Escritorio/Programacion/Proyectos/Horarios/Software/Pruebas")
+sys.path.append("src/Logic/")
+sys.path.append("tests/Logic/")
 
 import flet as ft 
 import numpy as np 
 import time as tm 
-from materias import Materia, CHoras
-from pga import PGA
+from Subjects import Subject, HoursComposition
+from Professor_Classroom_Group import PCG
 import copy
-from colores import MiColorPicker,MiColorRGB, triada_a_hex
-from tests_3 import BD, materia_1, materia_2, materia_3 
-from materias import CHoras
-from seleccionador_materias import SeleccionadorMaterias
+from Colors import MyColorPicker,MyColorRGB, RGB_to_hex
+from tests_3 import Bd, materia_1, materia_2, materia_3 
+from Subjects import HoursSlotsComposition
+from seleccionador_materias import SubjectSelector
 from Seleccionador_PGA import buscador
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
 # ! este a partir de una inicializacion se debe mantener con operaciones que permitan 
@@ -23,12 +23,11 @@ from Seleccionador_PGA import buscador
 # ! operaciones permitidas deben ser bien escogidas  
 # el tiempo permitido maximo poara la generacion de un tablero deberiaser de de 0.2 segundos 
 
+def initialize_control_board():
 
-def tablero_control_0():
+    weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-    dias_de_la_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
-
-    horas_del_dia = [
+    daily_hours = [
             "7:00 - 7:30 AM", "7:30 - 8:00 AM", "8:00 - 8:30 AM", "8:30 - 9:00 AM", 
             "9:00 - 9:30 AM", "9:30 - 10:00 AM", "10:00 - 10:30 AM", "10:30 - 11:00 AM", 
             "11:00 - 11:30 AM", "11:30 - 12:00 PM", "12:00 - 12:30 PM", "12:30 - 1:00 PM",
@@ -39,7 +38,7 @@ def tablero_control_0():
             "9:00 - 9:30 PM", "9:30 - 10:00 PM", "10:00 - 10:30 PM"
     ]
 
-    def boton_contenedor(i,j):
+    def button_container(i, j):
         b = ft.Container(
                 content=ft.Text(f""),
                 theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
@@ -48,20 +47,20 @@ def tablero_control_0():
                 alignment=ft.alignment.center,
                 bgcolor=ft.colors.WHITE24,
                 width=100,
-                height=30 ,
+                height=30,
                 border_radius=5,
             )
         return b
 
 
-    matriz_botones = np.array([[boton_contenedor(i,j) for j in range(7)] for i in range(30)])
+    button_matrix = np.array([[button_container(i, j) for j in range(7)] for i in range(30)])
 
     
-    def contenedor_hora(i):
+    def time_container(i):
         return ft.Container(
                     theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
                     bgcolor=ft.colors.SURFACE_VARIANT,
-                    content=ft.Text(horas_del_dia[i],color="white",size = 12),
+                    content=ft.Text(daily_hours[i], color="white", size=12),
                     margin=1,
                     padding=0,
                     alignment=ft.alignment.center,
@@ -70,11 +69,11 @@ def tablero_control_0():
                     border_radius=1,
                 )
         
-    def contendor_dia(i):
+    def day_container(i):
         return ft.Container(
                     theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
                     bgcolor=ft.colors.SURFACE_VARIANT,
-                    content=ft.Text(dias_de_la_semana[i],color="white",size = 12),
+                    content=ft.Text(weekdays[i], color="white", size=12),
                     margin=2,
                     padding=0,
                     alignment=ft.alignment.center,
@@ -83,10 +82,10 @@ def tablero_control_0():
                     border_radius=1,
                 )
         
-    contenedor_especial = ft.Container(
+    special_container = ft.Container(
                             theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
                             bgcolor=ft.colors.SURFACE_VARIANT,
-                            content=ft.Text("Especial",color="white",width=1),
+                            content=ft.Text("Special", color="white", width=1),
                             margin=2,
                             padding=0,
                             alignment=ft.alignment.center,
@@ -95,355 +94,337 @@ def tablero_control_0():
                             border_radius=1,
                         )
         
-    contendores_horas = [contenedor_especial] + [contenedor_hora(i) for i in range(30)]
-    contenedor_dias = [contendor_dia(i) for i in range(7)]
+    time_containers = [special_container] + [time_container(i) for i in range(30)]
+    day_containers = [day_container(i) for i in range(7)]
 
-    columna_horas = ft.Column(
-                    controls = contendores_horas,
+    time_column = ft.Column(
+                    controls=time_containers,
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=0,
-                    scroll= ft.ScrollMode.AUTO,
+                    scroll=ft.ScrollMode.AUTO,
                     #expand = True,
                     )
     
 
-    columnas_dias = [ft.Column(controls = [contenedor_dias[i]],
-                    horizontal_alignment = ft.alignment.center, 
-                    alignment=ft.alignment.center,spacing=2) for i in range(7)]
+    day_columns = [ft.Column(controls=[day_containers[i]],
+                    horizontal_alignment=ft.alignment.center, 
+                    alignment=ft.alignment.center, spacing=2) for i in range(7)]
         
 
     
-        # añadimos los botones contenidos en la matriz de botones 
+    # Add the buttons contained in the button matrix 
 
     for i in range(30):
         for j in range(7):
-            boton = matriz_botones[i][j]
-            columnas_dias[j].controls.append(boton)
+            button = button_matrix[i][j]
+            day_columns[j].controls.append(button)
                 
             
 
-    columnas_totales = [columna_horas] + columnas_dias
+    total_columns = [time_column] + day_columns
 
 
-    fila = ft.Row(
-            controls= columnas_totales,
+    row = ft.Row(
+            controls=total_columns,
             spacing=0,
             vertical_alignment=ft.CrossAxisAlignment.START,
-            scroll= ft.ScrollMode.AUTO,
+            scroll=ft.ScrollMode.AUTO,
             )
 
-    cuad = ft.Column(
-            controls = [fila],
+    grid = ft.Column(
+            controls=[row],
             alignment=ft.MainAxisAlignment.START,
             spacing=0,
-            scroll= ft.ScrollMode.AUTO,
-            width= 840,
-            height= 500,
+            scroll=ft.ScrollMode.AUTO,
+            width=840,
+            height=500,
         )
-    return matriz_botones, cuad, columnas_dias
+    return button_matrix, grid, day_columns
 
 
-def descomponer_vector(vector):
+def decompose_vector(vector):
     pos_in = 0
-    posiciones = []
-    inicio_cadena = False
+    positions = []
+    start_sequence = False
 
     for num, ele in enumerate(vector):
-        if ele == 0 and inicio_cadena:
-            inicio_cadena = False
-            posiciones.append((pos_in, num))
+        if ele == 0 and start_sequence:
+            start_sequence = False
+            positions.append((pos_in, num))
             continue 
-        if ele == 1 and (not inicio_cadena):
-            inicio_cadena = True
+        if ele == 1 and (not start_sequence):
+            start_sequence = True
             pos_in = num
             continue 
-    if inicio_cadena:
-        posiciones.append((pos_in, len(vector)-1))
+    if start_sequence:
+        positions.append((pos_in, len(vector)-1))
 
-    return posiciones
+    return positions
+
 
 
 # si hago el objecto de TableroControl mutable para solo añadir los bloques 
 # uno por uno 
 
 
-def generar_bloques_materia(pga, tablero_control, materia):
-    # dado un conjunto de materias se dara una lista de bloques de materias las cuales mediante metodos internos 
-    # se insertaran 
-    horas_colocadas = materia.horas_colocadas
-    bloques = []
-    for columna in range(7):
-        columna_ = horas_colocadas[:,columna]
-        posiciones = descomponer_vector(columna_)
-        for posicion in posiciones:
-            fila = posicion[0]
-            tamaño_bloque = posicion[1] - posicion[0] 
-            bloque = BloqueMateria(pga, tablero_control, materia, tamaño_bloque, (fila,columna))
-            bloques.append(bloque)
-    return bloques
+def generate_subject_blocks(pga, control_board, subject):
+    # Given a set of subjects, it will return a list of subject blocks that will be inserted
+    # using internal methods.
+    hours_placed = subject.allocated_subject_matrix
+    blocks = []
+    for column in range(7):
+        column_ = hours_placed[:, column]
+        positions = decompose_vector(column_)
+        for position in positions:
+            row = position[0]
+            block_size = position[1] - position[0] 
+            block = SubjectBlock(pga, control_board, subject, block_size, (row, column))
+            blocks.append(block)
+    return blocks
 
 
-
-class BloquesMaterias():
+class SubjectBlocks:
     
     def __init__(self) -> None:
-        self.materias = { }
-        self.total = np.zeros((30,7), dtype=object)
+        self.subjects = {}
+        self.total = np.zeros((30, 7), dtype=object)
 
-    def new(self, bmateria, posicion):
-        materia = bmateria.materia 
-        i = posicion[0] 
-        j = posicion[1]
-        if materia in self.materias:
-            self.materias[materia][i, j] = bmateria
-            self.total[i, j] = bmateria
+    def new(self, subject_block, position):
+        subject = subject_block.subject 
+        i = position[0] 
+        j = position[1]
+        if subject in self.subjects:
+            self.subjects[subject][i, j] = subject_block
+            self.total[i, j] = subject_block
             return None
-        self.materias[materia] =  np.zeros((30,7), dtype=object)
-        self.materias[materia][i, j] = bmateria
-        self.total[i, j] = bmateria
+        self.subjects[subject] = np.zeros((30, 7), dtype=object)
+        self.subjects[subject][i, j] = subject_block
+        self.total[i, j] = subject_block
         return None 
     
-    def get_blocks_materia(self, materia):
-        if materia in self.materias:
-            lista_bloques = list(set((self.materias[materia].flatten().tolist())))
-            lista_bloques.remove(0)
-            return lista_bloques
+    def get_subject_blocks(self, subject):
+        if subject in self.subjects:
+            block_list = list(set(self.subjects[subject].flatten().tolist()))
+            block_list.remove(0)
+            return block_list
         return []
     
-    def get_blocks(self, posicion):
-        i = posicion[0]
-        j = posicion[1]
+    def get_blocks(self, position):
+        i = position[0]
+        j = position[1]
         if self.total[i, j] != 0:
             return self.total[i, j]
         return []
 
     
-    def delete_block(self, materia, posicion): #! se elimina tanto del total como se la materia
-        i = posicion[0]
-        j = posicion[1]
+    def delete_block(self, subject, position):  #! Deletes both from total and subject
+        i = position[0]
+        j = position[1]
 
-        if materia in self.materias and self.total[i, j] != 0:
-            self.materias[materia][i, j] = 0
-            if set(self.materias[materia].flatten().tolist()) == set([0]):
-                del self.materias[materia]
+        if subject in self.subjects and self.total[i, j] != 0:
+            self.subjects[subject][i, j] = 0
+            if set(self.subjects[subject].flatten().tolist()) == set([0]):
+                del self.subjects[subject]
             return None
         return None
     
-    def delete_blocks_materia(self, materia):
-        if materia in self.bloques:
-            del self.bloques[materia]
+    def delete_subject_blocks(self, subject):
+        if subject in self.subjects:
+            del self.subjects[subject]
             return None
         return None
     
-    def delete_blocks(self):
-        self.materias = { }
-        self.total = np.zeros((30,7), dtype=object)
+    def delete_all_blocks(self):
+        self.subjects = {}
+        self.total = np.zeros((30, 7), dtype=object)
 
         
+def schedule_button(pga, board, button, subject, position, size, subject_manager):
+    button.bgcolor = ft.colors.GREEN_400
 
-def programar_boton(pga, tablero, boton, materia, posicion, tamaño, gestor_materias):
-    boton.bgcolor = ft.colors.GREEN_400
+    def add_block():
+        block = SubjectBlock(pga, board, subject, size, position)
+        board.add_block(block)
+        board.turn_off_board()
+        subject_manager.update()
+        board.grid.update()
 
-    def añadir_bloque():
-        bloque = BloqueMateria(pga, tablero, materia, tamaño, posicion)
-        tablero.añadir_bloque(bloque)
-        tablero.apagar_tablero()
-        gestor_materias.update()
-        tablero.cuadricula.update()
-
-
-    boton.on_click = lambda e : añadir_bloque()
+    button.on_click = lambda e: add_block()
 
 
-def remplazar_elemento(vector, inicio, fin, elemento):
-    parte_izquierda = vector[0:inicio]
-    parte_derecha = vector[fin+1:]
-
-    return np.concatenate((parte_izquierda,[elemento], parte_derecha))
 
 
-def insertar_elementos(vector, pos, nuevos_elementos):
-    vector = np.insert(vector, pos, nuevos_elementos)
-    vector = np.delete(vector,len(nuevos_elementos)+pos)
+def replace_element(vector, start, end, element):
+    left_part = vector[0:start]
+    right_part = vector[end+1:]
+
+    return np.concatenate((left_part, [element], right_part))
+
+
+def insert_elements(vector, pos, new_elements):
+    vector = np.insert(vector, pos, new_elements)
+    vector = np.delete(vector, len(new_elements) + pos)
     return vector
 
 
-def obtener_posicion_absoluta(vector, pos_req):
+def get_absolute_position(vector, req_pos):
     c = 0
     k = 0
     for ele in vector:
-        if type(ele) == ft.Container : # es un bloque del tablero, si no es un bloque de una materia 
-            c = c +1
+        if type(ele) == ft.Container:  # it is a block on the board, if not a subject block
+            c = c + 1
             k = k + 1
-            if c == pos_req :
+            if c == req_pos:
                 return k
-            continue 
-        tamaño = ele.tamaño
-        print("Tamaño  = ", c + ele.tamaño)
-        c = c + tamaño
+            continue
+        size = ele.size
+        print("Size = ", c + ele.size)
+        c = c + size
         k = k + 1
-        if c == pos_req :
-            return k 
+        if c == req_pos:
+            return k
 
-
-
-class TableroControl(ft.Container):
+class ControlBoardSubjectSlots(ft.Container):
 
     def __init__(self, pga) -> None:
-        self.actualizar_pga(pga)
+        self.update_pga(pga)
 
+    def update_pga(self, pga: PCG) -> None:
+        button_matrix, grid, day_columns = initialize_control_board()
 
-    def actualizar_pga(self, pga: PGA) -> None:
-        matriz_botones, cuadricula, columnas_dias = tablero_control_0()
+        subject_selector = SubjectSelector(pga, self) # !!!! Cambiar al momento de refactorizar 
+        self.subject_selector = subject_selector
 
-        seleccionador_mat = SeleccionadorMaterias(pga, self)
-        self.seleccionador_mat = seleccionador_mat
-
-        self.matriz_botones = matriz_botones
-        self.cuadricula = cuadricula
-        self.columnas_dias = columnas_dias
-        self.bloques_materias = BloquesMaterias()
+        self.button_matrix = button_matrix
+        self.grid = grid
+        self.day_columns = day_columns
+        self.subject_blocks = SubjectBlocks()
         self.pga = pga
-
 
         super().__init__(
-            content = cuadricula
+            content=grid
         )
 
-        for materia in pga.materias:
-            bloques_materias = generar_bloques_materia(pga, self, materia)
-            for bloque_materia in bloques_materias:
-                self.añadir_bloque(bloque_materia)
+        # Generate subject blocks for each subject in the PGA
+        for subject in pga.subjects:
+            subject_blocks = generate_subject_blocks(pga, self, subject)
+            for subject_block in subject_blocks:
+                self.add_block(subject_block)
 
+    def load_availability(self, size, subject):  # This method activates the cells to add a block
+        # Paints the grid cells based on the subject's availability in the board
+        availability = subject.availability_matrix
+        for row in range(30):
+            for col in range(7):
+                button = self.button_matrix[row, col]
+                if availability[row, col] == 0:
+                    button.bgcolor = ft.colors.RED
+                    continue
 
-    def cargar_disponibilidad(self, tamaño, materia): # este metodo activas las celdasa para que se pueda añadir un bloque
-        # pintara las celdas del tablero respecto a la disponibilidad de la materia en este tablero
-        disponibilidad = materia.disponibilidad 
-        for fila in range(30):
-            for columna in range(7):
-                boton = self.matriz_botones[fila, columna]
-                if disponibilidad[fila,columna] == 0 :
-                    boton.bgcolor = ft.colors.RED 
-                    continue 
+                if availability[row: row + size, col].sum() == size:
+                    schedule_button(self.pga, self, button, subject, (row, col), size, self.subject_selector)
+                    continue
 
-                if disponibilidad[fila: fila + tamaño, columna].sum() == tamaño:
-                    programar_boton(self.pga, self, boton, materia, (fila,columna), tamaño, self.seleccionador_mat)
-                    continue 
-    
-                boton.bgcolor = ft.colors.YELLOW
-        self.cuadricula.update()
+                button.bgcolor = ft.colors.YELLOW
+        self.grid.update()
 
-    def apagar_tablero(self):
-        for fila in range(30):
-            for columna in range(7):
-                boton = self.matriz_botones[fila, columna]
-                boton.bgcolor = ft.colors.WHITE24
-                boton.on_click = None 
-        pass
-        self.cuadricula.update()
+    def turn_off_board(self):
+        for row in range(30):
+            for col in range(7):
+                button = self.button_matrix[row, col]
+                button.bgcolor = ft.colors.WHITE24
+                button.on_click = None
+        self.grid.update()
 
+    def add_block(self, subject_block) -> None:
+        i = subject_block.position[0]
+        j = subject_block.position[1]
+        size = subject_block.size
 
-    def añadir_bloque(self, bmateria) -> None:
-        i = bmateria.posicion[0]
-        j = bmateria.posicion[1]
-        tamaño = bmateria.tamaño
-        # reiniciamos la j-columna, pero antes hacemos una copia 
-        elementos_anteriores = copy.copy(self.columnas_dias[j].controls)
-        #print(elementos_anteriores)
-        fila_rel = obtener_posicion_absoluta(elementos_anteriores, i+1)
-        elementos_anteriores = remplazar_elemento(elementos_anteriores,
-                                                  fila_rel  ,
-                                                  fila_rel + tamaño -1 ,
-                                                  bmateria)
-    
-        #print(self.columnas_dias[j].controls)
-        self.columnas_dias[j].controls = elementos_anteriores
-        #self.columnas_dias[j].update()
-        #self.diseño.update()
-        self.bloques_materias.new(bmateria, (i, j))
-        bmateria.materia.colocar_horas((i,j), bmateria.tamaño )
-        pass 
+        # Reset the j-column, but before doing that, we make a copy
+        previous_elements = copy.copy(self.day_columns[j].controls)
 
-    def eliminar_bloque(self, materia, posicion: tuple, tamaño) -> None:
-        i = posicion[0]
-        j = posicion[1]
-        # suponemos que tenemos un bloque de una materia aqui 
-        elementos_anteriores = copy.copy(self.columnas_dias[j].controls) # bien 
-        fila_rel = obtener_posicion_absoluta(elementos_anteriores, i+1)
-        #elementos_anteriores = np.delete(elementos_anteriores,i+1)
-        botones_a_agregar = self.matriz_botones[i:i+tamaño,j]
-        elementos_anteriores = insertar_elementos(elementos_anteriores,fila_rel ,botones_a_agregar)
-                                                                        
-        #np.insert(elementos_anteriores,i,self.matriz_botones[i][j:j+tamaño])
+        row_rel = get_absolute_position(previous_elements, i + 1)
+        previous_elements = replace_element(previous_elements,
+                                            row_rel,
+                                            row_rel + size - 1,
+                                            subject_block)
+
+        self.day_columns[j].controls = previous_elements
+        self.subject_blocks.new(subject_block, (i, j))
+        subject_block.subject.assign_class_block((i, j), subject_block.size)
+
+    def remove_block(self, subject, position: tuple, size) -> None:
+        i = position[0]
+        j = position[1]
+
+        previous_elements = copy.copy(self.day_columns[j].controls)
+        row_rel = get_absolute_position(previous_elements, i + 1)
+
+        # Add the buttons back into the list
+        buttons_to_add = self.button_matrix[i:i + size, j]
+        previous_elements = insert_elements(previous_elements, row_rel, buttons_to_add)
+
+        self.day_columns[j].controls = previous_elements
+        self.day_columns[j].update()
+        self.subject_blocks.delete_block(subject, position)
+        subject.remove_class_block(position, size)
+        self.subject_selector.update()
+
+    def change_subject_color(self, subject, color):
+        blocks = self.subject_blocks.get_subject_blocks(subject)
+        self.pga.subject_colors.change_color(subject, color)
+        for block in blocks:
+            block.color_picker.set_color(color)
+            block.change_individual_block_color(color)
+        self.grid.update()
+        self.subject_selector.update()
+
 
         
-        self.columnas_dias[j].controls = elementos_anteriores
-        self.columnas_dias[j].update()
-        self.bloques_materias.delete_block(materia, posicion)
-        materia.eliminar_horas(posicion, tamaño)
-        self.seleccionador_mat.update()
+class SubjectBlock(ft.Container):
 
-    
-
-    def cambiar_color_materia(self, materia, color):
-        bloques = self.bloques_materias.get_blocks_materia(materia)
-        self.pga.colores_materias.cambiar_color(materia, color)
-        for bloque in bloques:
-            bloque.color_picker.set_color(color)
-            bloque.cambiar_color_bloque_individual(color)
-        self.cuadricula.update()
-        self.seleccionador_mat.update()
-        
-
-        
-        
-class BloqueMateria(ft.Container):
-
-    def __init__(self, pga, tablero_control, materia, tamaño, posicion) -> None:
-        self.materia = materia
-        self.tamaño = tamaño # el tamaño es la cantidad de medias horas 
-        self.tablero = tablero_control
-        self.posicion = posicion
+    def __init__(self, pga, control_board, subject, size, position) -> None:
+        self.subject = subject
+        self.size = size  # Size represents the number of half-hours
+        self.board = control_board
+        self.position = position
         self.pga = pga
 
-
-
-        color_picker = MiColorPicker()
-        color_original = pga.colores_materias.color[materia]
-        color_picker.update_color(color_original)
+        # Color picker for the block
+        color_picker = MyColorPicker()
+        original_color = pga.subject_colors.colors[subject]
+        color_picker.update_color(original_color)
         self.color_picker = color_picker
 
+        # Function to delete the block
+        def delete_block(self):
+            position = self.position
+            self.board.turn_off_board()
+            self.board.remove_block(subject, position, size)
 
-
-        def eliminar_bloque(self):
-            posicion = self.posicion
-            self.tablero.apagar_tablero()
-            self.tablero.eliminar_bloque(materia, posicion, tamaño)
-
-
-        def cambiar_color_materia(self, materia, tablero):
+        # Function to change the subject color
+        def change_subject_color(self, subject, board):
             color = self.color_picker.get_color()
-            tablero.cambiar_color_materia(materia, color)
+            board.change_subject_color(subject, color)
 
+        # Function to move the block (delete and re-enable availability for insertion)
+        def move_block(self):
+            position = self.position
+            self.board.remove_block(subject, position, size)
+            self.board.load_availability(size, subject)
 
-        def mover_bloque(self):
-            # ? este elimina el bloque y activa el tablero para que se pueda volver a insertar 
-            posicion = self.posicion
-            self.tablero.eliminar_bloque(materia, posicion, tamaño)
-            self.tablero.cargar_disponibilidad(tamaño, materia)
-
-        #color = MicolorRGB(100, 100, 50)
-
-        menuitem_INFO = ft.MenuItemButton(content= ft.Row(controls = [ft.Icon(name=ft.icons.INFO),ft.Text("Info")])
-                                         ,on_click= lambda e: print("Hola Guapos")
+        # Creating menu items for block options
+        menuitem_INFO = ft.MenuItemButton(content= ft.Row(controls = [ft.Icon(name=ft.icons.INFO), ft.Text("Info")]),
+                                         on_click= lambda e: print("Hello Everyone")
                         )
         
-        menuitem_DELETE = ft.MenuItemButton(content= ft.Row(controls = [ft.Icon(name=ft.icons.DELETE),ft.Text("Eliminar")]),
-                                            on_click= lambda e: eliminar_bloque(self)
+        menuitem_DELETE = ft.MenuItemButton(content= ft.Row(controls = [ft.Icon(name=ft.icons.DELETE), ft.Text("Delete")]),
+                                            on_click= lambda e: delete_block(self)
                             )
         
-        menuitem_MOVE = ft.MenuItemButton(content= ft.Row(controls = [ft.Icon(name=ft.icons.MOVE_DOWN),ft.Text("Mover")]),
-                                           on_click= lambda e: mover_bloque(self)
+        menuitem_MOVE = ft.MenuItemButton(content= ft.Row(controls = [ft.Icon(name=ft.icons.MOVE_DOWN), ft.Text("Move")]),
+                                           on_click= lambda e: move_block(self)
                         )
 
         menuitem_COLOR =  ft.SubmenuButton(
@@ -451,72 +432,71 @@ class BloqueMateria(ft.Container):
                             leading=ft.Icon(ft.icons.COLOR_LENS),
                             controls=[
                                 ft.MenuItemButton(
-                                    content=ft.Container(content = self.color_picker.contenedor,width=200,height=170),
+                                    content=ft.Container(content=self.color_picker, width=200, height=170),
                                 )
                             ],
-                            on_close= lambda e: cambiar_color_materia(self, materia, tablero_control),
-                        )     
-        
+                            on_close= lambda e: change_subject_color(self, subject, control_board),
+                        )
+
+        # Tooltip and name display for the subject
         text_name = ft.Tooltip(
-                        message=materia.nombre,
-                        content=ft.Text(materia.abreviatura, size = 23, color = ft.colors.BLACK),
+                        message=subject.name,
+                        content=ft.Text(subject.code, size=23, color=ft.colors.BLACK),
                         text_style=ft.TextStyle(size=15, color=ft.colors.BLACK),
                     )
         
-        cont_MATERIA = ft.Container(content= text_name,
-                                    width=100,
-                                    height=(30*tamaño + (tamaño-1)*2),
-                                    alignment=ft.alignment.center,
-                                    bgcolor= triada_a_hex(color_original),
-                                    padding=0,
-                                    margin = ft.Margin(top=0, right=0, bottom=0, left=0),
-                                    border_radius=5,
-                                    on_hover = lambda e : ft.Tooltip( message="This is tooltip",)
+        subject_container = ft.Container(content=text_name,
+                                         width=100,
+                                         height=(30*size + (size-1)*2),
+                                         alignment=ft.alignment.center,
+                                         bgcolor=RGB_to_hex(original_color),
+                                         padding=0,
+                                         margin=ft.Margin(top=0, right=0, bottom=0, left=0),
+                                         border_radius=5,
+                                         on_hover=lambda e: ft.Tooltip(message="This is tooltip",)
                                     )
 
-        menu_opciones = ft.MenuBar(
+        menu_options = ft.MenuBar(
             controls=[
                     ft.SubmenuButton(
-                        content = cont_MATERIA,
+                        content=subject_container,
                         controls=[
                                 menuitem_INFO,
                                 menuitem_DELETE,
                                 menuitem_MOVE,
                                 menuitem_COLOR,          
                         ],
-                        width = 100,
-                        height = (30*tamaño + (tamaño-1)*2),
-                        menu_style=ft.MenuStyle(padding = 0
-                                    ),
-                        style=ft.ButtonStyle( padding = 0,
-                                )
+                        width=100,
+                        height=(30*size + (size-1)*2),
+                        menu_style=ft.MenuStyle(padding=0),
+                        style=ft.ButtonStyle(padding=0)
                     ),  
             ],
-            style = ft.MenuStyle(
+            style=ft.MenuStyle(
                                 padding=0,
                     ),
-            data = tamaño
+            data=size
         )
 
         super().__init__(
-            content = menu_opciones
+            content=menu_options
         )
 
-        pass
 
 
-    def cambiar_color_bloque_individual(self, color):
-        color = triada_a_hex(color)
+    def change_individual_block_color(self, color):
+        color = RGB_to_hex(color)
         self.content.controls[0].content.bgcolor = color
+        self.content.update()
 
 
 
 
-profesor = BD.profesores.get()[0]
-T = TableroControl(profesor)
+professor = Bd.professors.get()[0]
+T = ControlBoardSubjectSlots(professor)
 
-materia = BD.materias.get()[0]
-print(profesor.get_materias())
+subject = Bd.subjects.get()[0]
+print(professor.get_subjects())
 
 # def mostrar_colocacion_materia():
 #         T.cargar_disponibilidad(4, materia_1)
@@ -529,7 +509,7 @@ print(profesor.get_materias())
 #         on_click= lambda e : mostrar_colocacion_materia()
 #     )
 
-print(len(profesor.get_materias()))
+print(len(professor.get_subjects()))
 # Tablero = ft.Row(controls = [T.cuadricula, boton])
 
 # #lista_materia = SeleccionadorMaterias(BD.profesores.get()[0], 1).lista_materias
@@ -537,16 +517,16 @@ print(len(profesor.get_materias()))
 # print(BD.materias.get()[0].composicion_horas.get_bloques_disponibles())
 
 def main(page : ft.Page):
-    fila = ft.Row(
+    row = ft.Row(
         controls = [T,
-        T.seleccionador_mat.contenido],
+        T.subject_selector],
         spacing = 40
      )
-    columna = ft.Column(
-        controls=  [buscador.contenedor,
-                    fila],
+    column = ft.Column(
+        controls=  [buscador,
+                    row],
     )
-    page.add(columna)
+    page.add(column)
 
 ft.app(main)
 

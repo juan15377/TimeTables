@@ -2,165 +2,160 @@
 import sys
 
 
-sys.path.append("/home/juandejesus/Escritorio/Programacion/Proyectos/Horarios/Software/Pruebas")
+sys.path.append("tests/Logic/")
 
 import flet as ft
-from tests_3 import BD
+from tests_3 import Bd
 import time as tm 
-
-class Listview_pga():
-    def __init__(self, pga):
-        nombre = pga.nombre
+class ListViewPCG():
+    def __init__(self, pcg):
+        name = pcg.name  # Changed "nombre" to "name" for consistency with English
         pb = ft.ProgressBar(width=400)
-        carga_total = sum([materia.composicion_horas.total() for materia in pga.materias])
-        carga_faltante = sum([materia.composicion_horas.faltantes() for materia in pga.materias])
+        total_workload = sum([subject.hours_distribution.total() for subject in pcg.subjects])  # Assuming 'materias' is 'subjects'
+        remaining_workload = sum([subject.hours_distribution.remaining() for subject in pcg.get_subjects()])
 
-        pb.value = 1 - carga_faltante / carga_total if carga_total != 0 else 1
+        pb.value = 1 - remaining_workload / total_workload if total_workload != 0 else 1
 
-        contenedor = ft.Row(
+        container = ft.Row(
             controls = [
-                ft.Text(nombre),
+                ft.Text(name),
                 pb
             ],
             spacing=40
         )
 
-        self.contenedor = contenedor
-        self.pga = pga
+        self.container = container
+        self.pcg = pcg
         self.progressbar = pb
 
-
     def update(self):
-        pga = self.pga
-        carga_total = sum([materia.composicion_horas.total for materia in pga.materias])
-        carga_faltante = sum([materia.composicion_horas.faltante for materia in pga.materias])
+        pcg = self.pcg
+        total_workload = sum([subject.workload.total for subject in pcg.subjects])
+        remaining_workload = sum([subject.workload.remaining for subject in pcg.subjects])
 
-        self.progressbar.value = carga_faltante / carga_total
+        self.progressbar.value = remaining_workload / total_workload
 
     
-
-
-class BusquedaElementos():
-
-    def __init__(self, pgas : list, funciones):
-        controles = []
+class ElementSearch():
+    
+    def __init__(self, pgas: list, functions):
+        controls = []
 
         def close_anchor(e):
-            self.barra_busqueda.close_view("Juan de Jesus Venegas Flores")
-            self.barra_busqueda.update()
+            self.search_bar.close_view("Juan de Jesus Venegas Flores")
+            self.search_bar.update()
 
         def handle_change(e):
-            valor = self.barra_busqueda.value 
-            self.search_value(valor)
-            self.barra_busqueda.valor = valor
-            self.barra_busqueda.update()
+            value = self.search_bar.value
+            self.search_value(value)
+            self.search_bar.value = value
+            self.search_bar.update()
 
         def handle_submit(e):
-            self.reiniciar_valores()
-
+            self.reset_values()
 
         def handle_tap(e):
-            self.reiniciar_valores()
+            self.reset_values()
 
+        def execute_function(e):
+            func = e.control.data[1]
+            func()
+            self.search_bar.close_view()
 
-        def hola(e):
-            f = e.control.data[1]
-            f()
-            self.barra_busqueda.close_view()
+        # Initialize controls for the search
+        for (pga, func) in zip(pgas, functions):
+            list_view = ListViewPCG(pga)
+            controls.append(ft.ListTile(
+                title=list_view.container, 
+                on_click=lambda e: execute_function(e),
+                data=(pga.name, func)
+            ))
 
-        c = 0
-        for (pga, func) in zip(pgas, funciones):
-            listview = Listview_pga(pga)
-            controles.append(ft.ListTile(title=listview.contenedor, 
-                                         on_click = lambda e : hola(e),
-                                         data = (pga.nombre, func)
-                                         )
-                            )
-            c = c + 1
-            
-
-        self.controles = controles
-    
-        barra_busqueda = ft.SearchBar(
+        self.controls = controls
+        
+        search_bar = ft.SearchBar(
             divider_color=ft.colors.BLUE,
-            bar_hint_text="Buscar",
-            view_hint_text="Nombre",
+            bar_hint_text="Search",
+            view_hint_text="Name",
             on_submit=handle_change,
             on_tap=handle_tap,
             view_elevation=4,
-            controls = controles,
+            controls=controls,
             width=700,
-            height=50)
+            height=50
+        )
         
-        self.barra_busqueda = barra_busqueda
+        self.search_bar = search_bar
 
+    def change_behavior(self, pga, f):
+        self.function_dict[pga] = f
+        self.update_behavior()
 
-    def cambiar_comportamiento(self, pga, f):
-        self.dict_func_pga[pga] = f
-        self.update_comportamiento()
+    def update_controls(self, value):
+        self.search_bar.close_view()
+        self.search_bar.update()
+        tm.sleep(0.1)  # Assuming tm is time, can import time if needed
+        self.search_bar.open_view()
+        self.value = value
+        self.search_bar.update()
 
+    def execute_function(self, pga):
+        f = self.function_dict[pga.key]
+        print(pga.name)
+        self.search_bar.close_view()
 
-    def update_controls(self, valor):
-        self.barra_busqueda.close_view()
-        self.barra_busqueda.update()
-        tm.sleep(0.1)
-        self.barra_busqueda.open_view()
-        self.value = valor
-        self.barra_busqueda.update()
-
-    def ejecutar_funcion(self, pga):
-        f = self.dict_pga[pga.key]
-        f
-        print(pga.nombre)
-        self.barra_busqueda.close_view()
-
-    def search_value(self, valor):
-        if valor == "":
-            self.reiniciar_valores()
+    def search_value(self, value):
+        if value == "":
+            self.reset_values()
             return None
-    
-        nuevos_controles = []
-        for control in self.controles:
-            print(valor)
-            if valor.lower() in control.data[0].lower():
-                nuevos_controles.append(control)
-        self.barra_busqueda.controls = nuevos_controles
-        self.update_controls(valor)
 
-    def reiniciar_valores(self):
-        self.barra_busqueda.controls = self.controles
+        new_controls = []
+        for control in self.controls:
+            if value.lower() in control.data[0].lower():
+                new_controls.append(control)
+        self.search_bar.controls = new_controls
+        self.update_controls(value)
+
+    def reset_values(self):
+        self.search_bar.controls = self.controls
         self.update_controls("")
 
 
 
-
-class seleccionador():
+class Selector(ft.Container):
 
     def __init__(self, pgas):
-
-
+        # Create a TextButton to display the selected value
         texto = ft.TextButton(
-            text = ""
+            text=""
         )
 
+        # Define a function to change the text of the button
         def cambiar(valor):
             texto.text = valor
             texto.update()
 
+        # Initialize the list of functions
         funciones = []
 
+        # Loop through the provided `pgas` and append corresponding functions
         for pga in pgas:
-        # Capturar el valor actual de `profesor` usando un valor predeterminado
+            # Capture the current value of `pga` using a default value for the lambda function
             funciones.append(lambda p=pga: cambiar(p.nombre))
 
-        lv = BusquedaElementos(pgas, funciones)
+        # Create the BusquedaElementos instance with the list of `pgas` and functions
+        lv = ElementSearch(pgas, funciones)
 
-        fila = ft.Column(controls = [lv.barra_busqueda,
-                texto])
-        self.contenedor = fila 
+        # Create a vertical column layout with the search bar and text button
+        fila = ft.Column(controls=[lv.search_bar, texto])
+
+        # Store the container as an attribute
+        
+        super().__init__(
+            fila
+        )
 
 
-
-buscador = seleccionador(BD.profesores.get())
+buscador = Selector(Bd.professors.get())
 
 

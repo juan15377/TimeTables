@@ -1,7 +1,7 @@
 import flet as ft
 import sys 
 
-sys.path.append("/home/juandejesus/Escritorio/Programacion/Proyectos/Horarios/Software/Logica Principal")
+sys.path.append("/src/Logic")
 from materias import CHoras, CBloques
 
 
