@@ -229,32 +229,33 @@ class SelectorDistributionHours(ft.Container):
                         )
                 ),
             ],
+            width= 500,
+            height=500
         )
 
         super().__init__(
             content=tabs,
-            width=800,
-            height=600,
-            padding=30
+            width=650,
+            height=300,
         )
 
-    def get(self):
+    def get_hours_distribution(self):
         if self.selector_hours.check.value:
             return self.selector_hours.get()
         else:
             return self.selector_blocks.get()
 
-def main(page: ft.Page):
-    selector = SelectorDistributionHours()
+# def main(page: ft.Page):
+#     selector = SelectorDistributionHours()
     
-    def print_selection(e):
-        print(selector.get())
+#     def print_selection(e):
+#         print(selector.get())
         
-    button = ft.TextButton(
-        text="Print",
-        on_click=print_selection
-    )
+#     button = ft.TextButton(
+#         text="Print",
+#         on_click=print_selection
+#     )
     
-    page.add(selector, button)
+#     page.add(selector, button)
 
-ft.app(target=main)
+# ft.app(target=main)

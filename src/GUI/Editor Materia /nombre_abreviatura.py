@@ -1,18 +1,18 @@
 import flet as ft  
 
 
-class name_and_abrevation(ft.Container):
+class NameCodeSubject(ft.Container):
 
-    def __init__(self, name : str = "", abrevation : str = ""):
+    def __init__(self, name : str = "", code : str = ""):
 
         self.name = name
-        self.abrevation = abrevation
+        self.code = code
 
         def change_name(e):
             self.name = e.control.value
 
-        def change_abrevation(e):
-            self.abrevation = e.control.value
+        def change_code(e):
+            self.code = e.control.value
 
         name_textfield = ft.TextField(
             value = self.name,
@@ -24,45 +24,46 @@ class name_and_abrevation(ft.Container):
             max_length = 50
         )
 
-        abrevation_textfield = ft.TextField(
-            value = self.abrevation,
+        code_textfield = ft.TextField(
+            value = self.code,
             label="Codigo",
             border=ft.InputBorder.UNDERLINE,
             filled=True,
-            hint_text = "Enter text here",
-            on_change = change_abrevation,
+            hint_text = "Insertar Codigo Materia",
+            on_change = change_code,
             max_length = 5
         )
 
         layout = ft.Row(
             controls = [
                 name_textfield,
-                abrevation_textfield,
+                code_textfield,
             ]
         )
 
         super().__init__(
             content = layout,
-            width = 400,
+            width = 200,
             height = 120,
             padding = 10,
+            margin = 20
         )
 
-    def get_name_and_abrevation(self):
-        return self.name, self.abrevation
+    def get_name_and_code(self):
+        return self.name, self.code
     
-    def set_name_and_abrevation(self, name, abrevation):
-        self.name = name
-        self.abrevation = abrevation
-        self.name_textfield.value = name
-        self.abrevation_textfield.value = abrevation
+    def set_name_and_abrevation(self, new_name, new_code):
+        self.name = new_name
+        self.code = new_code
+        self.name_textfield.value = new_name
+        self.code_textfield.value = new_code
 
-        self.abrevation_textfield.update()
+        self.code_textfield.update()
         self.name_textfield.update()
 
 
-def main(page : ft.Page):
-    na = name_and_abrevation("Nombre", "MATAC")
-    page.add(na)
+# def main(page : ft.Page):
+#     na = NameCodeSubject("Nombre", "MATAC")
+#     page.add(na)
 
-ft.app(main)
+# ft.app(main)

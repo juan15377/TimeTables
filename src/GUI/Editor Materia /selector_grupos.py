@@ -25,7 +25,9 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
         )
         
         super().__init__(
-            content = self.table)  # Inicialización de UserControl
+            content = self.table,
+            height= 300,
+            width = 600)  # Inicialización de UserControl
 
 
     def add_group(self, group):
@@ -64,42 +66,60 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
         return self.groups
 
 
-class GroupSelector(SearchValue, ft.Container):
+class GroupSelector(ft.Container):
     
     
-    def __init__(self, tablegroups : TableGroups, BD, button_add_group_to_table):
+    def __init__(self, BD):
+        tablegroups = TableGroups()
+        button_add_group_to_table = ft.IconButton(
+            icon = ft.icons.ADD
+        )
+                
         self.table_groups = tablegroups
         
-        super().__init__(
+        search_values_textfield = SearchValue(
             {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in BD.groups.get()}
         )
+        #search_values_textfield.height = 400
+        search_values_textfield.width = 600
+        
+        self.search_values_textfield = search_values_textfield
         
         button_add_group_to_table.on_click = lambda e : self.add_group_to_table() 
         
+        super().__init__(
+            content = ft.Column(
+                controls=[
+                    search_values_textfield,
+                    tablegroups,
+                    button_add_group_to_table,  # Botón para agregar un grupo a la tabla
+                ]
+            ),
+            margin=30
+        )
         
         
     def add_group_to_table(self):
         # Agrega un grupo seleccionado a la tabla
-        group = self.get_value()
+        group = self.search_values_textfield.get_value()
         if group:
             self.table_groups.add_group(group)
         self.update()
         
+    def get_groups(self):
+        # Devuelve la lista de grupos seleccionados
+        return self.table_groups.get_groups()
         
         
+        
 
-def main(page: ft.Page):
-    page.title = "Gestión de Grupos"
-    table = TableGroups()
-    button_add_group_to_table = ft.IconButton(
-        icon = ft.icons.ADD
-    )
+# def main(page: ft.Page):
+#     page.title = "Gestión de Grupos"
+#     selector_grupos = GroupSelector(Bd)
     
-    selector = GroupSelector(table, Bd, button_add_group_to_table)
-
-    page.add(selector, table, button_add_group_to_table)
+#     page.add(selector_grupos)
     
 
 
 
-ft.app(target=main)
+# ft.app(target=main)

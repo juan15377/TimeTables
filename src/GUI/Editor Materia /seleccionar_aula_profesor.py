@@ -55,31 +55,31 @@ class SearchValue(ft.Container):
     
     
 
-def main(page):
+# def main(page):
     
-    objecto = SearchValue({"1":1,
-                           "2":2,
-                           "3":3,
-                           "4":4,
-                           "5":5,
-                           "6":6,
-                           "7":7,
-                           "8":8,
-                           "9":9,
-                           "10":10})
-    buton_ver = ft.TextButton(
-        text = "hola",
-        on_click= lambda e: print(objecto.get_value())
-    )
+#     objecto = SearchValue({"1":1,
+#                            "2":2,
+#                            "3":3,
+#                            "4":4,
+#                            "5":5,
+#                            "6":6,
+#                            "7":7,
+#                            "8":8,
+#                            "9":9,
+#                            "10":10})
+#     buton_ver = ft.TextButton(
+#         text = "hola",
+#         on_click= lambda e: print(objecto.get_value())
+#     )
 
 
-    page.add(
-        ft.Row([
-            objecto,
-            buton_ver
-        ],
-            alignment=ft.MainAxisAlignment.CENTER
-        )
-    )
+#     page.add(
+#         ft.Row([
+#             objecto,
+#             buton_ver
+#         ],
+#             alignment=ft.MainAxisAlignment.CENTER
+#         )
+#     )
 
-ft.app(main)
+# ft.app(main)
