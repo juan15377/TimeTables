@@ -102,11 +102,11 @@ class Subject():
         row = position[0]
         col = position[1]
         self.allocated_subject_matrix[row:int(hours_length_block*2),col] = False
-        self.hours_distribution.eliminar_bloque(hours_length_block)
+        self.hours_distribution.remove_length_hour(hours_length_block)
         # esto debe dessencadenar que el profesor, aula y sus grupos relacionados a esta materia 
         # deben actualizar su disponibilidad  
         update_availability_subject(self, position, hours_length_block, True)
-        self.update_disponibilidad()
+        self.update_availability_matrix()
 
     def total(self):
         return self.hours_distribution.total()

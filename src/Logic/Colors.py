@@ -66,8 +66,6 @@ class MyColorPicker(ft.Container):
         """
         Initializes a custom color picker container using Flet's ColorPicker widget.
         """
-        self.contenedor = ColorPicker(width=200)
-
         super().__init__(
             content=ColorPicker(width=200)  # Create the ColorPicker widget
         )
@@ -90,7 +88,7 @@ class MyColorPicker(ft.Container):
         Returns:
             MyColorRGB: The current color in the picker, converted to RGB format.
         """
-        color_hex = self.contenedor.color
+        color_hex = self.content.color
         color_rgb = hex_to_RGB(color_hex)
         return MyColorRGB(color_rgb.red, color_rgb.green, color_rgb.blue)
 
@@ -102,19 +100,21 @@ class MyColorPicker(ft.Container):
             color (MyColorRGB): The RGB color to update in the color picker.
         """
         color_hex = RGB_to_hex(color)
-        self.contenedor.color = color_hex
+        self.content.color = color_hex
 
 
-
-# def main(page : ft.page):
-#      color_picker = MyColorPicker()
-#      def cambiar_color():
-#          print(color_picker.set_color(MyColorRGB(100, 10, 10)),"\n"*10)
-#      boton = ft.TextButton(
+#=
+#def main(page : ft.page):
+#    color_picker = MyColorPicker()
+#    def cambiar_color():
+#        print(RGB_to_hex(color_picker.get_color()))
+#        print(color_picker.set_color(MyColorRGB(100, 10, 10)),"\n"*10)
+#          
+#    boton = ft.TextButton(
 #          text = "Cambiar",
 #          on_click= lambda e : cambiar_color()
-#      )
-#      page.add(color_picker, boton)
+#    )
+#    page.add(color_picker, boton)
+#
+#ft.app(target=main)
 
-
-# ft.app(target = main)

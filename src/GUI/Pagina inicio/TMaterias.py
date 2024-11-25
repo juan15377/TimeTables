@@ -286,10 +286,10 @@ def get_absolute_position(vector, req_pos):
 
 class ControlBoardSubjectSlots(ft.Container):
 
-    def __init__(self, pga) -> None:
-        self.update_pga(pga)
+    def __init__(self, pga, update = False) -> None:
+        self.update_pga(pga, update)
 
-    def update_pga(self, pga: PCG) -> None:
+    def update_pga(self, pga: PCG, update) -> None:
         button_matrix, grid, day_columns = initialize_control_board()
 
         subject_selector = SubjectSelector(pga, self) # !!!! Cambiar al momento de refactorizar 
@@ -302,14 +302,15 @@ class ControlBoardSubjectSlots(ft.Container):
         self.pga = pga
 
         super().__init__(
-            content=grid
+            content=self.grid
         )
-
+        
         # Generate subject blocks for each subject in the PGA
         for subject in pga.subjects:
             subject_blocks = generate_subject_blocks(pga, self, subject)
             for subject_block in subject_blocks:
-                self.add_block(subject_block)
+                self.add_block(subject_block, update_slots_block = False)
+                
 
     def load_availability(self, size, subject):  # This method activates the cells to add a block
         # Paints the grid cells based on the subject's availability in the board
@@ -327,6 +328,7 @@ class ControlBoardSubjectSlots(ft.Container):
 
                 button.bgcolor = ft.colors.YELLOW
         self.grid.update()
+        
 
     def turn_off_board(self):
         for row in range(30):
@@ -336,7 +338,7 @@ class ControlBoardSubjectSlots(ft.Container):
                 button.on_click = None
         self.grid.update()
 
-    def add_block(self, subject_block) -> None:
+    def add_block(self, subject_block, update_slots_block = True) -> None:
         i = subject_block.position[0]
         j = subject_block.position[1]
         size = subject_block.size
@@ -352,7 +354,8 @@ class ControlBoardSubjectSlots(ft.Container):
 
         self.day_columns[j].controls = previous_elements
         self.subject_blocks.new(subject_block, (i, j))
-        subject_block.subject.assign_class_block((i, j), subject_block.size)
+        if update_slots_block :
+            subject_block.subject.assign_class_block((i, j), subject_block.size)
 
     def remove_block(self, subject, position: tuple, size) -> None:
         i = position[0]
@@ -404,7 +407,7 @@ class SubjectBlock(ft.Container):
             self.board.remove_block(subject, position, size)
 
         # Function to change the subject color
-        def change_subject_color(self, subject, board):
+        def change_subject_color(subject, board):
             color = self.color_picker.get_color()
             board.change_subject_color(subject, color)
 
@@ -435,7 +438,7 @@ class SubjectBlock(ft.Container):
                                     content=ft.Container(content=self.color_picker, width=200, height=170),
                                 )
                             ],
-                            on_close= lambda e: change_subject_color(self, subject, control_board),
+                            on_close= lambda e: change_subject_color(subject, control_board),
                         )
 
         # Tooltip and name display for the subject
@@ -488,6 +491,8 @@ class SubjectBlock(ft.Container):
         color = RGB_to_hex(color)
         self.content.controls[0].content.bgcolor = color
         self.content.update()
+        print("actualizado")
+        print(self.content.controls[0].content.bgcolor)
 
 
 
@@ -516,17 +521,60 @@ print(len(professor.get_subjects()))
 # selec_bloques = CargarMateria(BD.profesores.get()[0], BD.materias.get()[0], T)
 # print(BD.materias.get()[0].composicion_horas.get_bloques_disponibles())
 
+# !!! principal class 
+class ControlBlocksSubject(ft.Container):
+
+    def __init__(self, Bd, pcg):
+        boardsubjects = ControlBoardSubjectSlots(pcg)
+        row = ft.Row(
+        controls = [
+                boardsubjects,
+                boardsubjects.subject_selector],
+            spacing = 40
+        )
+
+        super().__init__(
+            content = ft.Row(
+                controls = [row]
+            )
+        )
+        
+        
+    def set_pcg(self, pcg):
+        boardsubjects = ControlBoardSubjectSlots(pcg)
+        
+        row = ft.Row(
+        controls = [
+                boardsubjects,
+                boardsubjects.subject_selector],
+            spacing = 40
+        )
+        
+        del super().content.controls[0]
+        super().content.controls.append(row)
+
+        
+        super().update()
+        
+    
+# programar el caso base de no hay profesor ni ninguna materia
+    
+lista = [1]
+
 def main(page : ft.Page):
-    row = ft.Row(
-        controls = [T,
-        T.subject_selector],
-        spacing = 40
-     )
-    column = ft.Column(
-        controls=  [buscador,
-                    row],
+    boardsubject = ControlBlocksSubject(Bd, professor)
+    def cambiar_professor(e):
+        print(e.data)
+        professor_2 = Bd.professors.get()[lista[0]%2]
+        boardsubject.set_pcg(professor_2)
+        lista[0] = lista[0] + 1
+    
+    boton_cambiar_professor = ft.TextButton(
+        text = "cambiar",
+        on_click= lambda e: cambiar_professor(e),
     )
-    page.add(column)
+
+    page.add(boardsubject, boton_cambiar_professor)
 
 ft.app(main)
 

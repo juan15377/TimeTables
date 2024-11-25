@@ -7,6 +7,7 @@ sys.path.append("tests/Logic/")
 import flet as ft
 from tests_3 import Bd
 import time as tm 
+
 class ListViewPCG():
     def __init__(self, pcg):
         name = pcg.name  # Changed "nombre" to "name" for consistency with English
@@ -120,39 +121,36 @@ class ElementSearch():
         self.search_bar.controls = self.controls
         self.update_controls("")
 
-
-
 class Selector(ft.Container):
 
-    def __init__(self, pgas):
+    def __init__(self, options):
         # Create a TextButton to display the selected value
-        texto = ft.TextButton(
+        text_button = ft.TextButton(
             text=""
         )
 
         # Define a function to change the text of the button
-        def cambiar(valor):
-            texto.text = valor
-            texto.update()
+        def change_text(value):
+            text_button.text = value
+            text_button.update()
 
         # Initialize the list of functions
-        funciones = []
+        functions = []
 
-        # Loop through the provided `pgas` and append corresponding functions
-        for pga in pgas:
-            # Capture the current value of `pga` using a default value for the lambda function
-            funciones.append(lambda p=pga: cambiar(p.nombre))
+        # Loop through the provided `options` and append corresponding functions
+        for option in options:
+            # Capture the current value of `option` using a default value for the lambda function
+            functions.append(lambda o=option: change_text(o.name))
 
-        # Create the BusquedaElementos instance with the list of `pgas` and functions
-        lv = ElementSearch(pgas, funciones)
+        # Create the ElementSearch instance with the list of `options` and functions
+        search_view = ElementSearch(options, functions)
 
         # Create a vertical column layout with the search bar and text button
-        fila = ft.Column(controls=[lv.search_bar, texto])
+        column = ft.Column(controls=[search_view.search_bar, text_button])
 
         # Store the container as an attribute
-        
         super().__init__(
-            fila
+            column
         )
 
 
