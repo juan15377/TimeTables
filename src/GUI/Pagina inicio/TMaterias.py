@@ -354,7 +354,7 @@ class ControlBoardSubjectSlots(ft.Container):
 
         self.day_columns[j].controls = previous_elements
         self.subject_blocks.new(subject_block, (i, j))
-        if update_slots_block :
+        if update_slots_block:
             subject_block.subject.assign_class_block((i, j), subject_block.size)
 
     def remove_block(self, subject, position: tuple, size) -> None:
@@ -559,7 +559,7 @@ class ControlBlocksSubject(ft.Container):
     
 # programar el caso base de no hay profesor ni ninguna materia
     
-lista = [1]
+lista = [0]
 
 def main(page : ft.Page):
     boardsubject = ControlBlocksSubject(Bd, professor)

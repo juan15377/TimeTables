@@ -63,9 +63,9 @@ materia_1 = Bd.subjects.get()[0]
 materia_2 = Bd.subjects.get()[1]
 materia_3 = Bd.subjects.get()[2]
 
-materia_1.assign_class_block((0,1), 2)
-materia_2.assign_class_block((1,2), 2)
-#materia_3.assign_class_block((2,1), 2)
+materia_3.assign_class_block((5,4), 5)
+materia_1.assign_class_block((0,1), 5)
+materia_2.assign_class_block((1,2), 5)
 
 # print(materia_1.disponibilidad, "\n")
 # print(materia_2.disponibilidad, "\n")

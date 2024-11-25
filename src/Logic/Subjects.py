@@ -91,7 +91,7 @@ class Subject():
     def assign_class_block(self, position, hours_length_block):
         row = position[0]
         col = position[1]
-        self.allocated_subject_matrix[row:int(hours_length_block),col] = True
+        self.allocated_subject_matrix[row:row + int(hours_length_block),col] = True
         self.hours_distribution.add_block_hour(hours_length_block)
         # esto debe dessencadenar que el profesor, aula y sus grupos relacionados a esta materia 
         # deben actualizar su disponibilidad  
@@ -101,7 +101,7 @@ class Subject():
     def remove_class_block(self, position, hours_length_block):
         row = position[0]
         col = position[1]
-        self.allocated_subject_matrix[row:int(hours_length_block*2),col] = False
+        self.allocated_subject_matrix[row:row+int(hours_length_block*2),col] = False
         self.hours_distribution.remove_length_hour(hours_length_block)
         # esto debe dessencadenar que el profesor, aula y sus grupos relacionados a esta materia 
         # deben actualizar su disponibilidad  
