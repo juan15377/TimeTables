@@ -35,7 +35,7 @@ def initialize_control_board():
             "3:00 - 3:30 PM", "3:30 - 4:00 PM", "4:00 - 4:30 PM", "4:30 - 5:00 PM",
             "5:00 - 5:30 PM", "5:30 - 6:00 PM", "6:00 - 6:30 PM", "6:30 - 7:00 PM",
             "7:00 - 7:30 PM", "7:30 - 8:00 PM", "8:00 - 8:30 PM", "8:30 - 9:00 PM",
-            "9:00 - 9:30 PM", "9:30 - 10:00 PM", "10:00 - 10:30 PM"
+            "9:00 - 9:30 PM", "9:30 - 10:00 PM"
     ]
 
     def button_container(i, j):
@@ -171,6 +171,7 @@ def decompose_vector(vector):
     return positions
 
 
+#print(decompose_vector([0, 1, 1, 0, 1]))
 
 # si hago el objecto de TableroControl mutable para solo añadir los bloques 
 # uno por uno 
@@ -188,7 +189,10 @@ def generate_subject_blocks(pga, control_board, subject):
         print(positions)
         for position in positions:
             row = position[0]
-            block_size = position[1] - position[0] + 1
+            block_size = position[1] - position[0] 
+            if position[1] == 29:
+                block_size += 1
+            print(block_size)
             block = SubjectBlock(pga, control_board, subject, block_size, (row, column))
             blocks.append(block)
     return blocks
@@ -366,7 +370,6 @@ class ControlBoardSubjectSlots(ft.Container):
                                             subject_block)
         
         
-        print("Tamaño = ", subject_block.size)
         print(subject_block.subject.allocated_subject_matrix)
         self.day_columns[j].controls = news_elements
         self.subject_blocks.new(subject_block, (i, j))
@@ -629,7 +632,13 @@ content_professor = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_professor)
 content_classroom = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_classroom)
 content_group = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_group)
 
-#
+materia_1 = Bd.subjects.get()[0]
+
+print(materia_1.allocated_subject_matrix)
+
+print(decompose_vector(materia_1.allocated_subject_matrix[:,1]))
+print(len(materia_1.allocated_subject_matrix[:,1]))
+
 #lista = [0]
 #
 #def main(page : ft.Page):
