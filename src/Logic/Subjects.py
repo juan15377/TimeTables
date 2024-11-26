@@ -2,8 +2,8 @@ from Keys import Key
 from functools import reduce
 import numpy as np
 from Hours import *
-from Professor_Classroom_Group import Professor, Classroom, Group
-
+from Professor_Classroom_Group import Professor, Classroom, Group, DEFAULT_PCG
+from Colors import MyColorRGB
 class NameSubject():
 
     def __init__(self, name : str, code : str):
@@ -30,6 +30,8 @@ class Subject():
 
 
 def intersectAvailability(teacher, classroom, groups):
+    if teacher == None or classroom == None or groups == []:
+        return None
     group_availability_matrices = [group.availability_matrix for group in groups]
     availability_matrix_for_groups = reduce(lambda m1, m2: m1 & m2, group_availability_matrices)
     availability_matrix_teacher = teacher.availability_matrix
@@ -101,7 +103,7 @@ class Subject():
     def remove_class_block(self, position, hours_length_block):
         row = position[0]
         col = position[1]
-        self.allocated_subject_matrix[row:row+int(hours_length_block*2),col] = False
+        self.allocated_subject_matrix[row:row+int(hours_length_block),col] = False
         self.hours_distribution.remove_length_hour(hours_length_block)
         # esto debe dessencadenar que el profesor, aula y sus grupos relacionados a esta materia 
         # deben actualizar su disponibilidad  
@@ -175,3 +177,16 @@ class Subjects:
 
     def get(self):
         return self.subjects
+
+DEFAULT_SUBJECT = Subject(
+    "",
+    "",
+    None,
+    None,
+    [],
+    HoursComposition(0, 0, 0),
+)
+
+DEFAULT_PCG.subjects.append(DEFAULT_SUBJECT)
+DEFAULT_PCG.subject_colors.colors[DEFAULT_SUBJECT] = MyColorRGB(0, 0, 0)
+

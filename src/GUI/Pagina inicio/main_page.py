@@ -1,6 +1,6 @@
 import flet as ft
 
-from TMaterias import boardsubject
+from TMaterias import content_professor, content_classroom, content_group
 from TMaterias import initialize_control_board
 
 
@@ -157,21 +157,44 @@ import flet as ft
 
 def main(page: ft.Page):
     # Contenido inicial de cada sección
-    content = ft.Container(content=ft.Text("Bienvenido, selecciona una opción"), expand=True)
+    content = ft.Container(
+        content= ft.Column([ content_professor], alignment=ft.MainAxisAlignment.START, expand=True,
+                    height=800,
+                    width=600
+                    ), 
+        expand=True)
+    
+    # Página principa
+    
+    def update_contents():
+        content_professor.update()
+        content_classroom.update()
+        content_group.update()
 
     # Callback para manejar los cambios de la NavigationRail
     def on_change(e):
+        
         selected_index = e.control.selected_index
-
+        
         # Cambiar el contenido basado en la selección
         if selected_index == 0:  # Profesor
-            content.content = ft.Column([ boardsubject], alignment=ft.MainAxisAlignment.START, expand=True,
+            content.content = ft.Column([content_professor], alignment=ft.MainAxisAlignment.START, expand=True,
                                         height=800,
                                         width=600)
+            content_professor.update()
+
         elif selected_index == 1:  # Aula
-            content.content = ft.Text("Vista de Aula")
+            content.content = ft.Column([content_classroom], alignment=ft.MainAxisAlignment.START, expand=True,
+                                        height=800,
+                                        width=600)
+            content_classroom.update()
+
         elif selected_index == 2:  # Grupo
-            content.content = ft.Text("Vista de Grupo")
+            content.content = ft.Column([content_group], alignment=ft.MainAxisAlignment.START, expand=True,
+                                        height=800,
+                                        width=60)
+            content_group.update()
+
         content.update()        
         # Actualizar la página
 
@@ -254,7 +277,7 @@ def main(page: ft.Page):
             [
                 rail,
                 ft.VerticalDivider(width=1),
-                ft.Column([ boardsubject], alignment=ft.MainAxisAlignment.START, expand=True,
+                ft.Column([ content_professor], alignment=ft.MainAxisAlignment.START, expand=True,
                           height=800,
                           width=600),
             ],
@@ -263,7 +286,7 @@ def main(page: ft.Page):
     )
 
 
-# ! arreglar el problema de deslizamiento hacia abajo
+# ? arreglar el problema de deslizamiento hacia abajo
 # ! arreglar el caso de un tablero cuando no se tiene matterias
 # ! arreglar el problema cuando no hay profesores, aulao grupos
 

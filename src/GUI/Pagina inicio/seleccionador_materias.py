@@ -2,9 +2,16 @@ import flet as ft
 import sys
 
 sys.path.append("tests/Logic/")
+sys.path.append("src/Logic/")
+
 
 from tests_3 import Bd
 from Colors import RGB_to_hex
+from Colors import MyColorRGB
+from Subjects import DEFAULT_PCG, DEFAULT_SUBJECT
+
+print(" dcfgvhbjnkmljhg cfxzssxfcgvhbjnkmljhbgvfcd"
+      , print(len(DEFAULT_PCG.subjects)))
 
 class LoadSubject():
 
@@ -90,7 +97,7 @@ class LoadSubject():
             self.board.load_availability(size, self.subject)
 
         self.block_selection = block_selection
-        original_color = pga.subject_colors.colors[subject]
+        original_color = self.pga.subject_colors.colors[subject]
 
         subject_container = ft.Container(content= ft.Text(subject.code,
                                     size= 35, color = ft.colors.BLACK),
@@ -138,15 +145,14 @@ class LoadSubject():
         self.vbloques_drop.update()
         self.block_selection.update()
 
-
-
-
 class SubjectSelector(ft.Container):
 
-    def __init__(self, pga, board):
+    def __init__(self, board, pga):
         self.pga = pga
-        subject_0 = pga.get_subjects()[0]
-        subject_loader = LoadSubject(pga, subject_0, board)
+        if len(pga.get_subjects()) == 0:
+            self.pga = DEFAULT_PCG
+        subject_0 = self.pga.get_subjects()[0]
+        subject_loader = LoadSubject(self.pga, subject_0, board)
         self.subject_loader = subject_loader
 
         self.load_subject_list()
@@ -163,7 +169,7 @@ class SubjectSelector(ft.Container):
 
         for subject in self.pga.get_subjects():
             progress_bar = ft.ProgressBar(width = 150, height = 10)
-            completed_value =  1 - subject.remaining() / subject.total()
+            completed_value =  1 - subject.remaining() / subject.total() if subject.total() != 0 else 1
             progress_bar.value = completed_value
             color = RGB_to_hex(self.pga.subject_colors.colors[subject])
             text_name = ft.Container(

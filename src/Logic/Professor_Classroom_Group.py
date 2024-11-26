@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 import numpy as np
 import random as rn
 from Colors import MyColorRGB
-
+#from Subjects import *
+from Hours import HoursComposition
 
 class PCGMethods:
     """Handles shared methods for PGA instances."""
@@ -83,6 +84,9 @@ class PCG:
 
 # ? Profesor
 # ? Professor, Classroom, and Group classes extend from PGA
+
+DEFAULT_PCG = PCG()
+
 
 class Professor(PCG):
     def __init__(self, name) -> None:

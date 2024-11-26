@@ -1,0 +1,4 @@
+# arreglar que la ultima fila no se agrega al momento de generar un bloque de 
+# de una materia
+
+#

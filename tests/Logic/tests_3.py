@@ -44,68 +44,51 @@ for i in range(3):
 
 comp_horas = HoursComposition(1, 2, 5)
 
-info1 = InfoSubject("Programacion Matematica", "PROGRA", Bd.professors.get()[0], Bd.classrooms.get()[0], [Bd.classrooms.get()[0]], comp_horas)
-Bd.subjects.add(info1)
+
 
 comp_horas = HoursComposition(1, 2, 5)
-info2 = InfoSubject("Calculo Diferencial", "CALC", Bd.professors.get()[0], Bd.classrooms.get()[1], [Bd.classrooms.get()[1]], comp_horas)
-Bd.subjects.add(info2)
-
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Linfefeal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+info3 = InfoSubject("Calculo Diferencial", "CALC1", Bd.professors.get()[0], Bd.classrooms.get()[1], [Bd.groups.get()[2]], comp_horas)
 Bd.subjects.add(info3)
 
 comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lfdsineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
 Bd.subjects.add(info3)
 
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineafdsl", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lidfdsneal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Linl", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
-comp_horas = HoursComposition(1, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
-Bd.subjects.add(info3)
+#comp_horas = HoursComposition(1, 2, 5)
+#info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.groups.get()[2]], comp_horas)
+#Bd.subjects.add(info3)
+#
+#comp_horas = HoursComposition(1, 2, 5)
+#info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[0], [Bd.groups.get()[0]], comp_horas)
+#Bd.subjects.add(info3)
+#comp_horas = HoursComposition(1, 2, 5)
+#info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.groups.get()[2]], comp_horas)
+#Bd.subjects.add(info3)
+#comp_horas = HoursComposition(1, 2, 5)
+#info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[1]], comp_horas)
+#Bd.subjects.add(info3)
+#comp_horas = HoursComposition(1, 2, 5)
+#info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.groups.get()[2]], comp_horas)
+#Bd.subjects.add(info3)
+#
 # añadimos 1 bloque a la primera materia 
 
 
 #BD.materias.get()[0].colocar_horas((0, 4), 1)
 materia_1 = Bd.subjects.get()[0]
 materia_2 = Bd.subjects.get()[1]
-materia_3 = Bd.subjects.get()[2]
+#materia_3 = Bd.subjects.get()[2]
 
-materia_3.assign_class_block((5,4), 5)
-materia_1.assign_class_block((0,1), 5)
-materia_2.assign_class_block((1,2), 5)
+#materia_3.assign_class_block((5,4), 5)
+#materia_1.assign_class_block((0,1), 5)
+#materia_2.assign_class_block((1,2), 5)
 
 # print(materia_1.disponibilidad, "\n")
 # print(materia_2.disponibilidad, "\n")
 # print(materia_3.disponibilidad)
 
+print(len(Bd.groups.get()[0].get_subjects()))
+print(len(Bd.classrooms.get()[0].get_subjects()))
 
 # el colocar horas el la primera materia deberia propagar la disponibilidad en la tercer materia 
 # al parecer funciona bien la propagacion de la disponibilidad a las materias 

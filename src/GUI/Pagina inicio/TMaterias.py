@@ -5,16 +5,16 @@ sys.path.append("src/Logic/")
 sys.path.append("tests/Logic/")
 
 import flet as ft 
-import numpy as np 
+import numpy as np
 import time as tm 
 from Subjects import Subject, HoursComposition
-from Professor_Classroom_Group import PCG
+from Professor_Classroom_Group import PCG, DEFAULT_PCG
 import copy
 from Colors import MyColorPicker,MyColorRGB, RGB_to_hex
-from tests_3 import Bd, materia_1, materia_2, materia_3 
+from tests_3 import Bd, materia_1, materia_2
 from Subjects import HoursSlotsComposition
 from seleccionador_materias import SubjectSelector
-from Seleccionador_PGA import buscador
+from Seleccionador_PGA import buscador_professor,buscador_classroom, buscador_group
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
 # ! este a partir de una inicializacion se debe mantener con operaciones que permitan 
 # ! añadir bloques, este debe tener una forma eficiemte de actualizar ciertas partes del objecto para 
@@ -130,9 +130,9 @@ def initialize_control_board():
             controls=total_columns,
             spacing=0,
             vertical_alignment=ft.CrossAxisAlignment.START,
-            #scroll=ft.ScrollMode.AUTO,
+            scroll=ft.ScrollMode.AUTO,
             width=840,
-            height=600,  
+            height=1000,  
             expand = False
             )
 
@@ -143,7 +143,7 @@ def initialize_control_board():
             scroll=ft.ScrollMode.AUTO,
             width=840,
             height=500,    
-            expand = False
+            expand = True
         )
     
     return button_matrix, grid, day_columns
@@ -295,13 +295,13 @@ def get_absolute_position(vector, req_pos):
 
 class ControlBoardSubjectSlots(ft.Container):
 
-    def __init__(self, pga, update = False) -> None:
+    def __init__(self, pga = DEFAULT_PCG, update = False) -> None:
         self.update_pga(pga, update)
 
-    def update_pga(self, pga: PCG, update) -> None:
+    def update_pga(self, pga, update) -> None:
         button_matrix, grid, day_columns = initialize_control_board()
 
-        subject_selector = SubjectSelector(pga, self) # !!!! Cambiar al momento de refactorizar 
+        subject_selector = SubjectSelector(self, pga) # !!!! Cambiar al momento de refactorizar 
         self.subject_selector = subject_selector
 
         self.button_matrix = button_matrix
@@ -533,11 +533,13 @@ print(len(professor.get_subjects()))
 # !!! principal class 
 class ControlBlocksSubject(ft.Container):
 
-    def __init__(self, Bd, pcg):
+    def __init__(self, Bd, pcg, search):
         boardsubjects = ControlBoardSubjectSlots(pcg)
+        self.search = search
+        self.pcg = pcg
         row = ft.Column(
         controls = [
-                buscador,
+                search,
                 ft.Row(
                     controls = [      
                         boardsubjects,
@@ -555,13 +557,12 @@ class ControlBlocksSubject(ft.Container):
             ),
         )
         
-        
     def set_pcg(self, pcg):
         boardsubjects = ControlBoardSubjectSlots(pcg)
-        
+        self.pcg = pcg
         row = ft.Column(
         controls = [
-                buscador,
+                self.search,
                 ft.Row(
                     controls = [      
                         boardsubjects,
@@ -575,21 +576,51 @@ class ControlBlocksSubject(ft.Container):
         
         del super().content.controls[0]
         super().content.controls.append(row)
-
         
         super().update()
         
+    def update(self):
+        boardsubjects = ControlBoardSubjectSlots(self.pcg)
+        row = ft.Column(
+        controls = [
+                self.search,
+                ft.Row(
+                    controls = [      
+                        boardsubjects,
+                        boardsubjects.subject_selector,
+                    ]
+                )
+                ],
+            expand=False,
+            spacing=40,
+        )
+        
+        del super().content.controls[0]
+        super().content.controls.append(row)   
     
 # programar el caso base de no hay profesor ni ninguna materia
 
 def cambiar_professor(e, bd = Bd):
-    seleccionado = buscador.get_value()
-    boardsubject.set_pcg(seleccionado)
+    seleccionado = buscador_professor.get_value()
+    content_professor.set_pcg(seleccionado)
 
 
-buscador.on_change = cambiar_professor
+def cambiar_classroom(e, bd = Bd):
+    seleccionado = buscador_classroom.get_value()
+    content_classroom.set_pcg(seleccionado)
 
-boardsubject = ControlBlocksSubject(Bd, professor)
+
+def cambiar_group(e, bd = Bd):
+    seleccionado = buscador_group.get_value()
+    content_group.set_pcg(seleccionado)
+
+buscador_professor.on_change = cambiar_professor
+buscador_classroom.on_change = cambiar_classroom
+buscador_group.on_change = cambiar_group
+
+content_professor = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_professor)
+content_classroom = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_classroom)
+content_group = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_group)
 
 #
 #lista = [0]

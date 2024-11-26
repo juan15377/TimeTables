@@ -165,6 +165,14 @@ sys.path.append("src/GUI/Editor Materia /")
 
 from seleccionar_aula_profesor import SearchValue
 
-buscador = SearchValue({
+buscador_professor = SearchValue({
     professor.name: professor for professor in Bd.professors.get()
+})
+
+buscador_classroom = SearchValue({
+    classroom.name: classroom for classroom in Bd.classrooms.get()
+})
+
+buscador_group = SearchValue({
+    group.career.name + " " + group.semester.name + " " + group.subgroup.name:group for group in Bd.groups.get()
 })
