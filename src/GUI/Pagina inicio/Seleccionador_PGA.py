@@ -150,10 +150,21 @@ class Selector(ft.Container):
 
         # Store the container as an attribute
         super().__init__(
-            column
+            column,
+            expand = False
         )
 
 
-buscador = Selector(Bd.professors.get())
+#buscador = Selector(Bd.professors.get())
 
 
+
+import sys 
+
+sys.path.append("src/GUI/Editor Materia /")
+
+from seleccionar_aula_profesor import SearchValue
+
+buscador = SearchValue({
+    professor.name: professor for professor in Bd.professors.get()
+})

@@ -49,6 +49,7 @@ def initialize_control_board():
                 width=100,
                 height=30,
                 border_radius=5,
+                expand = False
             )
         return b
 
@@ -67,6 +68,7 @@ def initialize_control_board():
                     width=100,
                     height=30,
                     border_radius=1,
+                    expand=False
                 )
         
     def day_container(i):
@@ -80,6 +82,7 @@ def initialize_control_board():
                     width=100,
                     height=30,
                     border_radius=1,
+                    expand=False
                 )
         
     special_container = ft.Container(
@@ -92,6 +95,7 @@ def initialize_control_board():
                             width=100,
                             height=30,
                             border_radius=1,
+                            expand = False
                         )
         
     time_containers = [special_container] + [time_container(i) for i in range(30)]
@@ -101,8 +105,6 @@ def initialize_control_board():
                     controls=time_containers,
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=0,
-                    scroll=ft.ScrollMode.AUTO,
-                    #expand = True,
                     )
     
 
@@ -128,7 +130,10 @@ def initialize_control_board():
             controls=total_columns,
             spacing=0,
             vertical_alignment=ft.CrossAxisAlignment.START,
-            scroll=ft.ScrollMode.AUTO,
+            #scroll=ft.ScrollMode.AUTO,
+            width=840,
+            height=600,  
+            expand = False
             )
 
     grid = ft.Column(
@@ -137,9 +142,13 @@ def initialize_control_board():
             spacing=0,
             scroll=ft.ScrollMode.AUTO,
             width=840,
-            height=500,
+            height=500,    
+            expand = False
         )
+    
     return button_matrix, grid, day_columns
+
+
 
 
 def decompose_vector(vector):
@@ -526,28 +535,42 @@ class ControlBlocksSubject(ft.Container):
 
     def __init__(self, Bd, pcg):
         boardsubjects = ControlBoardSubjectSlots(pcg)
-        row = ft.Row(
+        row = ft.Column(
         controls = [
-                boardsubjects,
-                boardsubjects.subject_selector],
-            spacing = 40
+                buscador,
+                ft.Row(
+                    controls = [      
+                        boardsubjects,
+                        boardsubjects.subject_selector,
+                    ]
+                )
+                ],
+            expand=False,
+            spacing=40,
         )
 
         super().__init__(
             content = ft.Row(
-                controls = [row]
-            )
+                controls = [row],
+            ),
         )
         
         
     def set_pcg(self, pcg):
         boardsubjects = ControlBoardSubjectSlots(pcg)
         
-        row = ft.Row(
+        row = ft.Column(
         controls = [
-                boardsubjects,
-                boardsubjects.subject_selector],
-            spacing = 40
+                buscador,
+                ft.Row(
+                    controls = [      
+                        boardsubjects,
+                        boardsubjects.subject_selector,
+                    ]
+                )
+                ],
+            expand=False,
+            spacing=40,
         )
         
         del super().content.controls[0]
@@ -558,23 +581,33 @@ class ControlBlocksSubject(ft.Container):
         
     
 # programar el caso base de no hay profesor ni ninguna materia
-    
-lista = [0]
 
-def main(page : ft.Page):
-    boardsubject = ControlBlocksSubject(Bd, professor)
-    def cambiar_professor(e):
-        print(e.data)
-        professor_2 = Bd.professors.get()[lista[0]%2]
-        boardsubject.set_pcg(professor_2)
-        lista[0] = lista[0] + 1
-    
-    boton_cambiar_professor = ft.TextButton(
-        text = "cambiar",
-        on_click= lambda e: cambiar_professor(e),
-    )
+def cambiar_professor(e, bd = Bd):
+    seleccionado = buscador.get_value()
+    boardsubject.set_pcg(seleccionado)
 
-    page.add(boardsubject, boton_cambiar_professor)
 
-ft.app(main)
+buscador.on_change = cambiar_professor
+
+boardsubject = ControlBlocksSubject(Bd, professor)
+
+#
+#lista = [0]
+#
+#def main(page : ft.Page):
+#    boardsubject = ControlBlocksSubject(Bd, professor)
+#    def cambiar_professor(e):
+#        print(e.data)
+#        professor_2 = Bd.professors.get()[lista[0]%2]
+#        boardsubject.set_pcg(professor_2)
+#        lista[0] = lista[0] + 1
+#    
+#    boton_cambiar_professor = ft.TextButton(
+#        text = "cambiar",
+#        on_click= lambda e: cambiar_professor(e),
+#    )
+#
+#    page.add(boardsubject, boton_cambiar_professor)
+#
+#ft.app(main)
 

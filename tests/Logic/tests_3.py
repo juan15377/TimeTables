@@ -52,9 +52,44 @@ info2 = InfoSubject("Calculo Diferencial", "CALC", Bd.professors.get()[0], Bd.cl
 Bd.subjects.add(info2)
 
 comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Linfefeal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lfdsineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lineafdsl", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lidfdsneal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Linl", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+
+comp_horas = HoursComposition(1, 2, 5)
 info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
 Bd.subjects.add(info3)
 
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
+comp_horas = HoursComposition(1, 2, 5)
+info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.classrooms.get()[2]], comp_horas)
+Bd.subjects.add(info3)
 # añadimos 1 bloque a la primera materia 
 
 

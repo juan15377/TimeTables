@@ -11,7 +11,9 @@ import flet as ft
 # todo: se considera que los nnombre son unicos 
 class SearchValue(ft.Container):
     
-    def __init__(self, dict_values) -> None:
+    def __init__(self, dict_values, on_change = lambda:None) -> None:
+        
+        self.on_change = on_change
         
         values = list(dict_values.values())
         names = list(dict_values.keys())
@@ -20,6 +22,7 @@ class SearchValue(ft.Container):
     
         def change_value(e):
             self.value_selected = dict_values[lv.value]
+            self.on_change(e)
             
         def handle_change(e):
             list_to_show = [name for (name, value) in zip(names, values) if e.data.lower() in name.lower()]
@@ -36,7 +39,6 @@ class SearchValue(ft.Container):
         
         search_entry = ft.TextField(
             on_change=handle_change,
-
         )
         
         super().__init__(
@@ -45,7 +47,10 @@ class SearchValue(ft.Container):
                     search_entry,
                     lv
                 ]
-            )
+            ),
+            expand = False,
+            height=100,
+            width=600
         )
         
         pass

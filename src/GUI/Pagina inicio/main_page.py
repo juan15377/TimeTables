@@ -1,5 +1,7 @@
 import flet as ft
 
+from TMaterias import boardsubject
+from TMaterias import initialize_control_board
 
 
 
@@ -105,11 +107,163 @@ def main(page: ft.Page):
     page.add(ft.Row([menubar]))
 
 
+#ft.app(main)
+
+a,grid,b = initialize_control_board()
+
+
+class TabsProfessorClassroomGroup(ft.Container):
+    
+    def __init__(self, bd):
+        t = ft.Tabs(
+            expand = True,
+            selected_index=1,
+            animation_duration=200,
+            tabs=[
+                ft.Tab(
+                    text="Professor",
+                    content=ft.Container(
+                        content = ft.Container(
+                            content = boardsubject,
+                            alignment=ft.alignment.center,
+                            margin=100,
+                            expand = True
+                        ),
+                        margin= 100,
+                        expand = False,
+                        adaptive=True
+                    ),
+
+                ),
+                ft.Tab(
+                    text = "Classroom",
+                    #tab_content=ft.Icon(ft.icons.SEARCH),
+                    content = grid
+                ),
+                ft.Tab(
+                    text="Group",
+                    #icon=ft.icons.SETTINGS,
+                    content=boardsubject
+                ),
+            ],
+        )
+        
+        super().__init__(content=t)
+        
+    
+    pass  
+
+import flet as ft
+
+def main(page: ft.Page):
+    # Contenido inicial de cada sección
+    content = ft.Container(content=ft.Text("Bienvenido, selecciona una opción"), expand=True)
+
+    # Callback para manejar los cambios de la NavigationRail
+    def on_change(e):
+        selected_index = e.control.selected_index
+
+        # Cambiar el contenido basado en la selección
+        if selected_index == 0:  # Profesor
+            content.content = ft.Column([ boardsubject], alignment=ft.MainAxisAlignment.START, expand=True,
+                                        height=800,
+                                        width=600)
+        elif selected_index == 1:  # Aula
+            content.content = ft.Text("Vista de Aula")
+        elif selected_index == 2:  # Grupo
+            content.content = ft.Text("Vista de Grupo")
+        content.update()        
+        # Actualizar la página
+
+    # Barra de navegación
+    rail = ft.NavigationRail(
+        selected_index=0,
+        label_type=ft.NavigationRailLabelType.ALL,
+        min_width=100,
+        min_extended_width=400,
+        leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
+        group_alignment=-0.9,
+        destinations=[
+            ft.NavigationRailDestination(
+                icon=ft.icons.FAVORITE_BORDER,
+                selected_icon=ft.icons.FAVORITE,
+                label="Profesor",
+            ),
+            ft.NavigationRailDestination(
+                icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
+                selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
+                label="Aula",
+            ),
+            ft.NavigationRailDestination(
+                icon=ft.icons.SETTINGS_OUTLINED,
+                selected_icon_content=ft.Icon(ft.icons.SETTINGS),
+                label_content=ft.Text("Grupo"),
+            ),
+        ],
+        on_change=on_change,  # Llamar al callback
+    )
+    
+    page.theme_mode = ft.ThemeMode.DARK 
+
+    # Layout principal
+    page.add(
+        ft.Row(
+            [
+                rail,
+                ft.VerticalDivider(width=1),
+                content,  # Contenedor dinámico
+            ],
+            expand=True,
+        )
+    )
+
 ft.app(main)
 
+import flet as ft
+
+def main(page: ft.Page):
+
+    rail = ft.NavigationRail(
+        selected_index=0,
+        label_type=ft.NavigationRailLabelType.ALL,
+        # extended=True,
+        min_width=100,
+        min_extended_width=400,
+        leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
+        group_alignment=-0.9,
+        destinations=[
+            ft.NavigationRailDestination(
+                icon=ft.icons.FAVORITE_BORDER, selected_icon=ft.icons.FAVORITE, label="Profesor"
+            ),
+            ft.NavigationRailDestination(
+                icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
+                selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
+                label="Aula",
+            ),
+            ft.NavigationRailDestination(
+                icon=ft.icons.SETTINGS_OUTLINED,
+                selected_icon_content=ft.Icon(ft.icons.SETTINGS),
+                label_content=ft.Text("Grupo"),
+            ),
+        ],
+        on_change=lambda e: print("Selected destination:", e.control.selected_index),
+    )
+
+    page.add(
+        ft.Row(
+            [
+                rail,
+                ft.VerticalDivider(width=1),
+                ft.Column([ boardsubject], alignment=ft.MainAxisAlignment.START, expand=True,
+                          height=800,
+                          width=600),
+            ],
+            expand=True,
+        )
+    )
 
 
-
-
-
+# ! arreglar el problema de deslizamiento hacia abajo
+# ! arreglar el caso de un tablero cuando no se tiene matterias
+# ! arreglar el problema cuando no hay profesores, aulao grupos
 
