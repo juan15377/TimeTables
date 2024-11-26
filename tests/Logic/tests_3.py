@@ -46,11 +46,11 @@ comp_horas = HoursComposition(1, 2, 5)
 
 
 
-comp_horas = HoursComposition(1, 2, 5)
+comp_horas = HoursComposition(0.5, 2, 5)
 info3 = InfoSubject("Calculo Diferencial", "CALC1", Bd.professors.get()[0], Bd.classrooms.get()[1], [Bd.groups.get()[2]], comp_horas)
 Bd.subjects.add(info3)
 
-comp_horas = HoursComposition(1, 2, 5)
+comp_horas = HoursComposition(0.5, 2, 5)
 info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
 Bd.subjects.add(info3)
 
@@ -80,7 +80,7 @@ materia_2 = Bd.subjects.get()[1]
 #materia_3 = Bd.subjects.get()[2]
 
 #materia_3.assign_class_block((5,4), 5)
-#materia_1.assign_class_block((0,1), 5)
+materia_1.assign_class_block((27,1), 3)
 #materia_2.assign_class_block((1,2), 5)
 
 # print(materia_1.disponibilidad, "\n")

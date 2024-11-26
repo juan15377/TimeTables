@@ -142,7 +142,7 @@ def initialize_control_board():
             spacing=0,
             scroll=ft.ScrollMode.AUTO,
             width=840,
-            height=500,    
+            height=400,    
             expand = True
         )
     
@@ -176,6 +176,7 @@ def decompose_vector(vector):
 # uno por uno 
 
 
+### refinar 
 def generate_subject_blocks(pga, control_board, subject):
     # Given a set of subjects, it will return a list of subject blocks that will be inserted
     # using internal methods.
@@ -184,9 +185,10 @@ def generate_subject_blocks(pga, control_board, subject):
     for column in range(7):
         column_ = hours_placed[:, column]
         positions = decompose_vector(column_)
+        print(positions)
         for position in positions:
             row = position[0]
-            block_size = position[1] - position[0] 
+            block_size = position[1] - position[0] + 1
             block = SubjectBlock(pga, control_board, subject, block_size, (row, column))
             blocks.append(block)
     return blocks
@@ -270,6 +272,8 @@ def replace_element(vector, start, end, element):
     return np.concatenate((left_part, [element], right_part))
 
 
+
+
 def insert_elements(vector, pos, new_elements):
     vector = np.insert(vector, pos, new_elements)
     vector = np.delete(vector, len(new_elements) + pos)
@@ -348,20 +352,23 @@ class ControlBoardSubjectSlots(ft.Container):
         self.grid.update()
 
     def add_block(self, subject_block, update_slots_block = True) -> None:
-        i = subject_block.position[0]
-        j = subject_block.position[1]
-        size = subject_block.size
+        i = subject_block.position[0] # 29
+        j = subject_block.position[1] # 29
+        size = subject_block.size # 1
 
         # Reset the j-column, but before doing that, we make a copy
         previous_elements = copy.copy(self.day_columns[j].controls)
 
         row_rel = get_absolute_position(previous_elements, i + 1)
-        previous_elements = replace_element(previous_elements,
+        news_elements = replace_element(previous_elements,
                                             row_rel,
                                             row_rel + size - 1,
                                             subject_block)
-
-        self.day_columns[j].controls = previous_elements
+        
+        
+        print("Tamaño = ", subject_block.size)
+        print(subject_block.subject.allocated_subject_matrix)
+        self.day_columns[j].controls = news_elements
         self.subject_blocks.new(subject_block, (i, j))
         if update_slots_block:
             subject_block.subject.assign_class_block((i, j), subject_block.size)
