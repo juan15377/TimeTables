@@ -99,7 +99,7 @@ class SubjectListView(ft.Column):
             text="Add Subject",
             on_click=lambda e: self.add_subject(),
             width=1600,
-            height=30,
+            height=60,
         )
 
         for subject in self.pga.get_subjects():
@@ -113,8 +113,8 @@ class SubjectListView(ft.Column):
                     ft.Container(content=ft.Text("Details"), 
                                  on_click=lambda e, s=subject: self.edit_subject(s)),
                 ],
-                spacing=70,
-                width = 1200
+                spacing=150,
+                width = 1200,
             )
             subjects.append(subject_view)
             
@@ -178,7 +178,7 @@ class ListViewPCG(ft.Container):
                     controls = all_expansions,
                     scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
                     width=1300,
-                    height=400,
+                    height=500,
                 )
                 self.content.controls[1] = expansions_column
                 self.content.update()
@@ -204,7 +204,7 @@ class ListViewPCG(ft.Container):
             controls = self.expansions,
             scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
             width=1300,
-            height=400,
+            height=500,
             )
                 
         self.charges_expansions(all_expansions, update = False)
@@ -214,7 +214,7 @@ class ListViewPCG(ft.Container):
                 controls=[search_textfield] + [self.expansions_column],
             ),
             width=1300,
-            height=400,
+            height=500,
             
             )        
         
@@ -225,7 +225,7 @@ class ListViewPCG(ft.Container):
                 controls = expansions,
                 scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
                 width=1300,
-                height=400,
+                height=500,
             )
             self.content=ft.Column(
                     controls=[self.search_textfield] + [expansions_column],
@@ -251,7 +251,7 @@ class ListViewPCG(ft.Container):
                 controls = expansions_filter,
                 scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
                 width=1300,
-                height=300,
+                height=500,
             )
         self.content.controls[1] = expansions_column
         self.content.update()
@@ -262,7 +262,7 @@ class ListViewPCG(ft.Container):
                 controls = all_expansions,
                     scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
                     width=1300,
-                    height=300,
+                    height=500,
                 )
         print("Tamaño_de_expansiones :", len(all_expansions))
         self.content.controls[1].controls.clear()
