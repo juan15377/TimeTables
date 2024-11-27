@@ -15,7 +15,7 @@ class Header(ft.Container):
         self.pga = pga
         self.listviewpga = listviewpga
         if type(pga)== Group:
-            pga_name = pga.career.name + " " + pga.semester.name + " " + pga.semester.name
+            pga_name = pga.career.name + " " + pga.semester.name + " " + pga.subgroup.name
         else:
             pga_name = pga.name
         self.name = pga_name
@@ -26,13 +26,12 @@ class Header(ft.Container):
         def delete_pga(pga):
 
             if type(pga) == Professor:
-                self.DB.professors.remove(self.name)
+                self.DB.professors.remove(pga)
             elif type(pga) == Classroom:
                 self.DB.classrooms.remove(pga)
             else:
                 self.DB.groups.remove(pga)
-            self.listviewpga.update_expansions()
-            self.listviewpga.update()
+            self.listviewpga.update_()
 
         button_remove_pga = ft.Container(
                             content=ft.Text("Delete"),
@@ -68,12 +67,23 @@ class Header(ft.Container):
                     spacing=50
                 ),
                 height=50,
-                width=1200,
+                width=1600,
                 border_radius=10,
             )
         
         super().__init__(
-            content=Title)
+            content=Title,
+            width=1600,
+            )
+        
+    def edit_availability_matrix(self):
+        
+        pass 
+    
+    def delete(self):
+        
+        pass
+        
 
 
 class SubjectListView(ft.Column):
@@ -88,7 +98,7 @@ class SubjectListView(ft.Column):
         button_new_subject = ft.TextButton(
             text="Add Subject",
             on_click=lambda e: self.add_subject(),
-            width=200,
+            width=1600,
             height=30,
         )
 
@@ -103,7 +113,8 @@ class SubjectListView(ft.Column):
                     ft.Container(content=ft.Text("Details"), 
                                  on_click=lambda e, s=subject: self.edit_subject(s)),
                 ],
-                spacing=70
+                spacing=70,
+                width = 1200
             )
             subjects.append(subject_view)
             
@@ -111,8 +122,8 @@ class SubjectListView(ft.Column):
             controls=[button_new_subject] + subjects,  # Add button for adding new subjects
             alignment=ft.alignment.top_left,
             scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-            width=1200,
-            height=300
+            width=1600,
+            height=1800,
         )
     
     def edit_subject(self, s):
@@ -151,6 +162,7 @@ def generate_expansion_view(pcg, DB, listviewpcg):
     return expansion
 # simplemente es una lista de los grupo, aulas, y profesores, simplemente tiene un buscador arriba
 # solo actualizar la columas de expansiones
+
 class ListViewPCG(ft.Container):
 
     def __init__(self, reference_pcgs, DB):
@@ -164,9 +176,9 @@ class ListViewPCG(ft.Container):
                 all_expansions = self.get_all_expansions()
                 expansions_column = ft.Column(
                     controls = all_expansions,
-                    scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                    width=800,
-                    height=600,
+                    scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
+                    width=1300,
+                    height=400,
                 )
                 self.content.controls[1] = expansions_column
                 self.content.update()
@@ -185,15 +197,14 @@ class ListViewPCG(ft.Container):
         self.search_textfield = search_textfield
                 
         all_expansions = self.get_all_expansions()
-    
         
         self.expansions = all_expansions
         
         self.expansions_column = ft.Column(
             controls = self.expansions,
-            scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-            width=800,
-            height=600,
+            scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
+            width=1300,
+            height=400,
             )
                 
         self.charges_expansions(all_expansions, update = False)
@@ -202,9 +213,10 @@ class ListViewPCG(ft.Container):
             content=ft.Column(
                 controls=[search_textfield] + [self.expansions_column],
             ),
-            width=1200,
-            height=600,
-        )        
+            width=1300,
+            height=400,
+            
+            )        
         
     def charges_expansions(self, expansions, update = True):
         self.expansions = expansions
@@ -212,8 +224,8 @@ class ListViewPCG(ft.Container):
             expansions_column = ft.Column(
                 controls = expansions,
                 scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                width=800,
-                height=600,
+                width=1300,
+                height=400,
             )
             self.content=ft.Column(
                     controls=[self.search_textfield] + [expansions_column],
@@ -228,8 +240,8 @@ class ListViewPCG(ft.Container):
         for pcg in self.reference_pcgs():
             expansion = generate_expansion_view(pcg, self.DB, self)
             expansions.append(expansion)
-            expansions.append(expansion)
-        
+        print("Ingresando ala funcion de obtener todas las expanciones")
+        print("Tamaño_de_expansiones :", len(expansions))
         return expansions
     
     def search(self, coincidence):
@@ -238,16 +250,24 @@ class ListViewPCG(ft.Container):
         expansions_column = ft.Column(
                 controls = expansions_filter,
                 scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                width=800,
-                height=600,
+                width=1300,
+                height=300,
             )
         self.content.controls[1] = expansions_column
         self.content.update()
 
-        
-        
-        
-        
+    def update_(self):
+        all_expansions = self.get_all_expansions()
+        expansions_column = ft.Column(
+                controls = all_expansions,
+                    scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
+                    width=1300,
+                    height=300,
+                )
+        print("Tamaño_de_expansiones :", len(all_expansions))
+        self.content.controls[1].controls.clear()
+        self.content.controls[1] = expansions_column
+        self.content.update()       
         
         
          
@@ -292,14 +312,18 @@ class GroupsPage(ft.Container):
         self.bd = bd  # Database connection
         
         listviewgroups =  ListViewPCG(Bd.groups.get, Bd)
+        print("Cantidad emprica de grupos")
+        print(len(Bd.groups.get()))
         self.listviewgroups = listviewgroups
         super().__init__(
             content= ft.Column(
                 controls = [
-                    #NewGroup(self.bd, listviewgroups),
+                    NewGroup(self.bd, listviewgroups),
                     listviewgroups
                 ],
-                spacing=20
+                spacing=20,
+                height=1000,
+                width=1600
             )
         )
         pass

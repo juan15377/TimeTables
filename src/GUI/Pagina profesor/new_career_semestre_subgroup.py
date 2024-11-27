@@ -5,13 +5,14 @@ sys.path.append("src/Logic/")
 # Object responsible for creating a list
 from tests_3 import Bd
 
-class NewCompositionGroup(ft.Container):
-    def __init__(self, reference_items, items, save_reference, delete_reference):
+class NewCompositionGroup(ft.Container): # list_items es la lista que se muestra cuando se ven en al pagina
+    def __init__(self, reference_items, items, save_reference, delete_reference, list_items):
         
         self.items = items
         self.reference_items = reference_items
         self.save_reference = save_reference
         self.delete_reference = delete_reference
+        self.list_items = list_items
         self.drop_items = ft.Dropdown(
         )
         self.texfield_item = ft.TextField(hint_text="Enter item name")
@@ -87,6 +88,7 @@ class NewCompositionGroup(ft.Container):
             # d.value = None
             self.update()
         self.update()
+        self.list_items.update_()
         
     def find_option(self, option_name):
         for option in self.drop_items.options:
@@ -98,12 +100,13 @@ class NewCompositionGroup(ft.Container):
 
 class NewCareer(NewCompositionGroup):
     
-    def __init__(self, bd):
+    def __init__(self, bd, list_items):
         super().__init__(
             reference_items = bd.groups.careers.get,
             items = bd.groups.careers.get(),
             save_reference = bd.groups.careers.new,
-            delete_reference = bd.groups.careers.remove
+            delete_reference = bd.groups.careers.remove,
+            list_items = list_items
         )
     
     pass  
@@ -111,13 +114,14 @@ class NewCareer(NewCompositionGroup):
 
 class NewSemester(NewCompositionGroup):
     
-    def __init__(self, bd):
+    def __init__(self, bd, list_items):
         
         super().__init__(
             reference_items = lambda: bd.groups.semesters.get(),
             items = bd.groups.semesters.get(),
             save_reference = bd.groups.semesters.new,
-            delete_reference = bd.groups.semesters.remove
+            delete_reference = bd.groups.semesters.remove,
+            list_items = list_items
         )
     
     pass  
@@ -125,13 +129,14 @@ class NewSemester(NewCompositionGroup):
 
 class NewSubgroup(NewCompositionGroup):
     
-    def __init__(self, bd):
+    def __init__(self, bd, list_items):
         
         super().__init__(
             reference_items = lambda: bd.groups.subgroups.get(),
             items = bd.groups.subgroups.get(),
             save_reference = bd.groups.subgroups.new,
-            delete_reference = bd.groups.subgroups.remove
+            delete_reference = bd.groups.subgroups.remove,
+            list_items = list_items
         )
     
     pass
@@ -141,9 +146,9 @@ class NewSubgroup(NewCompositionGroup):
 class NewGroup(ft.Container):
     
     def __init__(self, bd, list_groups):
-        self.career = NewCareer(bd)
-        self.semester = NewSemester(bd)
-        self.subgroup = NewSubgroup(bd)
+        self.career = NewCareer(bd,list_groups)
+        self.semester = NewSemester(bd, list_groups)
+        self.subgroup = NewSubgroup(bd, list_groups)
         
         def add_group(e):
             career = self.career.get()
@@ -155,7 +160,10 @@ class NewGroup(ft.Container):
                 return None
             
             bd.groups.new(career, semester, subgroup)
-            list_groups.update()
+            list_groups.update_()
+            
+            for gr in bd.groups.get():
+                print(gr.career.name + " " + gr.semester.name + " " + gr.subgroup.name)
         
         button_add_group = ft.IconButton(
             on_click= lambda e: add_group(e),
@@ -171,11 +179,9 @@ class NewGroup(ft.Container):
                     button_add_group,  # Botón para agregar un grupo a la BD
                 ]
             ),
-            height= 400,
-            width= 800,
-            alignment=ft.alignment.center,
+            height= 150,
+            width= 1600,
             ink=True,  # Agrega un borde al contenedor para diferenciarlo de otros contenedores en la pantalla.
-            expand=False
         )
     
     pass  

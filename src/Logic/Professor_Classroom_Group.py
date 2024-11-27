@@ -131,16 +131,36 @@ class Group(PCG):
         self.semester = semester
         self.subgroup = subgroup
 
+def delete_groups_subjects(groups, subjects, bd):
+    for group in groups:
+            bd.groups.remove(group)
+    for subject in subjects:
+        bd.subjects.remove(subject)
+    
 
 class Careers:
-    def __init__(self) -> None:
+    def __init__(self, bd) -> None:
         self.careers = []
-
+        self.bd = bd
+        
     def get(self):
         return self.careers
 
     def remove(self, career):
+        
+        # falta eliminar todos los grupos que esten relacionados con este 
+        # grupo, materias que 
+        related_groups = [group for group in self.bd.groups.get() if group.career == career]
+        related_subjects = []
+        print("Cantidad de grupos relacionados", len(related_groups))
+        for group in related_groups:
+                related_subjects.extend(group.subjects)
+                
+        delete_groups_subjects(related_groups, related_subjects, self.bd)
         self.careers.remove(career)
+        print("Cantidad de grupos", len(self.bd.groups.get()))
+        print("Cantidad de Carreraas", len(self.bd.groups.careers.get()))
+        
 
     def new(self, name):
         career = Career(name)
@@ -148,14 +168,24 @@ class Careers:
 
 
 class Semesters:
-    def __init__(self) -> None:
+    def __init__(self, bd) -> None:
         self.semesters = []
-
+        self.bd = bd
+        
     def get(self):
         return self.semesters
 
     def remove(self, semester):
+        # falta eliminar todos los grupos que esten relacionados con este 
+        # grupo, materias que 
+        related_groups = [group for group in self.bd.groups.get() if group.semester == semester]
+        related_subjects = []
+        for group in related_groups:
+                related_subjects.extend(group.subjects)
+                
+        delete_groups_subjects(related_groups, related_subjects, self.bd)
         self.semesters.remove(semester)
+        
 
     def new(self, name):
         semester = Semester(name)
@@ -163,14 +193,26 @@ class Semesters:
 
 
 class Subgroups:
-    def __init__(self) -> None:
+    def __init__(self, bd) -> None:
         self.subgroups = []
-
+        self.bd = bd
+        
     def get(self):
         return self.subgroups
 
     def remove(self, subgroup):
+
+        # falta eliminar todos los grupos que esten relacionados con este 
+        # grupo, materias que 
+        related_groups = [group for group in self.bd.groups.get() if group.subgroup == subgroup]
+        related_subjects = []
+        for group in related_groups:
+                related_subjects.extend(group.subjects)
+                
+        delete_groups_subjects(related_groups, related_subjects, self.bd)
         self.subgroups.remove(subgroup)
+        
+        
 
     def new(self, name):
         subgroup = Subgroup(name)
@@ -179,9 +221,9 @@ class Subgroups:
 
 class Groups:
     def __init__(self, BD) -> None:
-        self.careers = Careers()
-        self.semesters = Semesters()
-        self.subgroups = Subgroups()
+        self.careers = Careers(BD)
+        self.semesters = Semesters(BD)
+        self.subgroups = Subgroups(BD)
         self.groups = []
 
     def new(self, career: Career, semester: Semester, subgroup: Subgroup):
