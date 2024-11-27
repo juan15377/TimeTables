@@ -1,6 +1,19 @@
 import flet as ft
 from flet import AppBar, ElevatedButton, Page, Text, View, colors
 
+import sys 
+sys.path.append("src/Logic/")
+sys.path.append("tests/Logic/")
+sys.path.append("src/GUI/Editor Materia ")
+sys.path.append("src/GUI/Pagina profesor")
+
+from Editor_materia import *
+
+from Professor_page import *
+
+
+
+
 
 def load_professor_page(profesor):
     
@@ -18,10 +31,65 @@ def load_subjects_page(subject):
 
 
 
+
+
+ROUTE_PROFESSOR = '/PROFESSOR'
+ROUTE_CLASSROOM = '/CLASSROOM'
+ROUTE_SUBJECTS = '/GROUP'
+#                                                .subject
+#                                          |----SUBJECT_DETAILS
+#                     |-----|---PROFESSORS--
+#                    |         .professor  |---PROFESSOR_DETAILS
+#     |---PROFESSOR----
+#     |                             |---CLASSROOM_DETAILS
+#/ ---|---CLASSROOM------CLASSROOMS--
+#     |                   .classroom |-------SUBJECT_DETAILS
+#     |---GROUP---                             .subject
+#                |          |-------GROUP_DETAILS
+#                |---GROUPS--
+#                  .group   |--- SUBJECT_DETAILS
+#                                 .subject
+
+# va ser unos de los puntos de los cuales la aplicacion va arrancar
+# esta clase sera la encargada de recibir una ruta o un profesor, aula o grupo, materia 
+# de esta forma generara y cambiara la pagina 
 class Enruter_page():
     
-    def __init__(self) -> None:
+    
+    def __init__(self, page) -> None:
+        page.title = "TimeTables"
+        self.page
+        
+    def change_page(self, page_content, route):
+        self.page.views.clear()
+        
+        self.page.views.append(View(route, 
+                                   page_content))
+            
+        self.page.update()
+
+
+    def navigate_to_professors(self):
+        
+        
+        pass 
+    
+    def navigate_to_new_professor(self):
         pass
+    
+    def navigate_to_lassrooms(self, classroom):
+        pass
+    
+    def navigate_to_groups(self, group):
+        pass  
+    
+    def navigate_to_subject(self, subject):# in the subject 
+        pass
+    
+        
+
+        
+    
 
 
 def main(page: Page):

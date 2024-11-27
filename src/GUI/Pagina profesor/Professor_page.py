@@ -6,15 +6,18 @@ sys.path.append("src/Logic/")
 # Object responsible for creating a list
 from tests_3 import Bd
 from Professor_Classroom_Group import Professor, Classroom, Group
-
+from new_career_semestre_subgroup import NewGroup
+from new_professor_classroom import NewProfessor, NewClassroom
 class Header(ft.Container):
 
     def __init__(self, DB, pga, listviewpga):
         self.DB = DB 
         self.pga = pga
         self.listviewpga = listviewpga
-
-        pga_name = pga.name
+        if type(pga)== Group:
+            pga_name = pga.career.name + " " + pga.semester.name + " " + pga.semester.name
+        else:
+            pga_name = pga.name
         self.name = pga_name
 
         pb = ft.ProgressBar(width=400)
@@ -23,7 +26,7 @@ class Header(ft.Container):
         def delete_pga(pga):
 
             if type(pga) == Professor:
-                self.DB.professors.remove(pga)
+                self.DB.professors.remove(self.name)
             elif type(pga) == Classroom:
                 self.DB.classrooms.remove(pga)
             else:
@@ -43,7 +46,7 @@ class Header(ft.Container):
         Title = ft.Container(
                 content=ft.Row(
                     controls=[
-                        ft.Text(pga.name),
+                        ft.Text(self.name),
                         pb,
                         ft.Container(
                             content=ft.Text("Delete"),
@@ -123,132 +126,196 @@ class SubjectListView(ft.Column):
 def filter_expansions(expansions, coincidence):
     # This should filter expansions that match the coincidence
     new_expansions = []
-
+    print("Ejecutando filtro de expansiones")
     for expansion in expansions:
         if coincidence.lower() in expansion.data.lower():  # Data stores the name of the PGA
             new_expansions.append(expansion)
+            print(len(new_expansions))
     return new_expansions
 
-
-class ListViewPGA(ft.Container):
-
-    def __init__(self, pgas, DB, creating):
-        self.DB = DB  
-        self.pgas = pgas
-
-        def search_now(e):
-            self.update_expansions()
-            print("Value changed")
-            coincidence = e.control.value
-            if coincidence == "":
-                self.update()
-                return None  # Does not filter anything
-            self.search(coincidence)
-
-        self.update_expansions()
-
-        search_pga = ft.TextField(
-                        label="Search now",
-                        on_change=search_now
-                    )
-
-        textfield_new_teacher = ft.TextField(
-                            label="New",
-                            border=ft.InputBorder.UNDERLINE,
-                            filled=True,
-                            hint_text="Name",
-                            max_length=50
-                            )
-        
-        def add_new(DB):
-            name = textfield_new_teacher.value
-            creating.new(name)
-            textfield_new_teacher.value = ""
-            textfield_new_teacher.update()
-            # Update the component by adding a new element with empty subjects
-            self.update_expansions() 
-            self.update()
-            pass 
-
-        button_new_teacher = ft.TextButton(
-                            text="Add",
-                            on_click=lambda e, DB=self.DB: add_new(DB),
-                            width=100,
-                            height=30,
-                            )
-
-        top_section = ft.Row(
-            controls=[
-                search_pga,
-                textfield_new_teacher,
-                button_new_teacher
-            ]
-        )
-
-        expansions_column = ft.Column(
-            controls=self.expansions,
-            scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-            width=800,
-            height=600,
-            )
-
-        super().__init__(
-            content=ft.Column(
-                controls=[top_section] + [expansions_column],
-            ),
-            width=1200,
-            height=600,
-        )
-
-
-    def update_expansions(self):
-        expansions = []
-
-        for pga in self.pgas():
-            header = Header(self.DB, pga, self)
-            subject_list = SubjectListView(self.DB, pga, self)
-            expansion = ft.ExpansionTile(
-                            title=header,
-                            subtitle=ft.Text("Subjects"),
-                            affinity=ft.TileAffinity.LEADING,
-                            controls=[
-                                ft.Container(
+def generate_expansion_view(pcg, DB, listviewpcg):
+    header = Header(DB, pcg, listviewpcg)
+    subject_list = SubjectListView(DB, pcg, listviewpcg)
+    expansion = ft.ExpansionTile(
+                    title=header,
+                    subtitle=ft.Text("Subjects"),
+                    affinity=ft.TileAffinity.LEADING,
+                    controls=[
+                            ft.Container(
                                     content=subject_list,
                                     height=200,  # Set height to allow scrolling
                                 )
                             ],
                             data=header.name
                         )
-            expansions.append(expansion)
+    return expansion
+# simplemente es una lista de los grupo, aulas, y profesores, simplemente tiene un buscador arriba
+# solo actualizar la columas de expansiones
+class ListViewPCG(ft.Container):
 
+    def __init__(self, reference_pcgs, DB):
+        self.DB = DB  
+        self.reference_pcgs = reference_pcgs
+        self.expansions = []
+
+        def search(e):
+            coincidence = search_textfield.value
+            if coincidence == "":
+                all_expansions = self.get_all_expansions()
+                expansions_column = ft.Column(
+                    controls = all_expansions,
+                    scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
+                    width=800,
+                    height=600,
+                )
+                self.content.controls[1] = expansions_column
+                self.content.update()
+                return None
+            self.search(coincidence)
+            
+
+
+        search_textfield = ft.TextField(
+                        label="Search now",
+                        on_change=search,
+                        width=500,
+                        height=70,
+                    )
+        
+        self.search_textfield = search_textfield
+                
+        all_expansions = self.get_all_expansions()
+    
+        
+        self.expansions = all_expansions
+        
+        self.expansions_column = ft.Column(
+            controls = self.expansions,
+            scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
+            width=800,
+            height=600,
+            )
+                
+        self.charges_expansions(all_expansions, update = False)
+
+        super().__init__(
+            content=ft.Column(
+                controls=[search_textfield] + [self.expansions_column],
+            ),
+            width=1200,
+            height=600,
+        )        
+        
+    def charges_expansions(self, expansions, update = True):
         self.expansions = expansions
-
-
+        if update:
+            expansions_column = ft.Column(
+                controls = expansions,
+                scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
+                width=800,
+                height=600,
+            )
+            self.content=ft.Column(
+                    controls=[self.search_textfield] + [expansions_column],
+                )
+            self.update()   #self.content.controls= [self.search_textfield] + [self.expansions_column],
+            
+            
+        
+    def get_all_expansions(self):
+        expansions = []
+        
+        for pcg in self.reference_pcgs():
+            expansion = generate_expansion_view(pcg, self.DB, self)
+            expansions.append(expansion)
+            expansions.append(expansion)
+        
+        return expansions
+    
     def search(self, coincidence):
-        self.expansions = filter_expansions(self.expansions, coincidence)
-        self.update()
+        all_expansions =  self.get_all_expansions()
+        expansions_filter = filter_expansions(all_expansions, coincidence)
+        expansions_column = ft.Column(
+                controls = expansions_filter,
+                scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
+                width=800,
+                height=600,
+            )
+        self.content.controls[1] = expansions_column
+        self.content.update()
 
-
-    def update(self):
-        expansions = self.expansions
-        self.content.controls[1] = ft.Column(
-                                    controls=expansions,
-                                    scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                                    width=1200,
-                                    height=600,
-                                    )
-        super().update()
+        
+        
+        
+        
+        
+        
+         
+class ProfessorsPage(ft.Container):
+    
+    def __init__(self, bd):
+        self.bd = bd  # Database connection
+        
+        listviewprofessor =  ListViewPCG(Bd.professors.get, Bd)
+        self.listviewprofessor = listviewprofessor
+        super().__init__(
+            content=listviewprofessor,
+        )
         pass
+    
+    def update(self):
+        self.listviewprofessor.update()
+
+class ClassroomsPage(ft.Container):
+
+    
+    def __init__(self, bd):
+        self.bd = bd  # Database connection
+        
+        listviewclassrooms =  ListViewPCG(Bd.classrooms.get, Bd)
+        self.listviewclassrooms = listviewclassrooms
+        super().__init__(
+            content=listviewclassrooms,
+        )
+        pass
+    
+    def update(self):
+        self.listviewclassrooms.update()
+        
 
 
-time_init = tm.time()
-test_object = ListViewPGA(Bd.professors.get, Bd, Bd.professors)
-time_out = tm.time()
 
-print(f"Time taken = {time_out -  time_init}")
+class GroupsPage(ft.Container):
+
+    
+    def __init__(self, bd):
+        self.bd = bd  # Database connection
+        
+        listviewgroups =  ListViewPCG(Bd.groups.get, Bd)
+        self.listviewgroups = listviewgroups
+        super().__init__(
+            content= ft.Column(
+                controls = [
+                    #NewGroup(self.bd, listviewgroups),
+                    listviewgroups
+                ],
+                spacing=20
+            )
+        )
+        pass
+    
+    def update(self):
+        self.listviewgroups.update()
+
+
+
+professor_page = ProfessorsPage(Bd)
+classroom_page = ClassroomsPage(Bd)
+group_page = GroupsPage(Bd)
+
 
 
 def main(page: ft.Page):
-    page.add(test_object) 
+    page.add(group_page) 
 
 ft.app(main)
