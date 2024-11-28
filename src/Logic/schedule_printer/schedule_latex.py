@@ -212,29 +212,3 @@ class ScheduleLatex():
         
         
         pass 
-
-
-import clipboard
-
-# Copiar texto al portapapeles
-text = "Este es otro texto copiado."
-clipboard.copy(text)
-
-
-
-
-
-    
-path = "/home/juan/Escritorio"
-nombre = "hola"
-
-import sys 
-
-sys.path.append("tests/Logic/")
-from tests_3 import Bd 
-
-
-scb = ScheduleLatex(Bd)
-
-scb.compile_to_latex(path, "prueba")
-
