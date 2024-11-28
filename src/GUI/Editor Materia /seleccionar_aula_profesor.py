@@ -11,9 +11,10 @@ import flet as ft
 # todo: se considera que los nnombre son unicos 
 class SearchValue(ft.Container):
     
-    def __init__(self, dict_values, on_change = lambda:None) -> None:
+    def __init__(self, dict_values,  reference_get_new_dict, on_change = lambda:None) -> None:
         
         self.on_change = on_change
+        self.reference_get_new_dict = reference_get_new_dict
         
         values = list(dict_values.values())
         names = list(dict_values.keys())
@@ -58,6 +59,44 @@ class SearchValue(ft.Container):
     def get_value(self):
         return self.value_selected
     
+    
+    def update(self):
+        dict_values = self.reference_get_new_dict()
+        
+        values = list(dict_values.values())
+        names = list(dict_values.keys())
+        
+        self.value_selected = None
+    
+        def change_value(e):
+            self.value_selected = dict_values[lv.value]
+            self.on_change(e)
+            
+        def handle_change(e):
+            list_to_show = [name for (name, value) in zip(names, values) if e.data.lower() in name.lower()]
+            lv.options.clear()
+            for i in list_to_show:
+                lv.options.append(ft.dropdown.Option(f"{i}")),
+            search_entry.update()
+            lv.update()
+            
+        lv = ft.Dropdown(
+            on_change= change_value,
+            options=[ft.dropdown.Option(name) for name in names]
+        )
+        
+        search_entry = ft.TextField(
+            on_change=handle_change,
+        )      
+        
+        self.content = ft.Column(
+                controls = [
+                    search_entry,
+                    lv
+                ]
+            )
+        
+        super().update()
     
 
 # def main(page):

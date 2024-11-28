@@ -43,7 +43,7 @@ class NameCodeSubject(ft.Container):
 
         super().__init__(
             content = layout,
-            width = 200,
+            width = 500,
             height = 120,
             padding = 10,
             margin = 20

@@ -1,9 +1,9 @@
 # convertir la base de datos a una estrictura mas agradable para poder hacer
 # la conversion a pdf latex
-from professor_latex import *
-from classroom_latex import *
-from group_latex import *
-from schedulegrid import *
+from professor_latex import ProfessorLatex, create_professors_latex
+from classroom_latex import ClassroomLatex, create_classrooms_latex
+from group_latex import GroupLatex, create_groups_latex
+from schedulegrid import GridLatex, SubjectLatex
 
 import os
 import subprocess

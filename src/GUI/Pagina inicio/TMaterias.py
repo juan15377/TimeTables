@@ -3,18 +3,18 @@ import sys
 
 sys.path.append("src/Logic/")
 sys.path.append("tests/Logic/")
+sys.path.append("src/GUI/Enrutador/")
+from tests_3 import Bd
 
 import flet as ft 
 import numpy as np
 import time as tm 
-from Subjects import Subject, HoursComposition
 from Professor_Classroom_Group import PCG, DEFAULT_PCG
 import copy
-from Colors import MyColorPicker,MyColorRGB, RGB_to_hex
-from tests_3 import Bd, materia_1, materia_2
-from Subjects import HoursSlotsComposition
 from seleccionador_materias import SubjectSelector
-from Seleccionador_PGA import buscador_professor,buscador_classroom, buscador_group
+from Seleccionador_PGA import SearchValue
+from Colors import RGB_to_hex, MyColorPicker
+
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
 # ! este a partir de una inicializacion se debe mantener con operaciones que permitan 
 # ! añadir bloques, este debe tener una forma eficiemte de actualizar ciertas partes del objecto para 
@@ -79,7 +79,7 @@ def initialize_control_board():
                     margin=2,
                     padding=0,
                     alignment=ft.alignment.center,
-                    width=100,
+                    width=98,
                     height=30,
                     border_radius=1,
                     expand=False
@@ -88,14 +88,13 @@ def initialize_control_board():
     special_container = ft.Container(
                             theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
                             bgcolor=ft.colors.SURFACE_VARIANT,
-                            content=ft.Text("Special", color="white", width=1),
+                            content=ft.Text("", color="white", width=12),
                             margin=2,
                             padding=0,
                             alignment=ft.alignment.center,
-                            width=100,
+                            width=99,
                             height=30,
                             border_radius=1,
-                            expand = False
                         )
         
     time_containers = [special_container] + [time_container(i) for i in range(30)]
@@ -132,7 +131,7 @@ def initialize_control_board():
             vertical_alignment=ft.CrossAxisAlignment.START,
             scroll=ft.ScrollMode.AUTO,
             width=840,
-            height=1000,  
+            height=995,  
             expand = False
             )
 
@@ -142,7 +141,7 @@ def initialize_control_board():
             spacing=0,
             scroll=ft.ScrollMode.AUTO,
             width=840,
-            height=400,    
+            height=550,    
             expand = True
         )
     
@@ -513,43 +512,29 @@ class SubjectBlock(ft.Container):
         print("actualizado")
         print(self.content.controls[0].content.bgcolor)
 
-
-
-
-professor = Bd.professors.get()[0]
-T = ControlBoardSubjectSlots(professor)
-
-subject = Bd.subjects.get()[0]
-print(professor.get_subjects())
-
-# def mostrar_colocacion_materia():
-#         T.cargar_disponibilidad(4, materia_1)
-#         print(materia_1.disponibilidad, "\n \n")
-        
-
-
-# boton =ft.TextButton(
-#         text = "Presiona",
-#         on_click= lambda e : mostrar_colocacion_materia()
-#     )
-
-print(len(professor.get_subjects()))
-# Tablero = ft.Row(controls = [T.cuadricula, boton])
-
-# #lista_materia = SeleccionadorMaterias(BD.profesores.get()[0], 1).lista_materias
-# selec_bloques = CargarMateria(BD.profesores.get()[0], BD.materias.get()[0], T)
-# print(BD.materias.get()[0].composicion_horas.get_bloques_disponibles())
-
 # !!! principal class 
 class ControlBlocksSubject(ft.Container):
 
-    def __init__(self, Bd, pcg, search):
+    def __init__(self, Bd, pcg, search, to_change):
         boardsubjects = ControlBoardSubjectSlots(pcg)
+        self.boardsubjects = boardsubjects
+        
+        button_to_change_page = ft.IconButton(
+            icon=ft.icons.ADD,
+            on_click=lambda e: to_change(e),
+        )
+        
+        self.button_to_change_page = button_to_change_page
+    
         self.search = search
         self.pcg = pcg
         row = ft.Column(
         controls = [
-                search,
+                ft.Row(
+                    controls = [button_to_change_page,
+                                search
+                    ]
+                ),
                 ft.Row(
                     controls = [      
                         boardsubjects,
@@ -566,13 +551,18 @@ class ControlBlocksSubject(ft.Container):
                 controls = [row],
             ),
         )
+                
         
     def set_pcg(self, pcg):
         boardsubjects = ControlBoardSubjectSlots(pcg)
         self.pcg = pcg
         row = ft.Column(
         controls = [
-                self.search,
+                ft.Row(
+                    controls = [self.button_to_change_page,
+                                self.search
+                    ]
+                ),
                 ft.Row(
                     controls = [      
                         boardsubjects,
@@ -609,52 +599,4 @@ class ControlBlocksSubject(ft.Container):
         super().content.controls.append(row)   
     
 # programar el caso base de no hay profesor ni ninguna materia
-
-def cambiar_professor(e, bd = Bd):
-    seleccionado = buscador_professor.get_value()
-    content_professor.set_pcg(seleccionado)
-
-
-def cambiar_classroom(e, bd = Bd):
-    seleccionado = buscador_classroom.get_value()
-    content_classroom.set_pcg(seleccionado)
-
-
-def cambiar_group(e, bd = Bd):
-    seleccionado = buscador_group.get_value()
-    content_group.set_pcg(seleccionado)
-
-buscador_professor.on_change = cambiar_professor
-buscador_classroom.on_change = cambiar_classroom
-buscador_group.on_change = cambiar_group
-
-content_professor = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_professor)
-content_classroom = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_classroom)
-content_group = ControlBlocksSubject(Bd, DEFAULT_PCG, buscador_group)
-
-materia_1 = Bd.subjects.get()[0]
-
-print(materia_1.allocated_subject_matrix)
-
-print(decompose_vector(materia_1.allocated_subject_matrix[:,1]))
-print(len(materia_1.allocated_subject_matrix[:,1]))
-
-#lista = [0]
-#
-#def main(page : ft.Page):
-#    boardsubject = ControlBlocksSubject(Bd, professor)
-#    def cambiar_professor(e):
-#        print(e.data)
-#        professor_2 = Bd.professors.get()[lista[0]%2]
-#        boardsubject.set_pcg(professor_2)
-#        lista[0] = lista[0] + 1
-#    
-#    boton_cambiar_professor = ft.TextButton(
-#        text = "cambiar",
-#        on_click= lambda e: cambiar_professor(e),
-#    )
-#
-#    page.add(boardsubject, boton_cambiar_professor)
-#
-#ft.app(main)
 

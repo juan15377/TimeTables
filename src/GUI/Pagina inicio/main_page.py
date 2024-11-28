@@ -1,289 +1,309 @@
 import flet as ft
 
-from TMaterias import content_professor, content_classroom, content_group
-from TMaterias import initialize_control_board
+from professor_page_group_pages import ProfesorMainPage, ClassroomMainPage, GroupMainPage
+
+
+import sys 
+sys.path.append("src/GUI/Enrouter/")
+
+import sys 
+sys.path.append("src/GUI/Enrutador/")
+sys.path.append("src/GUI/Pagina profesor/")
+from prueba import EnrouterPage
+from TMaterias import Bd
+
+import flet as ft
+
+from Professor_page import ProfessorsPage, ClassroomsPage, GroupsPage
 
 
 
-def main(page: ft.Page):
-    appbar_text_ref = ft.Ref[ft.Text]()
+# cada vez que se reinicia la base de datos, o se carga se deben, crear 6 paginas nuevas con 
+# sus ciertas referencias
+class Pages():
+    
+    def __init__(self,
+                        professors_page,
+                        classrooms_page,
+                        groups_page):
 
-    def handle_menu_item_click(e):
-        print(f"{e.control.content.value}.on_click")
-        appbar_text_ref.current.value = e.control.content.value
+    
+        self.professors_page = professors_page
+        self.classrooms_page = classrooms_page
+        self.groups_page = groups_page
+        
+# falta un boton para regresar a la pagina principal
+
+class MainPage():
+    
+    
+    def __init__(self, bd, page) -> None:
+
+        # Contenido inicial de cada sección
+        
+        def change_to_mainpage():
+            enrouter_page.main_page = main_page
+            enrouter_page.change_page('/')
+            professor_page.update()
+            #classroom_page.update()
+            #group_page.update()
+        
+        professors_page = ProfessorsPage(bd, change_to_mainpage)
+        classrooms_page = ClassroomsPage(bd, change_to_mainpage)
+        groups_page = GroupsPage(bd, change_to_mainpage)  
+        
+
+        pages = Pages(
+            professors_page,
+            classrooms_page,
+            groups_page
+        )
+        
+        enrouter_page = EnrouterPage(page, pages)
+        self.page = page
+        self.bd = bd
+        
+        
+        function_reference_change_to_page = enrouter_page.change_page
+        professor_page = ProfesorMainPage(bd, function_reference_change_to_page)
+        classroom_page = ClassroomMainPage(bd, function_reference_change_to_page)
+        group_page = GroupMainPage(bd, function_reference_change_to_page)
+        
+        
+        
+        content = ft.Container(
+            content= ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                        height=800,
+                        width=600
+                        ), 
+            expand=True)
+
+
+        # Callback para manejar los cambios de la NavigationRail
+        def on_change(e):
+            
+            selected_index = e.control.selected_index
+            
+            # Cambiar el contenido basado en la selección
+            if selected_index == 0:  # Profesor
+                content.content = ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                                            height=800,
+                                            width=600)
+                professor_page.update()
+
+            elif selected_index == 1:  # Aula
+                content.content = ft.Column([classroom_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                                            height=800,
+                                            width=600)
+                classroom_page.update()
+
+            elif selected_index == 2:  # Grupo
+                content.content = ft.Column([group_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                                            height=800,
+                                            width=60)
+                group_page.update()
+
+            content.update()        
+            # Actualizar la página
+            
+            
+        def cargar_base_datos(e):
+            bd.load_db("/home/juan/Escritorio/DB.pickle")
+            self.restart()
+            professor_page.update()
+            classroom_page.update()
+            group_page.update()
+            
+
+        # Barra de navegación
+        rail = ft.NavigationRail(
+            selected_index=0,
+            label_type=ft.NavigationRailLabelType.ALL,
+            min_width=100,
+            min_extended_width=400,
+            leading=ft.Column(
+                    controls = [ft.FloatingActionButton(icon=ft.icons.CREATE, 
+                                            text="Print",
+                                            on_click = lambda e: bd.generate_pdf("/home/juan/Escritorio", "puto")),
+                                ft.FloatingActionButton(icon=ft.icons.SAVE, 
+                                            text="Guargar",
+                                            on_click = lambda e: bd.save_db("/home/juan/Escritorio", "DB")),
+                                ft.FloatingActionButton(icon=ft.icons.CHARGING_STATION, 
+                                            text="Cargar",
+                                            on_click = lambda e: cargar_base_datos(e))
+                    ]
+                    ),
+            group_alignment=-0.9,
+            destinations=[
+                ft.NavigationRailDestination(
+                    icon=ft.icons.FAVORITE_BORDER,
+                    selected_icon=ft.icons.FAVORITE,
+                    label="Profesor",
+                ),
+                ft.NavigationRailDestination(
+                    icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
+                    selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
+                    label="Aula",
+                ),
+                ft.NavigationRailDestination(
+                    icon=ft.icons.SETTINGS_OUTLINED,
+                    selected_icon_content=ft.Icon(ft.icons.SETTINGS),
+                    label_content=ft.Text("Grupo"),
+                ),
+            ],
+            on_change=on_change,  # Llamar al callback
+        )
+
+        # Layout principal
+        
+        main_page = ft.Row(
+                [
+                    rail,
+                    ft.VerticalDivider(width=1),
+                    content,  # Contenedor dinámico
+                ],
+                expand=True,
+            )
+        page.add(
+            main_page
+        )
+        
+    def restart(self):
+        bd = self.bd
+        page = self.page
+         # Contenido inicial de cada sección
+        self.bd = bd
+        
+        professors_page = ProfessorsPage(bd)
+        classrooms_page = ClassroomsPage(bd)
+        groups_page = GroupsPage(bd)  
+        
+
+        pages = Pages(
+            professors_page,
+            classrooms_page,
+            groups_page
+        )
+        
+        
+        enrouter_page = EnrouterPage(page, pages)
+        self.page = page
+        self.bd = bd
+        
+        function_reference_change_to_page = enrouter_page.change_page
+        professor_page = ProfesorMainPage(bd, function_reference_change_to_page)
+        classroom_page = ClassroomMainPage(bd, function_reference_change_to_page)
+        group_page = GroupMainPage(bd, function_reference_change_to_page)
+
+        
+        content = ft.Container(
+            content= ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                        height=800,
+                        width=600
+                        ), 
+            expand=True)
+
+
+        # Callback para manejar los cambios de la NavigationRail
+        def on_change(e):
+            
+            selected_index = e.control.selected_index
+            
+            # Cambiar el contenido basado en la selección
+            if selected_index == 0:  # Profesor
+                content.content = ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                                            height=800,
+                                            width=600)
+                professor_page.update()
+
+            elif selected_index == 1:  # Aula
+                content.content = ft.Column([classroom_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                                            height=800,
+                                            width=600)
+                classroom_page.update()
+
+            elif selected_index == 2:  # Grupo
+                content.content = ft.Column([group_page], alignment=ft.MainAxisAlignment.START, expand=True,
+                                            height=800,
+                                            width=60)
+                group_page.update()
+
+            content.update()        
+            # Actualizar la página
+            
+        def cargar_base_datos(e):
+            bd.load_db("/home/juan/Escritorio/DB.pickle")
+            self.restart()
+            professor_page.update()
+            classroom_page.update()
+            group_page.update()
+            
+
+        # Barra de navegación
+        rail = ft.NavigationRail(
+            selected_index=0,
+            min_width=100,
+            min_extended_width=400,
+            label_type=ft.NavigationRailLabelType.ALL,
+            leading=ft.Column(
+                    controls = [ft.FloatingActionButton(icon=ft.icons.CREATE, 
+                                            text="Add",
+                                            on_click = lambda e: bd.generate_pdf("/home/juan/Escritorio", "puto")),
+                                ft.FloatingActionButton(icon=ft.icons.SAVE, 
+                                            text="Guargar",
+                                            on_click = lambda e: self.bd.save_db("/home/juan/Escritorio", "DB")),
+                                ft.FloatingActionButton(icon=ft.icons.CHARGING_STATION, 
+                                            text="Cargar",
+                                            on_click = lambda e: cargar_base_datos(e)),
+                    ]
+                    ),
+            group_alignment=-0.9,
+            destinations=[
+                ft.NavigationRailDestination(
+                    icon=ft.icons.FAVORITE_BORDER,
+                    selected_icon=ft.icons.FAVORITE,
+                    label="Profesor",
+                ),
+                ft.NavigationRailDestination(
+                    icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
+                    selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
+                    label="Aula",
+                ),
+                ft.NavigationRailDestination(
+                    icon=ft.icons.SETTINGS_OUTLINED,
+                    selected_icon_content=ft.Icon(ft.icons.SETTINGS),
+                    label_content=ft.Text("Grupo"),
+                ),
+            ],
+            on_change=on_change,  # Llamar al callback
+        )
+        
+        page.controls.clear()
+        
+        page.add(
+            ft.Row(
+                [
+                    rail,
+                    ft.VerticalDivider(width=1),
+                    content,  # Contenedor dinámico,
+                ],
+                expand=True,
+            )
+        )
         page.update()
 
-    def handle_submenu_open(e):
-        print(f"{e.control.content.value}.on_open")
 
-    def handle_submenu_close(e):
-        print(f"{e.control.content.value}.on_close")
-
-    def handle_submenu_hover(e):
-        print(f"{e.control.content.value}.on_hover")
-
-    page.appbar = ft.Container(
-        content= ft.Text("puto el que lo lea")
-    )
-    
-    
-    ft.AppBar(
-        title=ft.Text("Menus", ref=appbar_text_ref),
-        center_title=True,
-        bgcolor=ft.colors.BLUE,
-    )
-
-    menubar = ft.MenuBar(
-        expand=True,
-        style=ft.MenuStyle(
-            alignment=ft.alignment.top_left,
-            mouse_cursor={
-
-            },
-        ),
-        controls=[
-            ft.SubmenuButton(
-                content=ft.Text("File"),
-                on_open=handle_submenu_open,
-                on_close=handle_submenu_close,
-                on_hover=handle_submenu_hover,
-                controls=[
-                    ft.MenuItemButton(
-                        content=ft.Text("About"),
-                        leading=ft.Icon(ft.icons.INFO),
-                        style=ft.ButtonStyle(
-                        ),
-                        on_click=handle_menu_item_click,
-                    ),
-                    ft.MenuItemButton(
-                        content=ft.Text("Save"),
-                        leading=ft.Icon(ft.icons.SAVE),
-                        style=ft.ButtonStyle(
-                        ),
-                        on_click=handle_menu_item_click,
-                    ),
-                    ft.MenuItemButton(
-                        content=ft.Text("Quit"),
-                        leading=ft.Icon(ft.icons.CLOSE),
-                        style=ft.ButtonStyle(
-                        ),
-                        on_click=handle_menu_item_click,
-                    ),
-                ],
-            ),
-            ft.SubmenuButton(
-                content=ft.Text("View"),
-                on_open=handle_submenu_open,
-                on_close=handle_submenu_close,
-                on_hover=handle_submenu_hover,
-                controls=[
-                    ft.SubmenuButton(
-                        content=ft.Text("Zoom"),
-                        controls=[
-                            ft.MenuItemButton(
-                                content=ft.Text("Magnify"),
-                                leading=ft.Icon(ft.icons.ZOOM_IN),
-                                close_on_click=False,
-                                style=ft.ButtonStyle(
-
-                                ),
-                                on_click=handle_menu_item_click,
-                            ),
-                            ft.MenuItemButton(
-                                content=ft.Text("Minify"),
-                                leading=ft.Icon(ft.icons.ZOOM_OUT),
-                                close_on_click=False,
-                                style=ft.ButtonStyle(
-                                ),
-                                on_click=handle_menu_item_click,
-                            ),
-                        ],
-                    )
-                ],
-            ),
-        ],
-    )
-
-    page.add(ft.Row([menubar]))
-
-
-#ft.app(main)
-
-a,grid,b = initialize_control_board()
-
-
-class TabsProfessorClassroomGroup(ft.Container):
-    
-    def __init__(self, bd):
-        t = ft.Tabs(
-            expand = True,
-            selected_index=1,
-            animation_duration=200,
-            tabs=[
-                ft.Tab(
-                    text="Professor",
-                    content=ft.Container(
-                        content = ft.Container(
-                            content = boardsubject,
-                            alignment=ft.alignment.center,
-                            margin=100,
-                            expand = True
-                        ),
-                        margin= 100,
-                        expand = False,
-                        adaptive=True
-                    ),
-
-                ),
-                ft.Tab(
-                    text = "Classroom",
-                    #tab_content=ft.Icon(ft.icons.SEARCH),
-                    content = grid
-                ),
-                ft.Tab(
-                    text="Group",
-                    #icon=ft.icons.SETTINGS,
-                    content=boardsubject
-                ),
-            ],
-        )
-        
-        super().__init__(content=t)
         
     
-    pass  
 
-import flet as ft
+
 
 def main(page: ft.Page):
-    # Contenido inicial de cada sección
-    content = ft.Container(
-        content= ft.Column([ content_professor], alignment=ft.MainAxisAlignment.START, expand=True,
-                    height=800,
-                    width=600
-                    ), 
-        expand=True)
     
-    # Página principa
-    
-    def update_contents():
-        content_professor.update()
-        content_classroom.update()
-        content_group.update()
+    MainPage(Bd, page)
 
-    # Callback para manejar los cambios de la NavigationRail
-    def on_change(e):
-        
-        selected_index = e.control.selected_index
-        
-        # Cambiar el contenido basado en la selección
-        if selected_index == 0:  # Profesor
-            content.content = ft.Column([content_professor], alignment=ft.MainAxisAlignment.START, expand=True,
-                                        height=800,
-                                        width=600)
-            content_professor.update()
-
-        elif selected_index == 1:  # Aula
-            content.content = ft.Column([content_classroom], alignment=ft.MainAxisAlignment.START, expand=True,
-                                        height=800,
-                                        width=600)
-            content_classroom.update()
-
-        elif selected_index == 2:  # Grupo
-            content.content = ft.Column([content_group], alignment=ft.MainAxisAlignment.START, expand=True,
-                                        height=800,
-                                        width=60)
-            content_group.update()
-
-        content.update()        
-        # Actualizar la página
-
-    # Barra de navegación
-    rail = ft.NavigationRail(
-        selected_index=0,
-        label_type=ft.NavigationRailLabelType.ALL,
-        min_width=100,
-        min_extended_width=400,
-        leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
-        group_alignment=-0.9,
-        destinations=[
-            ft.NavigationRailDestination(
-                icon=ft.icons.FAVORITE_BORDER,
-                selected_icon=ft.icons.FAVORITE,
-                label="Profesor",
-            ),
-            ft.NavigationRailDestination(
-                icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
-                selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
-                label="Aula",
-            ),
-            ft.NavigationRailDestination(
-                icon=ft.icons.SETTINGS_OUTLINED,
-                selected_icon_content=ft.Icon(ft.icons.SETTINGS),
-                label_content=ft.Text("Grupo"),
-            ),
-        ],
-        on_change=on_change,  # Llamar al callback
-    )
-    
-    page.theme_mode = ft.ThemeMode.DARK 
-
-    # Layout principal
-    page.add(
-        ft.Row(
-            [
-                rail,
-                ft.VerticalDivider(width=1),
-                content,  # Contenedor dinámico
-            ],
-            expand=True,
-        )
-    )
 
 ft.app(main)
-
-import flet as ft
-
-def main(page: ft.Page):
-
-    rail = ft.NavigationRail(
-        selected_index=0,
-        label_type=ft.NavigationRailLabelType.ALL,
-        # extended=True,
-        min_width=100,
-        min_extended_width=400,
-        leading=ft.FloatingActionButton(icon=ft.icons.CREATE, text="Add"),
-        group_alignment=-0.9,
-        destinations=[
-            ft.NavigationRailDestination(
-                icon=ft.icons.FAVORITE_BORDER, selected_icon=ft.icons.FAVORITE, label="Profesor"
-            ),
-            ft.NavigationRailDestination(
-                icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
-                selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
-                label="Aula",
-            ),
-            ft.NavigationRailDestination(
-                icon=ft.icons.SETTINGS_OUTLINED,
-                selected_icon_content=ft.Icon(ft.icons.SETTINGS),
-                label_content=ft.Text("Grupo"),
-            ),
-        ],
-        on_change=lambda e: print("Selected destination:", e.control.selected_index),
-    )
-
-    page.add(
-        ft.Row(
-            [
-                rail,
-                ft.VerticalDivider(width=1),
-                ft.Column([ content_professor], alignment=ft.MainAxisAlignment.START, expand=True,
-                          height=800,
-                          width=600),
-            ],
-            expand=True,
-        )
-    )
 
 
 # ? arreglar el problema de deslizamiento hacia abajo

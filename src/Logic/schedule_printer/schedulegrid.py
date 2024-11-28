@@ -69,12 +69,12 @@ class GridLatex:
         def secundary():
             return f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
 
-        for day in range(6):
+        for day in range(7):
             blocks_hours_for_day = days_block_hours[day]
             for block in blocks_hours_for_day:
                 length_block = len(block) 
                 row = block[-1] 
-                column = day 
+                column = day + 1
                 latex_matrix[row, column] = principal(length_block)
 
                 for auxiliar_color in block[:-1]:

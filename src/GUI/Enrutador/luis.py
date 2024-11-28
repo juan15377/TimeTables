@@ -1,11 +1,38 @@
-class Padre:
-    def __init__(self):
-        self.campo_padre = "Soy un campo del padre"
+import flet as ft
 
-class Hijo(Padre):
-    def mostrar_campo_padre(self):
-        print(f"Campo del padre: {self.campo_padre}")  # Acceso directo
+name = "AppBar Example"
 
-# Crear instancia de Hijo
-hijo = Hijo()
-hijo.mostrar_campo_padre()
+
+def example():
+
+    pagelet = ft.Pagelet(
+        appbar=ft.AppBar(
+            leading=ft.IconButton(icon = ft.icons.ARROW_BACK, 
+                                  on_click = lambda x: print("para atras")),
+            leading_width=50,
+            title=ft.Text(""),
+            center_title=False,
+            bgcolor=ft.colors.SURFACE_VARIANT,
+            actions=[
+                ft.PopupMenuButton(
+                    items=[
+                        ft.PopupMenuItem(text="Item 1"),
+                        ft.PopupMenuItem(),  # divider
+                        ft.PopupMenuItem(
+                            text="Checked item",
+                            checked=False,
+                        ),
+                    ]
+                ),
+            ],
+        ),
+        content=ft.Container(),
+    )
+
+    return pagelet
+
+def main(page:ft.page):
+    page.add(example())
+
+
+ft.app(main)

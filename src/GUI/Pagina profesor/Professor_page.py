@@ -270,17 +270,67 @@ class ListViewPCG(ft.Container):
         self.content.update()       
         
         
+class NavigatorBarBack(ft.Container):
+    
+    def __init__(self, funct_to_back):
+
+        pagelet = ft.Pagelet(
+            appbar=ft.AppBar(
+                leading=ft.IconButton(icon = ft.icons.ARROW_BACK, 
+                                    on_click = lambda x: funct_to_back()),
+                leading_width=50,
+                title=ft.Text(""),
+                center_title=False,
+                bgcolor=ft.colors.SURFACE_VARIANT,
+                actions=[
+                    ft.PopupMenuButton(
+                        items=[
+                            ft.PopupMenuItem(text="Item 1"),
+                            ft.PopupMenuItem(),  # divider
+                            ft.PopupMenuItem(
+                                text="Checked item",
+                                checked=False,
+                            ),
+                        ]
+                    ),
+                ],
+            ),
+            content=ft.Container(),
+        )
+            
+        
+        super().__init__(
+            content = pagelet,
+            height=50,
+            width=1000
+        )
+
          
 class ProfessorsPage(ft.Container):
     
-    def __init__(self, bd):
+    def __init__(self, bd, navigate_to_main_page):
         self.bd = bd  # Database connection
         
+
         listviewprofessor =  ListViewPCG(Bd.professors.get, Bd)
         self.listviewprofessor = listviewprofessor
+        navigatorbar = NavigatorBarBack(navigate_to_main_page)
+        
         super().__init__(
-            content=listviewprofessor,
+            content= ft.Column(
+                controls = [
+                    navigatorbar,
+                    NewProfessor(self.bd, listviewprofessor),
+                    listviewprofessor
+                ],
+                height=1000,
+                width=1600
+            )
         )
+        
+        def update(self):
+            self.listviewprofessor.update_()
+            
         pass
     
     def update(self):
@@ -289,18 +339,29 @@ class ProfessorsPage(ft.Container):
 class ClassroomsPage(ft.Container):
 
     
-    def __init__(self, bd):
+    def __init__(self, bd, navigate_to_main_page):
         self.bd = bd  # Database connection
         
         listviewclassrooms =  ListViewPCG(Bd.classrooms.get, Bd)
         self.listviewclassrooms = listviewclassrooms
+        navigatorbar = NavigatorBarBack(navigate_to_main_page)
+        
         super().__init__(
-            content=listviewclassrooms,
+            content= ft.Column(
+                controls = [
+                    navigatorbar,
+                    NewClassroom(self.bd, listviewclassrooms),
+                    listviewclassrooms
+                ],
+                spacing=20,
+                height=1000,
+                width=1600
+            )
         )
         pass
     
     def update(self):
-        self.listviewclassrooms.update()
+        self.listviewclassrooms.update_()
         
 
 
@@ -308,16 +369,17 @@ class ClassroomsPage(ft.Container):
 class GroupsPage(ft.Container):
 
     
-    def __init__(self, bd):
+    def __init__(self, bd, navigate_to_main_page):
         self.bd = bd  # Database connection
         
         listviewgroups =  ListViewPCG(Bd.groups.get, Bd)
-        print("Cantidad emprica de grupos")
-        print(len(Bd.groups.get()))
+        navigatorbar = NavigatorBarBack(navigate_to_main_page)
+
         self.listviewgroups = listviewgroups
         super().__init__(
             content= ft.Column(
                 controls = [
+                    navigatorbar,
                     NewGroup(self.bd, listviewgroups),
                     listviewgroups
                 ],
@@ -329,17 +391,6 @@ class GroupsPage(ft.Container):
         pass
     
     def update(self):
-        self.listviewgroups.update()
+        self.listviewgroups.update_()
 
 
-
-professor_page = ProfessorsPage(Bd)
-classroom_page = ClassroomsPage(Bd)
-group_page = GroupsPage(Bd)
-
-
-
-def main(page: ft.Page):
-    page.add(group_page) 
-
-ft.app(main)

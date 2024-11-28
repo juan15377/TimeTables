@@ -11,7 +11,7 @@ class NewProfessorOrClassroom(ft.Container):
         
         def add(e):
             self.save_reference(self.textfield_new.value)
-            self.on_add(e)
+            list_p.update_()
             self.textfield_new.value = ""
             self.textfield_new.update()
             self.list_p.update()

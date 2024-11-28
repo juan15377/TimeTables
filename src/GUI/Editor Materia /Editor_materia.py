@@ -32,11 +32,16 @@ class SubjectEditor(ft.Container):
             professor.name:professor for professor in bd.professors.get()
         })
         
+        professor_selector.width = 400
+        
+        
         self.professor_selector = professor_selector
         
         classroom_selector = SearchValue(
             {classroom.name: classroom for classroom in bd.classrooms.get()}
         )
+        
+        classroom_selector.width = 400
         
         self.classroom_selector = classroom_selector
         # Diseño del sector de aula y de professor 
@@ -164,9 +169,10 @@ class SubjectEditor(ft.Container):
         pass 
         
     
-    
-def main(page : ft.page):
-    subject_editor = SubjectEditor(page, Bd)
-    page.add(subject_editor)
-    
-ft.app(target=main)
+#    
+#def main(page : ft.page):
+#    subject_editor = SubjectEditor(page, Bd)
+#    page.add(subject_editor)
+#    
+#ft.app(target=main)
+#

@@ -1,4 +1,15 @@
-# arreglar que la ultima fila no se agrega al momento de generar un bloque de 
-# de una materia
+# aumentar el tamaño del tablero de materias y de seleccion de materias
+# refactorizar MainPage en metodos encapsulados
+# que cada vez que se inicie las lista de grupos
+# imprimir la base de datos que se esta editando 
+# mejorar el tablero inicial en la esquina superior izquierda 
+# mejorar el SearchValue con un un mejor comportamiento
+# mejorar el boton de poder acceder a los professores
 
-#
+
+# se necesita una refactorizacion urgente, de principio a fin
+
+
+# hay una objecto que es el principal de donde va arrancar el programa
+# que es de main_page 
+# hay un objecto secundario muy import 

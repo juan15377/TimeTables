@@ -68,7 +68,7 @@ class LoadSubject():
                     icon_size=20,
                     tooltip="Pause record",
                     on_click = lambda e : up_value(self),
-                    width=80
+                    width=35
                     ) 
         
         down_button = ft.IconButton(
@@ -77,17 +77,21 @@ class LoadSubject():
                     icon_size=20,
                     tooltip="Play record",
                     on_click=lambda e : down_value(self),
-                    width = 80
+                    width = 35
                     )
         
         block_selection = ft.Column(
             controls = [
-                up_button,
+                ft.Row(
+                    controls = [
+                        up_button,
+                        down_button
+                    ]
+                ),
                 vbloque_drop,
-                down_button
             ],
             width= 80,
-            height= 100
+            height= 120
         )
 
         def load_subject():
@@ -200,7 +204,7 @@ class SubjectSelector(ft.Container):
     def load_subject_list(self):
 
         subject_list = ft.Column(spacing=10, alignment=ft.alignment.top_center,
-                                   height= 300,
+                                   height= 420,
                                    width= 300,
                                    scroll= ft.ScrollMode.AUTO)
         self.subject_list = subject_list
