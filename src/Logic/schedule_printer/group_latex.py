@@ -51,7 +51,7 @@ def create_groups_latex(composite_groups):
                             grid.add_subject(subject)
                             symbol.add_subject(subject)
 
-                        grid_str = grid.to_latex_string()
+                        grid_str = grid.compile_to_latexstring()
                         symbol_str = symbol.to_latex_string()
 
                         result += f"""

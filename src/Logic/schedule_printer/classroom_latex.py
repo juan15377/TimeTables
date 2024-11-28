@@ -21,7 +21,7 @@ class ClassroomLatex:
             grid.add_subject(subject)
             symbol.add_subject(subject)
 
-        grid_string = grid.to_latex_string()
+        grid_string = grid.compile_to_latexstring()
         symbol_string = symbol.to_latex_string()
 
         template = f"""

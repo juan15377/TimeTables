@@ -1,12 +1,12 @@
 class SubjectLatex:
-    def __init__(self, name, abbreviation, professor, classroom, careers, semesters, groups, hours, color, hours_matrix):
+    def __init__(self, name, code, professor, classroom, careers, semesters, subgroups, hours, color, hours_matrix):
         self.name = name
-        self.abbreviation = abbreviation
+        self.code = code
         self.professor = professor
         self.classroom = classroom
         self.careers = careers
         self.semesters = semesters
-        self.groups = groups
+        self.subgroups = subgroups
         self.hours = hours
         self.color = color  # Assume color is a tuple (r, g, b)
         self.hours_matrix = hours_matrix
@@ -35,8 +35,8 @@ class SymbolLatex:
 
     def _convert_subject(self, subject, type_):
         """Convert a SubjectLatex instance to a LaTeX string based on the type."""
-        r, g, b = subject.color
-        symbol = f"\\cellcolor[rgb]{{{r},{g},{b}}} \\textbf{{{subject.abbreviation}}}"
+        r, g, b = subject.color.red / 255, subject.color.green / 255, subject.color.blue / 255
+        symbol = f"\\cellcolor[rgb]{{{r},{g},{b}}} \\textbf{{{subject.code}}}"
 
         if type_ == 1:
             vector = [
@@ -46,7 +46,7 @@ class SymbolLatex:
                 str(subject.hours),
                 self._table_elements(subject.careers),
                 self._table_elements(subject.semesters),
-                self._table_elements(subject.groups),
+                self._table_elements(subject.subgroups),
             ]
         elif type_ == 2:
             vector = [
@@ -64,7 +64,7 @@ class SymbolLatex:
                 str(subject.hours),
                 self._table_elements(subject.careers),
                 self._table_elements(subject.semesters),
-                self._table_elements(subject.groups),
+                self._table_elements(subject.subgroups),
             ]
         else:
             return ""
@@ -79,9 +79,9 @@ class SymbolLatex:
         }
 
         column_format_dict = {
-            1: "|c|p{4cm}|c|c|c|c|c|",
-            2: "|c|p{4cm}|p{4cm}|c|c|",
-            3: "|c|p{4cm}|p{4cm}|c|c|c|c|"
+            1: "|c|p{3cm}|c|c|c|c|c|",
+            2: "|c|p{3cm}|p{4cm}|c|c|",
+            3: "|c|p{3cm}|p{4cm}|c|c|c|c|"
         }
 
         header = f"""
