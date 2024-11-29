@@ -7,14 +7,14 @@ import sys
 sys.path.append("src/GUI/Enrouter/")
 
 import sys 
-sys.path.append("src/GUI/Enrutador/")
-sys.path.append("src/GUI/Pagina profesor/")
-from prueba import EnrouterPage
+sys.path.append("src/GUI/EnrouterPage/")
+sys.path.append("src/GUI/Professors_classrooms_groups_pages/")
+from enrouter_page import EnrouterPage
 from TMaterias import Bd
 
 import flet as ft
 
-from Professor_page import ProfessorsPage, ClassroomsPage, GroupsPage
+from prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
 
 
 
@@ -45,12 +45,24 @@ class MainPage():
             enrouter_page.main_page = main_page
             enrouter_page.change_page('/')
             professor_page.update()
-            #classroom_page.update()
-            #group_page.update()
+            classroom_page.update()
+            group_page.update()
+            page.update()
+            
+            
+            
+        def reference_to_add_subject_professors():
+            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page("/PROFESSORS"))
+            
+        def reference_to_add_subject_classrooms():
+            enrouter_page.navigate_to_new_subject(lambda :enrouter_page.change_page('/CLASSROOMS'))
+            
+        def reference_to_add_subject_groups():
+            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page('/GROUPS'))
         
-        professors_page = ProfessorsPage(bd, change_to_mainpage)
-        classrooms_page = ClassroomsPage(bd, change_to_mainpage)
-        groups_page = GroupsPage(bd, change_to_mainpage)  
+        professors_page = ProfessorsPage(bd, change_to_mainpage, reference_to_add_subject_professors)
+        classrooms_page = ClassroomsPage(bd, change_to_mainpage, reference_to_add_subject_classrooms)
+        groups_page = GroupsPage(bd, change_to_mainpage, reference_to_add_subject_groups)  
         
 
         pages = Pages(
@@ -59,7 +71,7 @@ class MainPage():
             groups_page
         )
         
-        enrouter_page = EnrouterPage(page, pages)
+        enrouter_page = EnrouterPage(page, pages, bd)
         self.page = page
         self.bd = bd
         

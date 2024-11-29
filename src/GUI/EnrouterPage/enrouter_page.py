@@ -1,19 +1,15 @@
 import flet as ft
-from flet import AppBar, ElevatedButton, Page, Text, View, colors
+from flet import View
 
 import sys 
-sys.path.append("src/Logic/")
-sys.path.append("tests/Logic/")
-sys.path.append("src/GUI/Editor Materia ")
-sys.path.append("src/GUI/Pagina profesor")
-sys.path.append("src/GUI/Pagina inicio")
 
+sys.path.append("src/GUI/SubjectEditor/")
 
-from Editor_materia import *
+from subject_editor import SubjectEditor
 
-
-
-def load_subjects_page(subject):
+def load_subjects_page(bd, page_to_route):
+    subject_editor = SubjectEditor(bd, reference_page_router = page_to_route)
+    return subject_editor
     pass
 
 
@@ -48,35 +44,29 @@ ROUTE_SUBJECTS = '/GROUPS'
 class EnrouterPage():
     
     
-    def __init__(self, page, pages) -> None:
+    def __init__(self, page, pages, bd) -> None:
         page.title = "TimeTables"
         self.main_page = None
         self.pages = pages
         self.page =  page
+        self.bd = bd
         
-        def change_to_professors(e):
-            self.change_page(professors_page, ROUTE_PROFESSOR)
-        
-        def change_to_classrooms(e):
-            self.change_page(classrooms_page, ROUTE_CLASSROOM)
-            
-        def change_to_groups(e):
-            self.change_page(groups_page, ROUTE_SUBJECTS)
-
-
         
     def change_page(self,route):
         
         if route == '/PROFESSORS':
             page_content = self.pages.professors_page
+            self.pages.professors_page.update(update = False)
         elif route == '/CLASSROOMS':
             page_content = self.pages.classrooms_page
+            self.pages.classrooms_page.update(update = False)
         elif route == '/GROUPS':
             page_content = self.pages.groups_page
+            self.pages.groups_page.update(update = False)
         elif route == '/':
             page_content = self.main_page
-        
-        self.load_page_content(page_content)    
+        self.load_page_content(page_content)  
+  
 
 
 
@@ -91,8 +81,9 @@ class EnrouterPage():
         self.page.update()
         
     
-    def navigate_to_professors(self):
-        
+    def navigate_to_new_subject(self, page_to_route):
+        page_content = load_subjects_page(self.bd, page_to_route)
+        self.load_page_content(page_content)
         
         pass 
     

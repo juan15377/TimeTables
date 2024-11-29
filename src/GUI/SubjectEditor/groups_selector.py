@@ -3,9 +3,10 @@ import sys
 
 sys.path.append("src/Logic/")
 sys.path.append("tests/Logic/")
+sys.path.append("src/GUI/Utils/")
 
 from tests_3 import Bd
-from seleccionar_aula_profesor import SearchValue
+from SearchValue import SearchValue
 
 groups = Bd.groups
 
@@ -74,11 +75,17 @@ class GroupSelector(ft.Container):
         button_add_group_to_table = ft.IconButton(
             icon = ft.icons.ADD
         )
+        self.BD = BD
                 
         self.table_groups = tablegroups
         
+        
+        def get_actual_groups():
+            return {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in self.BD.groups.get()}
+        
         search_values_textfield = SearchValue(
-            {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in BD.groups.get()}
+            {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in BD.groups.get()},
+            get_actual_groups,  # setear los valores de la búsqueda
         )
         #search_values_textfield.height = 400
         search_values_textfield.width = 600

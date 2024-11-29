@@ -3,7 +3,8 @@ import sys
 
 sys.path.append("src/Logic/")
 sys.path.append("tests/Logic/")
-sys.path.append("src/GUI/Enrutador/")
+sys.path.append("src/GUI/EnrouterPage/")
+sys.path.append("src/GUI/Utils/")
 from tests_3 import Bd
 
 import flet as ft 
@@ -11,8 +12,7 @@ import numpy as np
 import time as tm 
 from Professor_Classroom_Group import PCG, DEFAULT_PCG
 import copy
-from seleccionador_materias import SubjectSelector
-from Seleccionador_PGA import SearchValue
+from subject_selector import SubjectSelector
 from Colors import RGB_to_hex, MyColorPicker
 
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
@@ -521,7 +521,7 @@ class ControlBlocksSubject(ft.Container):
         
         button_to_change_page = ft.IconButton(
             icon=ft.icons.ADD,
-            on_click=lambda e: to_change(e),
+            on_click=lambda e: to_change(),
         )
         
         self.button_to_change_page = button_to_change_page

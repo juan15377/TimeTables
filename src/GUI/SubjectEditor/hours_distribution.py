@@ -80,9 +80,9 @@ class EditorHours(ft.Container):
 
     def get(self):
         return HoursComposition(
-            self.total_hours.get_value(),
             self.minimum_hours.get_value(),
             self.maximum_hours.get_value(),
+            self.total_hours.get_value(),
         )
         
     def set_value(self, hours):

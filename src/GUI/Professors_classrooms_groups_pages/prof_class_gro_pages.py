@@ -8,6 +8,8 @@ from tests_3 import Bd
 from Professor_Classroom_Group import Professor, Classroom, Group
 from new_career_semestre_subgroup import NewGroup
 from new_professor_classroom import NewProfessor, NewClassroom
+
+
 class Header(ft.Container):
 
     def __init__(self, DB, pga, listviewpga):
@@ -88,10 +90,11 @@ class Header(ft.Container):
 
 class SubjectListView(ft.Column):
 
-    def __init__(self, DB, pga, listviewpga):
+    def __init__(self, DB, pga, listviewpga, reference_to_add_subject):
         self.DB = DB 
         self.listviewpga = listviewpga
         self.pga = pga
+        self.reference_to_add_subject = reference_to_add_subject
 
         subjects = []
 
@@ -105,7 +108,7 @@ class SubjectListView(ft.Column):
         for subject in self.pga.get_subjects():
             name = subject.name 
             progress = ft.ProgressBar(width=400)
-            progress.value = 1 - subject.remaining() / subject.total() if subject.total != 0 else 1 
+            progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
             subject_view = ft.Row(
                 controls=[
                     ft.Text(name),
@@ -116,6 +119,7 @@ class SubjectListView(ft.Column):
                 spacing=150,
                 width = 1200,
             )
+            print(1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 )
             subjects.append(subject_view)
             
         super().__init__(
@@ -131,6 +135,7 @@ class SubjectListView(ft.Column):
         pass 
 
     def add_subject(self):
+        self.reference_to_add_subject()
         pass
 
 
@@ -144,9 +149,9 @@ def filter_expansions(expansions, coincidence):
             print(len(new_expansions))
     return new_expansions
 
-def generate_expansion_view(pcg, DB, listviewpcg):
+def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
     header = Header(DB, pcg, listviewpcg)
-    subject_list = SubjectListView(DB, pcg, listviewpcg)
+    subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject)
     expansion = ft.ExpansionTile(
                     title=header,
                     subtitle=ft.Text("Subjects"),
@@ -165,7 +170,8 @@ def generate_expansion_view(pcg, DB, listviewpcg):
 
 class ListViewPCG(ft.Container):
 
-    def __init__(self, reference_pcgs, DB):
+    def __init__(self, reference_pcgs, DB, reference_to_add_subject):
+        self.reference_to_add_subject = reference_to_add_subject
         self.DB = DB  
         self.reference_pcgs = reference_pcgs
         self.expansions = []
@@ -238,7 +244,7 @@ class ListViewPCG(ft.Container):
         expansions = []
         
         for pcg in self.reference_pcgs():
-            expansion = generate_expansion_view(pcg, self.DB, self)
+            expansion = generate_expansion_view(pcg, self.DB, self, self.reference_to_add_subject)
             expansions.append(expansion)
         print("Ingresando ala funcion de obtener todas las expanciones")
         print("Tamaño_de_expansiones :", len(expansions))
@@ -256,7 +262,7 @@ class ListViewPCG(ft.Container):
         self.content.controls[1] = expansions_column
         self.content.update()
 
-    def update_(self):
+    def update_(self, update = True):
         all_expansions = self.get_all_expansions()
         expansions_column = ft.Column(
                 controls = all_expansions,
@@ -267,7 +273,8 @@ class ListViewPCG(ft.Container):
         print("Tamaño_de_expansiones :", len(all_expansions))
         self.content.controls[1].controls.clear()
         self.content.controls[1] = expansions_column
-        self.content.update()       
+        if update:
+            self.content.update()       
         
         
 class NavigatorBarBack(ft.Container):
@@ -308,11 +315,11 @@ class NavigatorBarBack(ft.Container):
          
 class ProfessorsPage(ft.Container):
     
-    def __init__(self, bd, navigate_to_main_page):
+    def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
         self.bd = bd  # Database connection
         
 
-        listviewprofessor =  ListViewPCG(Bd.professors.get, Bd)
+        listviewprofessor =  ListViewPCG(Bd.professors.get, Bd, reference_to_add_subject)
         self.listviewprofessor = listviewprofessor
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
@@ -333,16 +340,16 @@ class ProfessorsPage(ft.Container):
             
         pass
     
-    def update(self):
-        self.listviewprofessor.update()
+    def update(self, update = True):
+        self.listviewprofessor.update_(update)
 
 class ClassroomsPage(ft.Container):
 
     
-    def __init__(self, bd, navigate_to_main_page):
+    def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
         self.bd = bd  # Database connection
         
-        listviewclassrooms =  ListViewPCG(Bd.classrooms.get, Bd)
+        listviewclassrooms =  ListViewPCG(Bd.classrooms.get, Bd, reference_to_add_subject)
         self.listviewclassrooms = listviewclassrooms
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
@@ -360,8 +367,8 @@ class ClassroomsPage(ft.Container):
         )
         pass
     
-    def update(self):
-        self.listviewclassrooms.update_()
+    def update(self, update = True):
+        self.listviewclassrooms.update_(update)
         
 
 
@@ -369,10 +376,10 @@ class ClassroomsPage(ft.Container):
 class GroupsPage(ft.Container):
 
     
-    def __init__(self, bd, navigate_to_main_page):
+    def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
         self.bd = bd  # Database connection
         
-        listviewgroups =  ListViewPCG(Bd.groups.get, Bd)
+        listviewgroups =  ListViewPCG(Bd.groups.get, Bd, reference_to_add_subject)
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
 
         self.listviewgroups = listviewgroups
@@ -390,7 +397,7 @@ class GroupsPage(ft.Container):
         )
         pass
     
-    def update(self):
-        self.listviewgroups.update_()
+    def update(self, update = True):
+        self.listviewgroups.update_(update)
 
 
