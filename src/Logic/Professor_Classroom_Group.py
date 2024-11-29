@@ -260,7 +260,7 @@ class Professors:
 
     def remove(self, professor):
         
-        for subject in self.professor.get_subjects():
+        for subject in professor.get_subjects():
             self.bd.subjects.remove(subject)
         self.professors.remove(professor)
         
@@ -280,6 +280,6 @@ class Classrooms:
         return self.classrooms
 
     def remove(self, classroom):
-        for subject in self.classroom.get_subjects():
+        for subject in classroom.get_subjects():
             self.subjects.remove(subject)
         self.classrooms.remove(classroom)

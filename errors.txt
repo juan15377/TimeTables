@@ -15,3 +15,8 @@
 # hay un objecto secundario muy import 
 # mejorar el searchvalue para cuando se va actualizando los valores de la entrada
 # si un bloque es eliminado este deja remanente en la matriz de posibilidades
+
+
+#algo que se debe tomar en cuenta es que antes de eliminar cualquier grupo, aula o profesor
+# se deben eliminar todas las materias que esten relacionados con estos
+3 

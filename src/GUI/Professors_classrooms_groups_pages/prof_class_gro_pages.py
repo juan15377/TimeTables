@@ -25,6 +25,7 @@ class Header(ft.Container):
         pb = ft.ProgressBar(width=400)
         pb.value = pga.methods.completion_rate()
 
+        self.pb = pb 
         def delete_pga(pga):
 
             if type(pga) == Professor:
@@ -85,17 +86,28 @@ class Header(ft.Container):
     def delete(self):
         
         pass
+    
+    def update(self):
+        self.pb.value = self.pga.methods.completion_rate()
+        self.pb.update()
+
+        pass  
+    
+    
+
         
 
 
 class SubjectListView(ft.Column):
 
-    def __init__(self, DB, pga, listviewpga, reference_to_add_subject):
+    def __init__(self, DB, pga, listviewpga, reference_to_add_subject, header_subject):
         self.DB = DB 
         self.listviewpga = listviewpga
         self.pga = pga
         self.reference_to_add_subject = reference_to_add_subject
-
+        self.header_subject = header_subject
+        
+        
         subjects = []
 
         button_new_subject = ft.TextButton(
@@ -146,6 +158,7 @@ class SubjectListView(ft.Column):
         pass
     
     def update(self):
+        # tambie se tiene que actualizar el header
         subjects = []
         for subject in self.pga.get_subjects():
  
@@ -168,6 +181,7 @@ class SubjectListView(ft.Column):
             )
             subjects.append(subject_view)
         self.controls = [self.button_new_subject] + subjects
+        self.header_subject.update()
         super().update()
 
 
@@ -183,7 +197,7 @@ def filter_expansions(expansions, coincidence):
 
 def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
     header = Header(DB, pcg, listviewpcg)
-    subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject)
+    subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject, header)
     expansion = ft.ExpansionTile(
                     title=header,
                     subtitle=ft.Text("Subjects"),
