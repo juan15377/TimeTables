@@ -13,3 +13,5 @@
 # hay una objecto que es el principal de donde va arrancar el programa
 # que es de main_page 
 # hay un objecto secundario muy import 
+# mejorar el searchvalue para cuando se va actualizando los valores de la entrada
+# si un bloque es eliminado este deja remanente en la matriz de posibilidades

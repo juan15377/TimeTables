@@ -20,15 +20,6 @@ class PGASubject():
         pass
 
 
-class Subject():
-
-    def __init__(self, name_subject : NameSubject, pga_subject : PGASubject, composition_hours: WeeklyHoursDistribution) -> None:
-        self.name_subject = name_subject
-        self.pga_subject = pga_subject
-        self.composition_hours = composition_hours
-        pass
-
-
 def intersectAvailability(teacher, classroom, groups):
     if teacher == None or classroom == None or groups == []:
         return None
@@ -43,7 +34,7 @@ def intersectAvailability(teacher, classroom, groups):
 
 
 
-def update_availability_subject(subject: Subject, position, length_hours, value = False):
+def update_availability_subject(subject, position, length_hours, value = False):
     row = position[0]
     col = position[1]
     estandarized_length = int(length_hours)
@@ -122,6 +113,16 @@ def delete_subject_from_DB(subject):
     classroom = subject.classroom
     groups = subject.groups
 
+    # interceptamos donde se coloco la materia 
+    # y la matriz de disponibilidad de cada uno y asi 
+    # podemos deja como esta su disponibilidad
+    
+    professor.availability_matrix = np.logical_or(professor.availability_matrix, subject.allocated_subject_matrix)
+    classroom.availability_matrix = np.logical_or(classroom.availability_matrix,  subject.allocated_subject_matrix)
+    
+    for group in groups:
+        group.availability_matrix = np.logical_or(group.availability_matrix, subject.allocated_subject_matrix)
+    
     professor.remove_subject(subject)
     classroom.remove_subject(subject)
     for group in groups:

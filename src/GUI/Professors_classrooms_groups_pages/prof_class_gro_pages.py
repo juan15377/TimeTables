@@ -106,6 +106,11 @@ class SubjectListView(ft.Column):
         )
 
         for subject in self.pga.get_subjects():
+            
+            def delete_subject_from_bd(subject):
+                self.DB.subjects.remove(subject)
+                self.update()
+                
             name = subject.name 
             progress = ft.ProgressBar(width=400)
             progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
@@ -113,8 +118,8 @@ class SubjectListView(ft.Column):
                 controls=[
                     ft.Text(name),
                     progress,
-                    ft.Container(content=ft.Text("Details"), 
-                                 on_click=lambda e, s=subject: self.edit_subject(s)),
+                    ft.Container(content=ft.Text("Delete"), 
+                                 on_click=lambda e, s=subject: delete_subject_from_bd(s)),
                 ],
                 spacing=150,
                 width = 1200,
@@ -129,6 +134,8 @@ class SubjectListView(ft.Column):
             width=1600,
             height=1800,
         )
+        
+        self.button_new_subject = button_new_subject
     
     def edit_subject(self, s):
         # This should open a new window to edit subject information
@@ -137,6 +144,31 @@ class SubjectListView(ft.Column):
     def add_subject(self):
         self.reference_to_add_subject()
         pass
+    
+    def update(self):
+        subjects = []
+        for subject in self.pga.get_subjects():
+ 
+            def delete_subject_from_bd(subject):
+                self.DB.subjects.remove(subject)
+                self.update()
+                
+            name = subject.name 
+            progress = ft.ProgressBar(width=400)
+            progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
+            subject_view = ft.Row(
+                controls=[
+                    ft.Text(name),
+                    progress,
+                    ft.Container(content=ft.Text("Delete"), 
+                                 on_click=lambda e, s=subject: delete_subject_from_bd(s)),
+                ],
+                spacing=150,
+                width = 1200,
+            )
+            subjects.append(subject_view)
+        self.controls = [self.button_new_subject] + subjects
+        super().update()
 
 
 def filter_expansions(expansions, coincidence):

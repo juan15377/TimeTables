@@ -50,7 +50,6 @@ class MainPage():
             page.update()
             
             
-            
         def reference_to_add_subject_professors():
             enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page("/PROFESSORS"))
             
@@ -181,14 +180,31 @@ class MainPage():
         )
         
     def restart(self):
-        bd = self.bd
+        bd = self.bd 
         page = self.page
-         # Contenido inicial de cada sección
-        self.bd = bd
         
-        professors_page = ProfessorsPage(bd)
-        classrooms_page = ClassroomsPage(bd)
-        groups_page = GroupsPage(bd)  
+        def change_to_mainpage():
+            enrouter_page.main_page = main_page
+            enrouter_page.change_page('/')
+            professor_page.update()
+            classroom_page.update()
+            group_page.update()
+            page.update()
+            
+            
+            
+        def reference_to_add_subject_professors():
+            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page("/PROFESSORS"))
+            
+        def reference_to_add_subject_classrooms():
+            enrouter_page.navigate_to_new_subject(lambda :enrouter_page.change_page('/CLASSROOMS'))
+            
+        def reference_to_add_subject_groups():
+            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page('/GROUPS'))
+        
+        professors_page = ProfessorsPage(bd, change_to_mainpage, reference_to_add_subject_professors)
+        classrooms_page = ClassroomsPage(bd, change_to_mainpage, reference_to_add_subject_classrooms)
+        groups_page = GroupsPage(bd, change_to_mainpage, reference_to_add_subject_groups)  
         
 
         pages = Pages(
@@ -197,16 +213,17 @@ class MainPage():
             groups_page
         )
         
-        
-        enrouter_page = EnrouterPage(page, pages)
+        enrouter_page = EnrouterPage(page, pages, bd)
         self.page = page
         self.bd = bd
+        
         
         function_reference_change_to_page = enrouter_page.change_page
         professor_page = ProfesorMainPage(bd, function_reference_change_to_page)
         classroom_page = ClassroomMainPage(bd, function_reference_change_to_page)
         group_page = GroupMainPage(bd, function_reference_change_to_page)
-
+        
+        
         
         content = ft.Container(
             content= ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
@@ -243,6 +260,7 @@ class MainPage():
             content.update()        
             # Actualizar la página
             
+            
         def cargar_base_datos(e):
             bd.load_db("/home/juan/Escritorio/DB.pickle")
             self.restart()
@@ -254,19 +272,19 @@ class MainPage():
         # Barra de navegación
         rail = ft.NavigationRail(
             selected_index=0,
+            label_type=ft.NavigationRailLabelType.ALL,
             min_width=100,
             min_extended_width=400,
-            label_type=ft.NavigationRailLabelType.ALL,
             leading=ft.Column(
                     controls = [ft.FloatingActionButton(icon=ft.icons.CREATE, 
-                                            text="Add",
+                                            text="Print",
                                             on_click = lambda e: bd.generate_pdf("/home/juan/Escritorio", "puto")),
                                 ft.FloatingActionButton(icon=ft.icons.SAVE, 
                                             text="Guargar",
-                                            on_click = lambda e: self.bd.save_db("/home/juan/Escritorio", "DB")),
+                                            on_click = lambda e: bd.save_db("/home/juan/Escritorio", "DB")),
                                 ft.FloatingActionButton(icon=ft.icons.CHARGING_STATION, 
                                             text="Cargar",
-                                            on_click = lambda e: cargar_base_datos(e)),
+                                            on_click = lambda e: cargar_base_datos(e))
                     ]
                     ),
             group_alignment=-0.9,
@@ -289,24 +307,25 @@ class MainPage():
             ],
             on_change=on_change,  # Llamar al callback
         )
+
+        # Layout principal
         
-        page.controls.clear()
-        
-        page.add(
-            ft.Row(
+        main_page = ft.Row(
                 [
                     rail,
                     ft.VerticalDivider(width=1),
-                    content,  # Contenedor dinámico,
+                    content,  # Contenedor dinámico
                 ],
                 expand=True,
             )
-        )
+        page.controls.clear()
+        
+        page.add(main_page)
         page.update()
 
 
         
-    
+# al momento de eliminar una materia todos los bloques que se colocaron dentro de el deben actualizarse
 
 
 

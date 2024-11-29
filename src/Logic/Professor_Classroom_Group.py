@@ -221,6 +221,7 @@ class Subgroups:
 
 class Groups:
     def __init__(self, BD) -> None:
+        self.bd = BD
         self.careers = Careers(BD)
         self.semesters = Semesters(BD)
         self.subgroups = Subgroups(BD)
@@ -239,11 +240,15 @@ class Groups:
         return self.groups
 
     def remove(self, group):
+        for subject in group.get_subjects():
+            self.bd.subjects.remove(subject)
         self.groups.remove(group)
+        #eliminar todas las materias relacionadas con este grupo
 
 
 class Professors:
     def __init__(self, BD) -> None:
+        self.bd = BD
         self.professors = []
 
     def new(self, name):
@@ -254,7 +259,13 @@ class Professors:
         return self.professors
 
     def remove(self, professor):
+        
+        for subject in self.professor.get_subjects():
+            self.bd.subjects.remove(subject)
         self.professors.remove(professor)
+        
+        # borrar todas las materias relaciondas con este professor
+        
 
 
 class Classrooms:
@@ -269,4 +280,6 @@ class Classrooms:
         return self.classrooms
 
     def remove(self, classroom):
+        for subject in self.classroom.get_subjects():
+            self.subjects.remove(subject)
         self.classrooms.remove(classroom)

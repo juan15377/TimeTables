@@ -31,7 +31,7 @@ class NameCodeSubject(ft.Container):
             filled=True,
             hint_text = "Insertar Codigo Materia",
             on_change = change_code,
-            max_length = 5
+            max_length = 7
         )
 
         layout = ft.Row(
