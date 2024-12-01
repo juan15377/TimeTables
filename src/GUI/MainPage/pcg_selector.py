@@ -1,12 +1,10 @@
-
 import sys
-
-
-sys.path.append("tests/Logic/")
-
 import flet as ft
-from tests_3 import Bd
-import time as tm 
+import time as tm
+
+
+# Importar otros módulos necesarios
+# Asegúrate de que los módulos en "tests/Logic/" existen antes de usarlos.
 
 class ListViewPCG():
     def __init__(self, pcg):
@@ -160,8 +158,3 @@ class Selector(ft.Container):
 
 
 
-import sys 
-
-sys.path.append("src/GUI/Editor Materia /")
-
-from seleccionar_aula_profesor import SearchValue

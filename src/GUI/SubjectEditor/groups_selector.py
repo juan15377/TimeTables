@@ -1,16 +1,9 @@
-import flet as ft
 import sys
-
-sys.path.append("src/Logic/")
-sys.path.append("tests/Logic/")
-sys.path.append("src/GUI/Utils/")
-
-from tests_3 import Bd
-from SearchValue import SearchValue
-
-groups = Bd.groups
+import flet as ft
 
 
+
+from src.GUI.Utils.SearchValue import SearchValue
 class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como componente personalizado
     
     def __init__(self):

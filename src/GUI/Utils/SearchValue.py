@@ -1,10 +1,9 @@
 
-# falta una estructura que sea capaz de colocar un buscador sobre un conjunto de estructura como aulas 
-# y poder seleccionarlos 
-
 import sys
-sys.path.append("src/Logic/")
 import flet as ft
+
+# Agregar ruta al sys.path si no está presente
+sys.path.append("src/Logic/")
 
 class SearchValue(ft.Container):
     

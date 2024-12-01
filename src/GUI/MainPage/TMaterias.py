@@ -1,19 +1,13 @@
+import sys
 
-import sys  
-
-sys.path.append("src/Logic/")
-sys.path.append("tests/Logic/")
-sys.path.append("src/GUI/EnrouterPage/")
-sys.path.append("src/GUI/Utils/")
-from tests_3 import Bd
-
-import flet as ft 
+# Importar las bibliotecas necesarias
+import flet as ft
 import numpy as np
-import time as tm 
-from Professor_Classroom_Group import PCG, DEFAULT_PCG
 import copy
-from subject_selector import SubjectSelector
-from Colors import RGB_to_hex, MyColorPicker
+
+from src.Logic.Professor_Classroom_Group import DEFAULT_PCG
+from src.GUI.MainPage.subject_selector import SubjectSelector
+from src.Logic.Colors import RGB_to_hex, MyColorPicker
 
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
 # ! este a partir de una inicializacion se debe mantener con operaciones que permitan 

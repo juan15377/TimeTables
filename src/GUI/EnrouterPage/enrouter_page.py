@@ -1,11 +1,8 @@
+import sys
 import flet as ft
 from flet import View
 
-import sys 
-
-sys.path.append("src/GUI/SubjectEditor/")
-
-from subject_editor import SubjectEditor
+from src.GUI.SubjectEditor import SubjectEditor
 
 def load_subjects_page(bd, page_to_route):
     subject_editor = SubjectEditor(bd, reference_page_router = page_to_route)

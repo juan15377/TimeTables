@@ -1,5 +1,5 @@
-from symbology import SymbolLatex
-from schedulegrid import GridLatex
+from .symbology import SymbolLatex
+from .schedulegrid import GridLatex
 
 class GroupLatex:
     def __init__(self, key_career, career, key_semester, semester, key_group, group):

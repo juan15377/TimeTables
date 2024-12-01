@@ -1,8 +1,7 @@
+import sys
 import flet as ft
-import sys 
 
-sys.path.append("src/Logic/")
-from Subjects import HoursComposition, HoursSlotsComposition
+from src.Logic.Hours import HoursComposition, HoursSlotsComposition
 
 class CounterHours(ft.Container):
 
@@ -236,7 +235,7 @@ class SelectorDistributionHours(ft.Container):
         super().__init__(
             content=tabs,
             width=650,
-            height=210,
+            height=230,
         )
 
     def get_hours_distribution(self):

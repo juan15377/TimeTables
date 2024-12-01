@@ -1,9 +1,9 @@
-from Keys import Key
+from .Keys import Key
 from functools import reduce
 import numpy as np
-from Hours import *
-from Professor_Classroom_Group import Professor, Classroom, Group, DEFAULT_PCG
-from Colors import MyColorRGB
+from .Hours import *
+from .Professor_Classroom_Group import Professor, Classroom, Group, DEFAULT_PCG
+from .Colors import MyColorRGB
 class NameSubject():
 
     def __init__(self, name : str, code : str):

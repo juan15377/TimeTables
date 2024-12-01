@@ -1,10 +1,10 @@
-from Keys import Key
+from .Keys import Key
 from abc import ABC, abstractmethod
 import numpy as np
 import random as rn
-from Colors import MyColorRGB
+from .Colors import MyColorRGB
 #from Subjects import *
-from Hours import HoursComposition
+from .Hours import HoursComposition
 
 class PCGMethods:
     """Handles shared methods for PGA instances."""

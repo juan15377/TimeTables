@@ -1,14 +1,11 @@
+import sys
 import flet as ft
-import sys  
-import time as tm 
-sys.path.append("tests/Logic/")
-sys.path.append("src/Logic/")
-# Object responsible for creating a list
-from tests_3 import Bd
-from Professor_Classroom_Group import Professor, Classroom, Group
-from new_career_semestre_subgroup import NewGroup
-from new_professor_classroom import NewProfessor, NewClassroom
+import time as tm
 
+
+from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
+from src.GUI.Professors_classrooms_groups_pages.new_career_semestre_subgroup import NewGroup
+from src.GUI.Professors_classrooms_groups_pages.new_professor_classroom import NewProfessor, NewClassroom
 
 class Header(ft.Container):
 
@@ -401,7 +398,7 @@ class ProfessorsPage(ft.Container):
         self.bd = bd  # Database connection
         
 
-        listviewprofessor =  ListViewPCG(Bd.professors.get, Bd, reference_to_add_subject)
+        listviewprofessor =  ListViewPCG(bd.professors.get, bd, reference_to_add_subject)
         self.listviewprofessor = listviewprofessor
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
@@ -443,7 +440,7 @@ class ClassroomsPage(ft.Container):
     def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
         self.bd = bd  # Database connection
         
-        listviewclassrooms =  ListViewPCG(Bd.classrooms.get, Bd, reference_to_add_subject)
+        listviewclassrooms =  ListViewPCG(bd.classrooms.get, bd, reference_to_add_subject)
         self.listviewclassrooms = listviewclassrooms
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
@@ -485,7 +482,7 @@ class GroupsPage(ft.Container):
     def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
         self.bd = bd  # Database connection
         
-        listviewgroups =  ListViewPCG(Bd.groups.get, Bd, reference_to_add_subject)
+        listviewgroups =  ListViewPCG(bd.groups.get, bd, reference_to_add_subject)
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
 
         button_new_subject = ft.FloatingActionButton(

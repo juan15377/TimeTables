@@ -1,21 +1,14 @@
-import flet as ft 
-import sys 
+import sys
+import flet as ft
 
-sys.path.append("src/Logic/")
-sys.path.append("tests/Logic/")
-sys.path.append("src/GUI/Utils/")
+        
+from src.GUI.SubjectEditor.name_and_code import NameCodeSubject
+from src.GUI.SubjectEditor.groups_selector import GroupSelector
+from src.GUI.Utils.SearchValue import SearchValue
+from src.GUI.SubjectEditor.hours_distribution import SelectorDistributionHours
+from src.GUI.SubjectEditor.online_switch import OnlineSwitch
+from src.Logic.Subjects import InfoSubject
 
-
-from name_and_code import NameCodeSubject # encargado del nombre y codigo de la materia 
-from groups_selector import GroupSelector  # para saber en que grupos se dara la materia
-from SearchValue import SearchValue # para saber en que aula y que profesor dara la materia 
-from hours_distribution import SelectorDistributionHours
-from online_switch import OnlineSwitch
-import sys 
-
-from Subjects import InfoSubject
-
-from tests_3 import Bd
 
 class NavigatorBarBack(ft.Container):
     

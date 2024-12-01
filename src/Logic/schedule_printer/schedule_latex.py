@@ -1,9 +1,9 @@
 # convertir la base de datos a una estrictura mas agradable para poder hacer
 # la conversion a pdf latex
-from professor_latex import ProfessorLatex, create_professors_latex
-from classroom_latex import ClassroomLatex, create_classrooms_latex
-from group_latex import GroupLatex, create_groups_latex
-from schedulegrid import GridLatex, SubjectLatex
+from .professor_latex import ProfessorLatex, create_professors_latex
+from .classroom_latex import ClassroomLatex, create_classrooms_latex
+from .group_latex import GroupLatex, create_groups_latex
+from .schedulegrid import GridLatex, SubjectLatex
 
 import os
 import subprocess
@@ -160,9 +160,7 @@ class ScheduleLatex():
         
         
     def compile_to_latex(self):
-        
-        print(type(self.professors[1]))
-        
+                
         input_text = f"""
         {create_professors_latex(self.professors)}
         

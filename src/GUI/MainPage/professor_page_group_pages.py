@@ -1,12 +1,7 @@
-import sys 
-sys.path.append("src/GUI/Enrouter/")
-sys.path.append("src/GUI/Utils/")
 
-
-from TMaterias import ControlBlocksSubject
-from SearchValue import SearchValue
-from TMaterias import Bd
-from TMaterias import DEFAULT_PCG
+from src.GUI.MainPage.TMaterias import ControlBlocksSubject
+from src.GUI.Utils.SearchValue import SearchValue
+from src.Logic.Professor_Classroom_Group import DEFAULT_PCG
 
 
 class ProfesorMainPage(ControlBlocksSubject):
@@ -61,7 +56,7 @@ class ClassroomMainPage(ControlBlocksSubject):
 
 
         classroom_search = SearchValue({
-            classroom.name: classroom for classroom in Bd.classrooms.get()
+            classroom.name: classroom for classroom in bd.classrooms.get()
             },
             get_actual_classrooms,  # setear los valores de la búsqueda  
             on_change = change_classroom
@@ -92,7 +87,7 @@ class GroupMainPage(ControlBlocksSubject):
             }
         
         self.group_search = SearchValue({
-            group.career.name + " " + group.semester.name + " " + group.subgroup.name:group for group in Bd.groups.get()
+            group.career.name + " " + group.semester.name + " " + group.subgroup.name:group for group in bd.groups.get()
             },
             get_actual_groups,  # setear los valores de la búsqueda
             on_change = change_group

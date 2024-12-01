@@ -9,28 +9,12 @@ from flet import (
     icons,
 )
 
-from professor_page_group_pages import ProfesorMainPage, ClassroomMainPage, GroupMainPage
+from src.Logic.Bd import BD
+from src.GUI.EnrouterPage import EnrouterPage
+from src.Logic.Professor_Classroom_Group import *
+from src.GUI.MainPage.professor_page_group_pages import *
+from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import *
 
-
-import sys 
-sys.path.append("src/GUI/Enrouter/")
-
-import sys 
-sys.path.append("src/GUI/EnrouterPage/")
-sys.path.append("src/GUI/Professors_classrooms_groups_pages/")
-from enrouter_page import EnrouterPage
-from TMaterias import Bd
-
-import flet as ft
-
-from prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
-
-
-from flet import FilePicker, FilePickerResultEvent, Text
-
-from flet import FilePicker, FilePickerResultEvent
-
-from flet import FilePicker, FilePickerResultEvent
 
 def get_file_path(page):
     """
@@ -468,12 +452,22 @@ class MainPage():
             # Actualizar la página
             
             
-        def cargar_base_datos(e):
-            bd.load_db("/home/juan/Escritorio/DB.pickle")
+        def cargar_base_datos():
+            file_path =  get_file_path(self.page)
+            bd.load_db(file_path)
             self.restart()
             professor_page.update()
             classroom_page.update()
             group_page.update()
+            
+        def guardar_base_de_datos():
+            save_path = get_save_file_path(self.page)
+            bd.save_db(save_path)
+            
+        def imprimir_horario():
+            save_path = get_save_file_path(self.page)
+            bd.generate_pdf(save_path)
+            
             
 
         # Barra de navegación
@@ -485,13 +479,13 @@ class MainPage():
             leading=ft.Column(
                     controls = [ft.FloatingActionButton(icon=ft.icons.DATA_OBJECT, 
                                             text="Print",
-                                            on_click = lambda e: bd.generate_pdf("/home/juan/Escritorio", "puto")),
+                                            on_click = lambda e: imprimir_horario()),
                                 ft.FloatingActionButton(icon=ft.icons.SAVE, 
                                             text="Guargar",
-                                            on_click = lambda e: bd.save_db("/home/juan/Escritorio", "DB")),
+                                            on_click = lambda e: guardar_base_de_datos()),
                                 ft.FloatingActionButton(icon=ft.icons.CHARGING_STATION, 
                                             text="Cargar",
-                                            on_click = lambda e: cargar_base_datos(e))
+                                            on_click = lambda e: cargar_base_datos())
                     ]
                     ),
             group_alignment=-0.9,
@@ -537,6 +531,8 @@ class MainPage():
 
 
 def main(page: ft.Page):
+    
+    Bd = BD()
     
     MainPage(Bd, page)
 

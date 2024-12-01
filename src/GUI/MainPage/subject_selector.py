@@ -1,17 +1,9 @@
-import flet as ft 
+import flet as ft
 import sys
 
-sys.path.append("tests/Logic/")
-sys.path.append("src/Logic/")
+from src.Logic.Colors import RGB_to_hex, MyColorPicker
+from src.Logic.Subjects import DEFAULT_PCG, DEFAULT_SUBJECT
 
-
-from tests_3 import Bd
-from Colors import RGB_to_hex
-from Colors import MyColorRGB
-from Subjects import DEFAULT_PCG, DEFAULT_SUBJECT
-
-print(" dcfgvhbjnkmljhg cfxzssxfcgvhbjnkmljhbgvfcd"
-      , print(len(DEFAULT_PCG.subjects)))
 
 class LoadSubject():
 

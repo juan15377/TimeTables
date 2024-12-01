@@ -1,12 +1,22 @@
-import flet as ft  
 import sys
-sys.path.append("tests/Logic/")
-sys.path.append("src/Logic/")
+import flet as ft
+
+# Rutas de módulos personalizados
+MODULE_PATHS = [
+    "tests/Logic/",
+    "src/Logic/",
+]
+
+# Asegurar que las rutas estén agregadas al PATH si no están presentes
+for path in MODULE_PATHS:
+    if path not in sys.path:
+        sys.path.append(path)
+
+# Aquí puedes agregar la lógica para la creación de la lista
 # Object responsible for creating a list
-from tests_3 import Bd
 
 class NewCompositionGroup(ft.Container): # list_items es la lista que se muestra cuando se ven en al pagina
-    def __init__(self, reference_items, items, save_reference, delete_reference, list_items):
+    def __init__(self, reference_items, items, save_reference, delete_reference, list_items, label):
         
         self.items = items
         self.reference_items = reference_items
@@ -38,8 +48,10 @@ class NewCompositionGroup(ft.Container): # list_items es la lista que se muestra
         super().__init__(
             content= ft.Column(
                 controls = [
+                    ft.Text(label),
                     ft.Row(
                         controls = [
+                            
                             self.texfield_item,
                             button_add,
                             button_delete,
@@ -106,7 +118,8 @@ class NewCareer(NewCompositionGroup):
             items = bd.groups.careers.get(),
             save_reference = bd.groups.careers.new,
             delete_reference = bd.groups.careers.remove,
-            list_items = list_items
+            list_items = list_items,
+            label = "Carrera"
         )
     
     pass  
@@ -121,7 +134,8 @@ class NewSemester(NewCompositionGroup):
             items = bd.groups.semesters.get(),
             save_reference = bd.groups.semesters.new,
             delete_reference = bd.groups.semesters.remove,
-            list_items = list_items
+            list_items = list_items,
+            label = "Semestre"
         )
     
     pass  
@@ -136,7 +150,8 @@ class NewSubgroup(NewCompositionGroup):
             items = bd.groups.subgroups.get(),
             save_reference = bd.groups.subgroups.new,
             delete_reference = bd.groups.subgroups.remove,
-            list_items = list_items
+            list_items = list_items,
+            label = "Subgrupo"
         )
     
     pass

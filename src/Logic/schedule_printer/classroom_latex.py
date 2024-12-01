@@ -1,6 +1,6 @@
 
-from symbology import SymbolLatex
-from schedulegrid import GridLatex
+from .symbology import SymbolLatex
+from .schedulegrid import GridLatex
 
 class ClassroomLatex:
     def __init__(self, name):

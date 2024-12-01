@@ -1,4 +1,4 @@
-from Keys import Key
+from .Keys import Key
 from functools import reduce
 import numpy as np
 
