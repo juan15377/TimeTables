@@ -236,12 +236,12 @@ class SubjectEditor(ft.Container):
         
         # crear nueva materia en la base de datos
         
-        if not is_avaible_subject(professor,
-                              classroom,
-                              groups,
-                              hours_distribution,
-                              is_online):
-            return None    
+        ##if not is_avaible_subject(professor,
+         #                     classroom,
+         #                     groups,
+         #                     hours_distribution,
+         #                     is_online):
+         #   return None    
     
         
         info_subject = InfoSubject(
@@ -255,6 +255,8 @@ class SubjectEditor(ft.Container):
         )
         
         self.bd.subjects.add(info_subject)
+        
+        print("Se ah Creado Una Materia")
         
         pass
         

@@ -11,10 +11,6 @@ from .schedule_printer import *
 
 import pickle
 
-
-import pickle
-import os
-
 import os
 import subprocess
 
@@ -89,6 +85,112 @@ def save_object_to_pickle(obj, path):
 
     print(f"Objeto guardado exitosamente en {path}")
 
+
+
+import flet
+from flet import (
+    ElevatedButton,
+    FilePicker,
+    FilePickerResultEvent,
+    Page,
+    Row,
+    Text,
+    icons,
+)
+import flet as ft
+
+import flet
+from flet import (
+    ElevatedButton,
+    FilePicker,
+    FilePickerResultEvent,
+    Page,
+    Row,
+    Text,
+    icons,
+)
+
+import pickle
+import os
+
+def save_object_to_pickle(obj, path):
+    """
+    Guarda un objeto en un archivo pickle en la ruta especificada.
+
+    Parámetros:
+    - obj: Objeto que se desea guardar.
+    - path: Ruta completa del archivo, incluyendo el nombre y la extensión .pickle.
+    """
+    # Asegurarse de que la ruta al directorio exista
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    # Guardar el objeto usando pickle
+    with open(path, "wb") as file:
+        pickle.dump(obj, file)
+
+    print(f"Objeto guardado exitosamente en {path}")
+
+def save_data_base(page, bd):
+    def save_file_result(e: FilePickerResultEvent):
+        if e.path:
+            save_object_to_pickle(bd, e.path)
+            page.remove(save_file_dialog)
+            print("Archivo guardado exitosamente")
+
+    save_file_dialog = FilePicker(on_result=save_file_result)
+
+    
+    page.overlay.extend([save_file_dialog])
+
+    page.add(save_file_dialog
+    )
+    
+    save_file_dialog.pick_files()
+
+
+def load_data_base(page, db):
+    
+    def load_file_path(e: FilePickerResultEvent):
+        if e.path:
+            with open(e.path, "rb") as file:
+                new_bd = pickle.load(file)
+                db.professors = new_bd.professors
+                db.classrooms = new_bd.classrooms
+                db.groups = new_bd.groups
+                db.subjects = new_bd.subjects
+            #page.remove(load_file_dialog)
+            page.close()
+                
+    load_file_dialog = FilePicker(on_result=load_file_path)
+    
+    page.overlay.extend([load_file_dialog])
+    
+    page.add(load_file_dialog)
+    
+    load_file_dialog.pick_files()
+    
+
+
+
+def generate_pdf_latex(page, bd):
+    def save_file_result(e: FilePickerResultEvent):
+        if e.path:
+            schedule_latex = ScheduleLatex(bd)
+            latex_content = schedule_latex.compile_to_latex()
+            save_latex_to_file_and_compile(latex_content, e.path)
+            page.remove(save_file_dialog)
+            print("Archivo guardado exitosamente")
+
+    save_file_dialog = FilePicker(on_result=save_file_result)
+
+    
+    page.overlay.extend([save_file_dialog])
+
+    page.add(save_file_dialog
+    )
+    
+    save_file_dialog.save_file()
+
 class BD():
 
     def __init__(self) -> None:
@@ -98,23 +200,16 @@ class BD():
         self.subjects = Subjects(self)
         pass
     
-    def generate_pdf(self, save_path):
+    def generate_pdf(self, page):
+        generate_pdf_latex(page, self)
         
-        schedule_latex = ScheduleLatex(self)
-        latex_content = schedule_latex.compile_to_latex()
-        save_latex_to_file_and_compile(latex_content, save_path)
+    def load_db(self, page):
+        load_data_base(page, self)
         
-    def load_db(self, file_path):
-        with open(file_path, 'rb') as file:
-            new_bd = pickle.load(file)
-            self.professors = new_bd.professors
-            self.classrooms = new_bd.classrooms
-            self.groups = new_bd.groups
-            self.subjects = new_bd.subjects
-            
-            
-    def save_db(self, save_path):
-        save_object_to_pickle(self, save_path)
+        
+    
+    def save_db(self, page):
+        save_data_base(page, self)
 
     def update_bd(self):
         pass

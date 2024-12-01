@@ -9,191 +9,15 @@ from flet import (
     icons,
 )
 
+
 from src.Logic.Bd import BD
 from src.GUI.EnrouterPage import EnrouterPage
 from src.Logic.Professor_Classroom_Group import *
 from src.GUI.MainPage.professor_page_group_pages import *
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import *
 
-
-def get_file_path(page):
-    """
-    Muestra un diálogo para seleccionar un archivo y devuelve la ruta seleccionada.
-
-    Args:
-        page: Página de Flet que contiene la interfaz.
-
-    Returns:
-        str: La ruta del archivo seleccionado o None si se cancela.
-    """
-    # Variable para almacenar la ruta seleccionada
-    file_path = {"value": None}
-
-    # Manejar el resultado del diálogo de selección de archivo
-    def get_file_result(e: FilePickerResultEvent):
-        file_path["value"] = e.files[0].path if e.files else None
-        page.update()
-
-    # Crear el diálogo de selección de archivo
-    get_file_dialog = FilePicker(on_result=get_file_result)
-
-    # Agregar el diálogo al overlay de la página
-    if get_file_dialog not in page.overlay:
-        page.overlay.append(get_file_dialog)
-        page.update()
-
-    # Mostrar el diálogo
-    get_file_dialog.pick_files()
-
-    # Esperar hasta que el diálogo se cierre
-    while file_path["value"] is None:
-        pass  # Esperar hasta que se actualice el valor
-
-    return file_path["value"]
-
 from flet import FilePicker, FilePickerResultEvent
 
-def get_save_file_path(page):
-    """
-    Muestra un diálogo para seleccionar una ubicación y un nombre para guardar un archivo.
-
-    Args:
-        page: Página de Flet que contiene la interfaz.
-
-    Returns:
-        str: La ruta del archivo especificado o None si se cancela.
-    """
-    # Variable para almacenar la ruta seleccionada
-    file_path = {"value": None}
-
-    # Manejar el resultado del diálogo de guardar archivo
-    def save_file_result(e: FilePickerResultEvent):
-        file_path["value"] = e.path if e.path else None
-        page.update()
-
-    # Crear el diálogo de guardar archivo
-    save_file_dialog = FilePicker(on_result=save_file_result)
-
-    # Agregar el diálogo al overlay de la página
-    if save_file_dialog not in page.overlay:
-        page.overlay.append(save_file_dialog)
-        page.update()
-
-    # Mostrar el diálogo para guardar archivo
-    save_file_dialog.save_file()
-
-    # Esperar hasta que el diálogo se cierre
-    while file_path["value"] is None:
-        pass  # Esperar hasta que se actualice el valor
-
-    return file_path["value"]
-
-
-def get_save_directory_path(page):
-    """
-    Muestra un diálogo para seleccionar un directorio y devuelve la ruta seleccionada.
-
-    Args:
-        page: Página de Flet que contiene la interfaz.
-
-    Returns:
-        str: La ruta del directorio seleccionado o None si se cancela.
-    """
-    # Variable para almacenar la ruta seleccionada
-    directory_path = {"value": None}
-
-    # Manejar el resultado del diálogo de selección de directorio
-    def get_directory_result(e: FilePickerResultEvent):
-        directory_path["value"] = e.path if e.path else None
-        page.update()
-
-    # Crear el diálogo de selección de directorio
-    get_directory_dialog = FilePicker(on_result=get_directory_result)
-
-    # Agregar el diálogo al overlay de la página
-    if get_directory_dialog not in page.overlay:
-        page.overlay.append(get_directory_dialog)
-        page.update()
-
-    # Mostrar el diálogo
-    get_directory_dialog.get_directory_path()
-
-    # Esperar hasta que el diálogo se cierre
-    while directory_path["value"] is None:
-        pass  # Esperar hasta que se actualice el valor
-
-    return directory_path["value"]
-
-
-
-from flet import FilePicker, FilePickerResultEvent, TextField, AlertDialog, Text, ElevatedButton
-
-from flet import FilePicker, FilePickerResultEvent, TextField, AlertDialog, Text, ElevatedButton
-
-def get_save_directory_and_filename(page):
-    """
-    Muestra un diálogo para seleccionar un directorio y luego solicita un nombre para el archivo.
-
-    Args:
-        page: Página de Flet que contiene la interfaz.
-
-    Returns:
-        tuple: Una tupla con la ruta seleccionada y el nombre del archivo (ruta, nombre) o None si se cancela.
-    """
-    # Variables para almacenar el directorio y el nombre del archivo
-    directory_path = {"value": None}
-    file_name = {"value": None}
-
-    # Manejar el resultado del diálogo de selección de directorio
-    def get_directory_result(e: FilePickerResultEvent):
-        directory_path["value"] = e.path if e.path else None
-        if directory_path["value"]:
-            # Mostrar diálogo para pedir el nombre del archivo
-            page.dialog = name_dialog
-            page.dialog.open = True
-            page.update()
-
-    # Crear el diálogo de selección de directorio
-    get_directory_dialog = FilePicker(on_result=get_directory_result)
-
-    # Crear el cuadro de diálogo para pedir el nombre del archivo
-    name_field = TextField(label="Nombre del archivo", hint_text="Introduce el nombre del archivo sin extensión")
-
-    def save_name(e):
-        file_name["value"] = name_field.value.strip()
-        if file_name["value"]:
-            name_dialog.open = False
-            page.update()
-
-    name_dialog = AlertDialog(
-        title=Text("Introduce el nombre del archivo"),
-        content=name_field,
-        actions=[
-            ElevatedButton("Guardar", on_click=save_name),
-            ElevatedButton("Cancelar", on_click=lambda e: close_dialog()),
-        ],
-    )
-
-    def close_dialog():
-        name_dialog.open = False
-        directory_path["value"] = None  # Cancelar todo si el usuario no introduce el nombre
-        page.update()
-
-    # Agregar el FilePicker al overlay de la página
-    if get_directory_dialog not in page.overlay:
-        page.overlay.append(get_directory_dialog)
-        page.update()
-
-    # Mostrar el diálogo para seleccionar el directorio
-    get_directory_dialog.get_directory_path()  # Método correcto
-
-    # Esperar hasta que ambos valores sean proporcionados
-    while directory_path["value"] is None or file_name["value"] is None:
-        pass  # Esperar hasta que se seleccionen ambos valores
-
-    if directory_path["value"] and file_name["value"]:
-        return directory_path["value"], file_name["value"]
-    return None
 
 
 def preload_database(page):
@@ -228,7 +52,7 @@ class MainPage():
             professor_page.update()
             classroom_page.update()
             group_page.update()
-            page.update()
+            self.page.update()
             
             
         def reference_to_add_subject_professors():
@@ -300,20 +124,18 @@ class MainPage():
             
             
         def cargar_base_datos():
-            file_path =  get_file_path(self.page)
-            bd.load_db(file_path)
+            self.bd.load_db(page)
             self.restart()
             professor_page.update()
             classroom_page.update()
             group_page.update()
+            #self.page.update()
             
         def guardar_base_de_datos():
-            save_path = get_save_file_path(self.page)
-            bd.save_db(save_path)
+            self.bd.save_db(self.page)
             
         def imprimir_horario():
-            save_path = get_save_file_path(self.page)
-            bd.generate_pdf(save_path)
+            self.bd.generate_pdf(self.page)
             
             
 
@@ -374,13 +196,15 @@ class MainPage():
         bd = self.bd 
         page = self.page
         
+        
+        
         def change_to_mainpage():
             enrouter_page.main_page = main_page
             enrouter_page.change_page('/')
             professor_page.update()
             classroom_page.update()
             group_page.update()
-            page.update()
+            self.page.update()
             
             
             
@@ -405,8 +229,6 @@ class MainPage():
         )
         
         enrouter_page = EnrouterPage(page, pages, bd)
-        self.page = page
-        self.bd = bd
         
         
         function_reference_change_to_page = enrouter_page.change_page
@@ -454,19 +276,20 @@ class MainPage():
             
         def cargar_base_datos():
             file_path =  get_file_path(self.page)
-            bd.load_db(file_path)
+            self.bd.load_db(file_path)
             self.restart()
             professor_page.update()
             classroom_page.update()
             group_page.update()
+            self.page.update()
             
         def guardar_base_de_datos():
-            save_path = get_save_file_path(self.page)
-            bd.save_db(save_path)
+            save_path = create_file_path(self.page)
+            self.bd.save_db(save_path)
             
         def imprimir_horario():
-            save_path = get_save_file_path(self.page)
-            bd.generate_pdf(save_path)
+            save_path = create_file_path(self.page)
+            self.bd.generate_pdf(save_path)
             
             
 
@@ -520,6 +343,7 @@ class MainPage():
                 expand=True,
             )
         page.controls.clear()
+        page.views.clear()
         
         page.add(main_page)
         page.update()
