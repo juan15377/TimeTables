@@ -42,6 +42,7 @@ class ProfesorMainPage(ControlBlocksSubject):
         
     def update(self):
         self.professor_search.update()
+        super().update()
         pass
         
 
@@ -75,6 +76,7 @@ class ClassroomMainPage(ControlBlocksSubject):
         
     def update(self):
         self.classroom_search.update()
+        super().update()
         
 class GroupMainPage(ControlBlocksSubject):
     
@@ -103,6 +105,7 @@ class GroupMainPage(ControlBlocksSubject):
     
     def update(self):
         self.group_search.update()
+        super().update()
     
 
 #lista = [0]

@@ -92,11 +92,6 @@ class Header(ft.Container):
         self.pb.update()
 
         pass  
-    
-    
-
-        
-
 
 class SubjectListView(ft.Column):
 
@@ -108,14 +103,24 @@ class SubjectListView(ft.Column):
         self.header_subject = header_subject
         
         
-        subjects = []
-
-        button_new_subject = ft.TextButton(
+        button_new_subject = ft.FloatingActionButton(
             text="Add Subject",
             on_click=lambda e: self.add_subject(),
             width=1600,
             height=60,
+            icon = ft.icons.ADD
         )
+        
+        subjects = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("name Subject")),
+                ft.DataColumn(ft.Text("progress")),
+                ft.DataColumn(ft.Text("professor")),
+                ft.DataColumn(ft.Text("Classroom")),
+                ft.DataColumn(ft.Text("total hours")),
+                ft.DataColumn(ft.Text("delete")),
+            ]
+            )
 
         for subject in self.pga.get_subjects():
             
@@ -126,21 +131,27 @@ class SubjectListView(ft.Column):
             name = subject.name 
             progress = ft.ProgressBar(width=400)
             progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
-            subject_view = ft.Row(
-                controls=[
-                    ft.Text(name),
-                    progress,
-                    ft.Container(content=ft.Text("Delete"), 
-                                 on_click=lambda e, s=subject: delete_subject_from_bd(s)),
-                ],
-                spacing=150,
-                width = 1200,
+            
+            subjects.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(name)),
+                        ft.DataCell(progress),
+                        ft.DataCell(ft.Text(subject.professor.name)),
+                        ft.DataCell(ft.Text(subject.classroom.name)),
+                        ft.DataCell(ft.Text(str(subject.hours_distribution.total()))),
+                        ft.DataCell(ft.Container(content=ft.IconButton(icon = ft.icons.DELETE,
+                                                                       on_click=lambda e, s=subject: delete_subject_from_bd(s)),
+                                                 
+                                                 ), 
+                        ),
+                    ],
+                )
             )
-            print(1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 )
-            subjects.append(subject_view)
+        
             
         super().__init__(
-            controls=[button_new_subject] + subjects,  # Add button for adding new subjects
+            controls=[subjects],  # Add button for adding new subjects
             alignment=ft.alignment.top_left,
             scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
             width=1600,
@@ -159,9 +170,29 @@ class SubjectListView(ft.Column):
     
     def update(self):
         # tambie se tiene que actualizar el header
-        subjects = []
+        
+
+        button_new_subject = ft.FloatingActionButton(
+            text="Add Subject",
+            on_click=lambda e: self.add_subject(),
+            width=1600,
+            height=60,
+            icon = ft.icons.DELETE
+        )
+        
+        subjects = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("name Subject")),
+                ft.DataColumn(ft.Text("progress")),
+                ft.DataColumn(ft.Text("professor")),
+                ft.DataColumn(ft.Text("Classroom")),
+                ft.DataColumn(ft.Text("total hours")),
+                ft.DataColumn(ft.Text("delete")),
+            ]
+        )
+
         for subject in self.pga.get_subjects():
- 
+            
             def delete_subject_from_bd(subject):
                 self.DB.subjects.remove(subject)
                 self.update()
@@ -169,18 +200,23 @@ class SubjectListView(ft.Column):
             name = subject.name 
             progress = ft.ProgressBar(width=400)
             progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
-            subject_view = ft.Row(
-                controls=[
-                    ft.Text(name),
-                    progress,
-                    ft.Container(content=ft.Text("Delete"), 
-                                 on_click=lambda e, s=subject: delete_subject_from_bd(s)),
-                ],
-                spacing=150,
-                width = 1200,
+            
+            subjects.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(name)),
+                        ft.DataCell(progress),
+                        ft.DataCell(ft.Text(subject.professor.name)),
+                        ft.DataCell(ft.Text(subject.classroom.name)),
+                        ft.DataCell(ft.Text(str(subject.hours_distribution.total()))),
+                        ft.DataCell(ft.Container(content=ft.Text("Delete"),
+                                                 on_click=lambda e, s=subject: delete_subject_from_bd(s)), 
+                        ),
+                    ],
+                )
             )
-            subjects.append(subject_view)
-        self.controls = [self.button_new_subject] + subjects
+        
+        self.controls = [subjects]
         self.header_subject.update()
         super().update()
 
@@ -266,7 +302,7 @@ class ListViewPCG(ft.Container):
                 controls=[search_textfield] + [self.expansions_column],
             ),
             width=1300,
-            height=500,
+            height=600,
             
             )        
         
@@ -355,7 +391,7 @@ class NavigatorBarBack(ft.Container):
         super().__init__(
             content = pagelet,
             height=50,
-            width=1000
+            width=1450
         )
 
          
@@ -369,11 +405,23 @@ class ProfessorsPage(ft.Container):
         self.listviewprofessor = listviewprofessor
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
+        button_new_subject = ft.FloatingActionButton(
+            text="add subject",
+            on_click=lambda e: reference_to_add_subject(),
+            width=200,
+            height=60,
+            icon = ft.icons.DELETE
+        )
+        
         super().__init__(
             content= ft.Column(
                 controls = [
                     navigatorbar,
-                    NewProfessor(self.bd, listviewprofessor),
+                    ft.Row(
+                        controls = [NewProfessor(self.bd, listviewprofessor),
+                                   button_new_subject],
+                        spacing= 400
+                    ),
                     listviewprofessor
                 ],
                 height=1000,
@@ -399,11 +447,23 @@ class ClassroomsPage(ft.Container):
         self.listviewclassrooms = listviewclassrooms
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
+        button_new_subject = ft.FloatingActionButton(
+            text="add subject",
+            on_click=lambda e: reference_to_add_subject(),
+            width=200,
+            height=60,
+            icon = ft.icons.DELETE
+        )
+        
         super().__init__(
             content= ft.Column(
                 controls = [
                     navigatorbar,
-                    NewClassroom(self.bd, listviewclassrooms),
+                    button_new_subject,
+                    ft.Row(
+                        controls = [NewClassroom(self.bd, listviewclassrooms),
+                                    ],
+                    ),
                     listviewclassrooms
                 ],
                 spacing=20,
@@ -428,16 +488,25 @@ class GroupsPage(ft.Container):
         listviewgroups =  ListViewPCG(Bd.groups.get, Bd, reference_to_add_subject)
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
 
+        button_new_subject = ft.FloatingActionButton(
+            text="add subject",
+            on_click=lambda e: reference_to_add_subject(),
+            icon = ft.icons.DELETE
+        )
+
         self.listviewgroups = listviewgroups
         super().__init__(
             content= ft.Column(
                 controls = [
                     navigatorbar,
-                    NewGroup(self.bd, listviewgroups),
+                    button_new_subject,
+                    ft.Row(
+                        controls = [NewGroup(self.bd, listviewgroups),
+                                    ]
+                    ),
                     listviewgroups
                 ],
-                spacing=20,
-                height=1000,
+                height=1400,
                 width=1600
             )
         )

@@ -15,7 +15,7 @@ class SearchValue(ft.Container):
         values = list(dict_values.values())
         names = list(dict_values.keys())
         self.dict_values = dict_values
-        self.value_selected = values[0] if values else None
+        self.value_selected = None
     
         def change_value(e):
             self.value_selected = self.dict_values[self.drop.value]
@@ -53,9 +53,16 @@ class SearchValue(ft.Container):
         self.drop.options.clear()
         self.drop.options = [ft.dropdown.Option(name) for name in dict_values.keys()]
         #self.drop.update()
-
-
-
+    
+    def deactivate(self):
+        self.drop.options = []
+        self.drop.update()
+        
+    def activate(self):
+        self.update()
+        self.drop.update()
+#
+#
 #def main(page:ft.page):
 #    
 #    valores = {
@@ -84,8 +91,20 @@ class SearchValue(ft.Container):
 #        on_click = lambda e: search_value.update(),
 #    )
 #    
-#    page.add(search_value, button_update)
+#    button_activate = ft.IconButton(
+#        icon = ft.icons.ADD,
+#        on_click = lambda e: search_value.activate(),
+#    )
+#    
+#    button_deactivate = ft.IconButton(
+#        icon = ft.icons.DELETE,
+#        on_click = lambda e: search_value.deactivate(),
+#    )
+#    
+#    
+#    page.add(search_value, button_update, button_activate, button_deactivate)
 #    
 #
 #
 #ft.app(main)
+#

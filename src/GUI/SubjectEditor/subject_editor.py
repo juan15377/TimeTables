@@ -10,6 +10,7 @@ from name_and_code import NameCodeSubject # encargado del nombre y codigo de la 
 from groups_selector import GroupSelector  # para saber en que grupos se dara la materia
 from SearchValue import SearchValue # para saber en que aula y que profesor dara la materia 
 from hours_distribution import SelectorDistributionHours
+from online_switch import OnlineSwitch
 import sys 
 
 from Subjects import InfoSubject
@@ -49,11 +50,24 @@ class NavigatorBarBack(ft.Container):
         super().__init__(
             content = pagelet,
             height=50,
-            width=1000
+            width=1450
         )
 
 # esta clase tiene dos objectivos, que carguen los datos de una materia y desde este se puedan editar estos
 # otro es que esta clase tiene es que sea capaz de crear una nueva materia 
+
+def is_avaible_subject(professor, classroom, groups, hours_distribution, is_online):
+    
+    if professor == None or groups == [] or hours_distribution.total()== 0:
+        return False
+    if is_online:
+        return True
+    if classroom == None:
+        return False
+    
+
+
+
 class SubjectEditor(ft.Container):
     
     def __init__(self, bd, reference_page_router, subject = False):
@@ -66,6 +80,7 @@ class SubjectEditor(ft.Container):
         
         groups_selector = GroupSelector(bd)
         self.groups_selector = groups_selector
+        
         
         
         def get_actual_professors():
@@ -94,6 +109,10 @@ class SubjectEditor(ft.Container):
             get_actual_classrooms
         )
         
+        online_switch = OnlineSwitch(classroom_selector)
+        self.online_switch = online_switch
+        
+        
         classroom_selector.width = 400
         
         self.classroom_selector = classroom_selector
@@ -102,18 +121,11 @@ class SubjectEditor(ft.Container):
         
         selector_hours_distribution = SelectorDistributionHours()
         self.selector_hours_distribution = selector_hours_distribution
+    
         
-        button_save_changes = ft.IconButton(
-            icon = ft.icons.SAVE,
-            on_click = lambda e: self.save_changes()
-        )
         
-        button_cancel = ft.IconButton(
-            icon = ft.icons.CANCEL,
-            on_click = lambda e: self.cancel()
-        )
-        
-        button_new_subject = ft.IconButton(
+        button_new_subject = ft.FloatingActionButton(
+            text = "New Subject",
             icon = ft.icons.ADD,
             on_click = lambda e: self.new_subject_in_bd()
         )
@@ -132,7 +144,8 @@ class SubjectEditor(ft.Container):
                             #classroom_selector
                             groups_selector,
                             
-                        ]
+                        ],
+                        alignment= ft.alignment.top_right
                     ),
                     ft.Column(
                         controls=[
@@ -142,40 +155,51 @@ class SubjectEditor(ft.Container):
                                 controls = [
                                     ft.Column(
                                         controls=[
-                                            ft.Text("Aula"),
-                                            classroom_selector,
-                                        ]
+                                            ft.Row(
+                                                controls = [
+                                                    ft.Column(
+                                                        controls = [ft.Text("Aula"),
+                                                                    classroom_selector]
+                                                    ),
+                                                    online_switch,  
+                                                ]
+                                            ),
+                                            ft.Column(
+                                                controls = [ft.Text("Profesor"),
+                                                            professor_selector,],
+                                                spacing=10
+                                            )
+                                        ],
+                                        spacing=50
                                     ),
                                     ft.Column(
                                         controls=[
-                                            ft.Text("Profesor"),
-                                            professor_selector,
+                                            
                                         ]
                                     )
-                                ]
+                                ],
                             ),
-
                             selector_hours_distribution,
                             ft.Row(
                                 controls = [
-                                    button_cancel,
-                                    button_save_changes,
-                                    button_new_subject
-                                    ]
-                            )        
+                                            button_new_subject                        
+
+                                ],
+                                alignment= ft.alignment.bottom_left
+                            )
                             
                         ],
-                        spacing=50
+                        spacing=30
                     ),
                     ft.Row(
                         controls=[
 
                             
                         ],
-                        spacing=50
                     ),
                     
-                ]
+                ],
+                spacing=30
             )
         
         head_layout = navigator
@@ -187,7 +211,6 @@ class SubjectEditor(ft.Container):
                     down_layout
                 ],
             ),
-            margin = 20,
             expand = True
         )
         
@@ -215,9 +238,18 @@ class SubjectEditor(ft.Container):
         professor = self.professor_selector.get_value()
         classroom = self.classroom_selector.get_value()
         hours_distribution = self.selector_hours_distribution.get_hours_distribution()
+        is_online = self.online_switch.is_online()
         print("Total de horas", hours_distribution.total())
         
         # crear nueva materia en la base de datos
+        
+        if not is_avaible_subject(professor,
+                              classroom,
+                              groups,
+                              hours_distribution,
+                              is_online):
+            return None    
+    
         
         info_subject = InfoSubject(
             name, 
@@ -225,7 +257,8 @@ class SubjectEditor(ft.Container):
             professor, 
             classroom, 
             groups, 
-            hours_distribution
+            hours_distribution,
+            is_online = is_online
         )
         
         self.bd.subjects.add(info_subject)
@@ -236,10 +269,11 @@ class SubjectEditor(ft.Container):
     def set_values_subject(self):
         pass 
         
-    
-    
-def main(page : ft.page):
-    subject_editor = SubjectEditor(Bd, lambda: print("hola"))
-    page.add(subject_editor)
-    
-ft.app(target=main)
+#    
+#    
+#def main(page : ft.page):
+#    subject_editor = SubjectEditor(Bd, lambda: print("hola"))
+#    page.add(subject_editor)
+#    
+#ft.app(target=main)
+#

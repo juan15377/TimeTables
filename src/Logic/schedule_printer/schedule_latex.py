@@ -159,7 +159,7 @@ class ScheduleLatex():
         
         
         
-    def compile_to_latex(self, save_path, file_name):
+    def compile_to_latex(self):
         
         print(type(self.professors[1]))
         
@@ -208,7 +208,8 @@ class ScheduleLatex():
             \\end{{document}}
             """
             
-        save_latex_to_file_and_compile(latex_content, save_path, file_name)
+        return latex_content
+            
         
         
         pass 

@@ -79,9 +79,9 @@ class SymbolLatex:
         }
 
         column_format_dict = {
-            1: "|c|p{3cm}|c|c|c|c|c|",
-            2: "|c|p{3cm}|p{4cm}|c|c|",
-            3: "|c|p{3cm}|p{4cm}|c|c|c|c|"
+            1: "|c|c|c|c|c|c|c|",
+            2: "|c|c|c|c|c|",
+            3: "|c|c|c|c|c|c|c|"
         }
 
         header = f"""

@@ -149,6 +149,7 @@ class LoadSubject():
         self.vbloques_drop.update()
         self.block_selection.update()
 
+
 class SubjectSelector(ft.Container):
 
     def __init__(self, board, pga):
@@ -220,6 +221,18 @@ class SubjectSelector(ft.Container):
                         
             )
         
+        contenedor_borde = ft.Container(
+        content=ft.Container(
+            content= content,
+            padding=10,
+            bgcolor=ft.colors.BLACK87,  # Color de fondo del contenedor interno
+        ),
+        padding=2,  # Espesor del borde
+        bgcolor="white",  # Color del borde
+
+        )
+        
         super().__init__(
-            content
+            content = contenedor_borde,
+            
         )

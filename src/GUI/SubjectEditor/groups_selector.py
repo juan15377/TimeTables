@@ -27,8 +27,8 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
         
         super().__init__(
             content = self.table,
-            height= 300,
-            width = 600)  # Inicialización de UserControl
+            height= 370,
+            width = 500)  # Inicialización de UserControl
 
 
     def add_group(self, group):
@@ -72,8 +72,9 @@ class GroupSelector(ft.Container):
     
     def __init__(self, BD):
         tablegroups = TableGroups()
-        button_add_group_to_table = ft.IconButton(
-            icon = ft.icons.ADD
+        button_add_group_to_table = ft.FloatingActionButton(
+            icon = ft.icons.ADD,
+            text = "Add Group"
         )
         self.BD = BD
                 
@@ -102,7 +103,6 @@ class GroupSelector(ft.Container):
                     button_add_group_to_table,  # Botón para agregar un grupo a la tabla
                 ]
             ),
-            margin=30
         )
         
         

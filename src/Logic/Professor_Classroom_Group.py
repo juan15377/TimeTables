@@ -283,3 +283,4 @@ class Classrooms:
         for subject in classroom.get_subjects():
             self.subjects.remove(subject)
         self.classrooms.remove(classroom)
+

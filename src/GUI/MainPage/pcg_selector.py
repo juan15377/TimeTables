@@ -151,7 +151,8 @@ class Selector(ft.Container):
         # Store the container as an attribute
         super().__init__(
             column,
-            expand = False
+            expand = False,
+            ink = True
         )
 
 

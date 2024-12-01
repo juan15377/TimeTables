@@ -1,22 +1,7 @@
-# aumentar el tamaño del tablero de materias y de seleccion de materias
-# refactorizar MainPage en metodos encapsulados
-# que cada vez que se inicie las lista de grupos
-# imprimir la base de datos que se esta editando 
-# mejorar el tablero inicial en la esquina superior izquierda 
-# mejorar el SearchValue con un un mejor comportamiento
-# mejorar el boton de poder acceder a los professores
+# mejorar la logica para que exista la pobilidad de que se puedas materia en online 
+# mejorar la pagina de añadir materia para que exista la posibilidad de añadir materia 
+# al SearchValue agregarle dos metodos, uno de bloqueo y otro de desbliqueo, donnde ambos no hay forma de 
+# seleccionar nada 
+# mejorar la interaz inicial para que tenga color, y ademas el boton de mas se encuentre a la derecha 
+# mejorar la barra de navegacion
 
-
-# se necesita una refactorizacion urgente, de principio a fin
-
-
-# hay una objecto que es el principal de donde va arrancar el programa
-# que es de main_page 
-# hay un objecto secundario muy import 
-# mejorar el searchvalue para cuando se va actualizando los valores de la entrada
-# si un bloque es eliminado este deja remanente en la matriz de posibilidades
-
-
-#algo que se debe tomar en cuenta es que antes de eliminar cualquier grupo, aula o profesor
-# se deben eliminar todas las materias que esten relacionados con estos
-3 

@@ -25,7 +25,10 @@ def intersectAvailability(teacher, classroom, groups):
         return None
     group_availability_matrices = [group.availability_matrix for group in groups]
     availability_matrix_for_groups = reduce(lambda m1, m2: m1 & m2, group_availability_matrices)
-    availability_matrix_teacher = teacher.availability_matrix
+    if not (classroom == None):
+        availability_matrix_teacher = teacher.availability_matrix
+    else:
+        availability_matrix_teacher = np.ones((len(teacher.availability_matrix), len(teacher.availability_matrix[0])), dtype=bool)
     availability_matrix_classroom = classroom.availability_matrix
 
     avaibility_total = availability_matrix_for_groups & availability_matrix_teacher & availability_matrix_classroom
@@ -39,35 +42,49 @@ def update_availability_subject(subject, position, length_hours, value = False):
     col = position[1]
     estandarized_length = int(length_hours)
     subject.professor.availability_matrix[row:row + estandarized_length, col] = value
-    subject.classroom.availability_matrix[row:row + estandarized_length, col] = value
+    if not subject.online:
+        subject.classroom.availability_matrix[row:row + estandarized_length, col] = value
     for group in subject.groups:
         group.availability_matrix[row:row + estandarized_length, col] = value
 
     subject.professor.methods.update_subjects_availability_matrices()
-    subject.classroom.methods.update_subjects_availability_matrices()
+    if not subject.online:
+        subject.classroom.methods.update_subjects_availability_matrices()
     for grupo in subject.groups:
         grupo.methods.update_subjects_availability_matrices()
 
 
 
+class ClassroomOnline():
+    name = "Online"
+    availability_matrix = np.ones((30,7), dtype =  bool)
+    
 
 
 class Subject():
 
-    def __init__(self, name, code, professor, classroom, groups, hours_distribution) -> None:
+    def __init__(self, name, code, professor, classroom, groups, hours_distribution, is_online = False) -> None:
+        
+        if is_online:
+            classroom = ClassroomOnline()
+        
         self.name = name 
         self.code = code 
         self.professor = professor
         self.classroom = classroom
+        self.online = is_online
         self.groups = groups
         self.hours_distribution = hours_distribution
         self.allocated_subject_matrix = np.full((30, 7), False) # Matrix
+        
 
         self.availability_matrix = intersectAvailability(professor, classroom, groups)
         pass
 
     def update_availability_matrix(self):
-        self.availability_matrix = intersectAvailability(self.professor, self.classroom, self.groups)
+        self.availability_matrix = intersectAvailability(self.professor, 
+                                                         self.classroom, 
+                                                         self.groups)
         pass
 
     def set_hours_distribution(self, new_hours_distribution):
@@ -137,7 +154,8 @@ class InfoSubject():
                  professor, 
                  classroom, 
                  groups, 
-                 hours_distribution) -> None:
+                 hours_distribution,
+                 is_online = False) -> None:
         
         self.name = name
         self.code = code
@@ -145,6 +163,7 @@ class InfoSubject():
         self.classroom = classroom
         self.groups = groups
         self.hours_distribution = hours_distribution
+        self.is_online = is_online
         
         pass
 
@@ -162,11 +181,13 @@ class Subjects:
         classroom = subject_info.classroom
         groups = subject_info.groups
         hours_distribution = subject_info.hours_distribution
-        subject = Subject(name, code, professor, classroom, groups, hours_distribution)
+        is_online = subject_info.is_online
+        subject = Subject(name, code, professor, classroom, groups, hours_distribution, is_online = is_online)
         self.subjects.append(subject)
 
         professor.add_subject(subject)
-        classroom.add_subject(subject)
+        if not is_online:
+            classroom.add_subject(subject)
         for group in groups:
             group.add_subject(subject)
 

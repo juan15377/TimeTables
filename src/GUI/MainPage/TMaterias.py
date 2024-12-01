@@ -519,9 +519,11 @@ class ControlBlocksSubject(ft.Container):
         boardsubjects = ControlBoardSubjectSlots(pcg)
         self.boardsubjects = boardsubjects
         
-        button_to_change_page = ft.IconButton(
+        button_to_change_page =  ft.FloatingActionButton(
             icon=ft.icons.ADD,
             on_click=lambda e: to_change(),
+            text = "Gestionar datos",
+            focus_elevation= 10,
         )
         
         self.button_to_change_page = button_to_change_page
@@ -529,22 +531,24 @@ class ControlBlocksSubject(ft.Container):
         self.search = search
         self.pcg = pcg
         row = ft.Column(
-        controls = [
-                ft.Row(
-                    controls = [button_to_change_page,
-                                search
-                    ]
-                ),
-                ft.Row(
-                    controls = [      
-                        boardsubjects,
-                        boardsubjects.subject_selector,
-                    ]
-                )
-                ],
-            expand=False,
-            spacing=40,
-        )
+            controls = [
+                    ft.Row(
+                        controls = [
+                                    self.search,
+                                    self.button_to_change_page,
+                        ]
+                    ),
+                    ft.Row(
+                        controls = [      
+                            boardsubjects,
+                            boardsubjects.subject_selector,
+                        ]
+                    )
+                    ],
+                expand=False,
+                spacing=40,
+            )
+    
 
         super().__init__(
             content = ft.Row(
@@ -557,22 +561,23 @@ class ControlBlocksSubject(ft.Container):
         boardsubjects = ControlBoardSubjectSlots(pcg)
         self.pcg = pcg
         row = ft.Column(
-        controls = [
-                ft.Row(
-                    controls = [self.button_to_change_page,
-                                self.search
-                    ]
-                ),
-                ft.Row(
-                    controls = [      
-                        boardsubjects,
-                        boardsubjects.subject_selector,
-                    ]
-                )
-                ],
-            expand=False,
-            spacing=40,
-        )
+            controls = [
+                    ft.Row(
+                        controls = [
+                                self.search,
+                                self.button_to_change_page,
+                        ]
+                    ),
+                    ft.Row(
+                        controls = [      
+                            boardsubjects,
+                            boardsubjects.subject_selector,
+                        ]
+                    )
+                    ],
+                expand=False,
+                spacing=40,
+            )
         
         del super().content.controls[0]
         super().content.controls.append(row)
@@ -582,18 +587,23 @@ class ControlBlocksSubject(ft.Container):
     def update(self):
         boardsubjects = ControlBoardSubjectSlots(self.pcg)
         row = ft.Column(
-        controls = [
-                self.search,
-                ft.Row(
-                    controls = [      
-                        boardsubjects,
-                        boardsubjects.subject_selector,
-                    ]
-                )
-                ],
-            expand=False,
-            spacing=40,
-        )
+            controls = [
+                    ft.Row(
+                        controls = [
+                                self.search,
+                                self.button_to_change_page,
+                        ]
+                    ),
+                    ft.Row(
+                        controls = [      
+                            boardsubjects,
+                            boardsubjects.subject_selector,
+                        ]
+                    )
+                    ],
+                expand=False,
+                spacing=40,
+            )
         
         del super().content.controls[0]
         super().content.controls.append(row)   

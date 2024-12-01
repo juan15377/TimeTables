@@ -16,9 +16,11 @@ class NewProfessorOrClassroom(ft.Container):
             self.textfield_new.update()
             self.list_p.update()
         
-        button_new = ft.IconButton(
+        button_new = ft.FloatingActionButton(
             icon = ft.icons.ADD,
-            on_click = lambda e: add(e)
+            on_click = lambda e: add(e),
+            text = "new",
+            width = 190
         )
         
         super().__init__(
