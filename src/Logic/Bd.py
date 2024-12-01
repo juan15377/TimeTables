@@ -158,8 +158,7 @@ def load_data_base(page, db):
                 db.classrooms = new_bd.classrooms
                 db.groups = new_bd.groups
                 db.subjects = new_bd.subjects
-            #page.remove(load_file_dialog)
-            page.close()
+            page.remove(load_file_dialog)
                 
     load_file_dialog = FilePicker(on_result=load_file_path)
     
@@ -200,16 +199,25 @@ class BD():
         self.subjects = Subjects(self)
         pass
     
-    def generate_pdf(self, page):
-        generate_pdf_latex(page, self)
+    def generate_pdf(self, path_save):
+        schedule_latex = ScheduleLatex(self)
+        latex_content = schedule_latex.compile_to_latex()
+        save_latex_to_file_and_compile(latex_content, path_save)
+
         
-    def load_db(self, page):
-        load_data_base(page, self)
+    def load_db(self, path_new_db):
+        with open(path_new_db, "rb") as file:
+            new_bd = pickle.load(file)
+            self.professors = new_bd.professors
+            self.classrooms = new_bd.classrooms
+            self.groups = new_bd.groups
+            self.subjects = new_bd.subjects
+            print("Cantidad Profesores, ", len(self.professors.get()))
         
         
     
-    def save_db(self, page):
-        save_data_base(page, self)
+    def save_db(self, path_save_db):
+        save_object_to_pickle(self, path_save_db)
 
     def update_bd(self):
         pass
