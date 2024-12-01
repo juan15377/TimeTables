@@ -33,15 +33,6 @@ class Header(ft.Container):
                 self.DB.groups.remove(pga)
             self.listviewpga.update_()
 
-        button_remove_pga = ft.Container(
-                            content=ft.Text("Delete"),
-                            on_click=lambda e, pga=pga: delete_pga(pga),
-                            bgcolor=ft.colors.RED,
-                            width=70,
-                            height=30,
-                            alignment=ft.alignment.center
-                            )
-
         Title = ft.Container(
                 content=ft.Row(
                     controls=[

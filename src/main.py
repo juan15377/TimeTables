@@ -1,3 +1,5 @@
-from src.GUI import *
-from src.Logic import *
-
+from src.GUI.MainPage import main
+import flet as ft
+ft.app(main)
+#
+#

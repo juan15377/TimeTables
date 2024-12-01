@@ -1,17 +1,6 @@
 import sys
 import flet as ft
 
-# Rutas de módulos personalizados
-MODULE_PATHS = [
-    "tests/Logic/",
-    "src/Logic/",
-]
-
-# Asegurar que las rutas estén agregadas al PATH si no están presentes
-for path in MODULE_PATHS:
-    if path not in sys.path:
-        sys.path.append(path)
-
 # Aquí puedes agregar la lógica para la creación de la lista
 # Object responsible for creating a list
 

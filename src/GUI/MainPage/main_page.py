@@ -190,7 +190,7 @@ class MainPage():
             leading=ft.Column(
                     controls = [ft.FloatingActionButton(icon=ft.icons.DATA_OBJECT, 
                                             text="Print",
-                                            on_click = lambda e: pick_file_printer.pick_files(
+                                            on_click = lambda e: pick_file_printer.save_file(
                         )),
                                 ft.FloatingActionButton(icon=ft.icons.SAVE, 
                                             text="Guargar",
@@ -252,7 +252,6 @@ def main(page: ft.Page):
     MainPage(Bd, page)
 
 
-ft.app(main)
 
 
 # ? arreglar el problema de deslizamiento hacia abajo
