@@ -79,8 +79,35 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
         os.chdir(original_directory)  # Restaurar el directorio original
 
     print(f"Archivo .tex guardado en: {tex_file_path}")
+
+def delete_exceptions(texto):
+
+    reemplazos = {
+    # Letras minúsculas con acentos y diéresis
+    'á': r"\'a", 'é': r"\'e", 'í': r"\'i", 'ó': r"\'o", 'ú': r"\'u",
+    'à': r"\`a", 'è': r"\`e", 'ì': r"\`i", 'ò': r"\`o", 'ù': r"\`u",
+    'ä': r'\"a', 'ë': r'\"e', 'ï': r'\"i', 'ö': r'\"o', 'ü': r'\"u',
+    'ã': r'\~a', 'õ': r'\~o', 'ñ': r'\~n',
+
+    # Letras mayúsculas con acentos y diéresis
+    'Á': r"\'A", 'É': r"\'E", 'Í': r"\'I", 'Ó': r"\'O", 'Ú': r"\'U",
+    'À': r"\`A", 'È': r"\`E", 'Ì': r"\`I", 'Ò': r"\`O", 'Ù': r"\`U",
+    'Ä': r'\"A ', 'Ë': r'\"E', 'Ï': r'\"I', 'Ö': r'\"O', 'Ü': r'\"U',
+    'Ã': r' \~A ', 'Õ': r'\~O', 'Ñ': r'\~N',
+
+    # Reemplazo de comillas dobles
+    '"': r' \textquotedblleft  ',  # Comillas de apertura
+    '"': r' \textquotedblright ',  # Comillas de cierre
+    }
+
+
     
+    for caracter, latex in reemplazos.items():
+        texto = texto.replace(caracter, latex)
     
+    return texto
+
+
 class ScheduleLatex():
     
     def __init__(self, bd):
@@ -163,16 +190,20 @@ class ScheduleLatex():
                 
         input_text = f"""
         {create_professors_latex(self.professors)}
+
+        {create_groups_latex(self.groups)}
         
         {create_classrooms_latex(self.classrooms)}
         
-        {create_groups_latex(self.groups)}
     
         
         """
         
         latex_content = f"""
-            \\documentclass{{article}}
+           \\documentclass{{article}}
+            \\usepackage[utf8]{{inputenc}}
+            \\usepackage[T1]{{fontenc}}
+            \\usepackage[spanish]{{babel}}
             \\usepackage[utf8]{{inputenc}}
             \\usepackage[spanish]{{babel}}
             \\usepackage{{amsmath}}
@@ -182,10 +213,12 @@ class ScheduleLatex():
             \\usepackage{{xcolor, colortbl}}
             \\usepackage{{lscape}}
             \\usepackage{{array, multirow, multicol}}
-            \\usepackage[margin=0.5in]{{geometry}} % Adjust margins to 0.5 inches
+            \\usepackage[margin=0.47in]{{geometry}} % Adjust margins to 0.5 inches
             \\usepackage{{fancyhdr}}
             \\usepackage{{longtable}}
             \\usepackage{{adjustbox}}
+            \\usepackage[table,xcdraw]{{xcolor}} % Para colores en las tablas
+            \\usepackage{{enumitem}} % Para personalizar las listas
 
             % Define a new command for subsubsubsections
             \\newcommand{{\\subsubsubsection}}[1]{{ \\paragraph{{#1}}\\mbox{{}}\\\\ }}
@@ -206,7 +239,7 @@ class ScheduleLatex():
             \\end{{document}}
             """
             
-        return latex_content
+        return  delete_exceptions(latex_content)
             
         
         

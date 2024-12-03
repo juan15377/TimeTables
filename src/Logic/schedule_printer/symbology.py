@@ -11,7 +11,6 @@ class SubjectLatex:
         self.color = color  # Assume color is a tuple (r, g, b)
         self.hours_matrix = hours_matrix
 
-
 class SymbolLatex:
     def __init__(self):
         self.subjects = []
@@ -25,12 +24,14 @@ class SymbolLatex:
         return " & ".join(vector) + " "
 
     def _table_elements(self, vector):
+
         """Create a LaTeX tabular representation for the vector."""
-        table = "\\begin{tabular}{c}\n"
+        table = "\\begin{itemize}[left=0pt,align=left]"
         for element in vector[:-1]:
-            table += f"{element} \\\\\n\\hline\n"
-        table += f"{vector[-1]} \\\\\n"
-        table += "\\end{tabular}\n"
+            table += "\\item " + f"{element} \n"
+        if len(vector) != 0:
+            table += "\\item " + f"{vector[-1]} \n"
+        table += "\\end{itemize}"
         return table
 
     def _convert_subject(self, subject, type_):
@@ -79,13 +80,13 @@ class SymbolLatex:
         }
 
         column_format_dict = {
-            1: "|c|c|c|c|c|c|c|",
-            2: "|c|c|c|c|c|",
-            3: "|c|c|c|c|c|c|c|"
+            1: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|",
+            2: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{3.5cm}|>{\centering\\arraybackslash}m{3.5cm}|",
+            3: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{2.15cm}|>{\centering\\arraybackslash}m{1.8cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|"
         }
 
         header = f"""
-        \\begin{{longtable}}{{{column_format_dict[self.type]}}}
+        \\begin{{tabular}}{{{column_format_dict[self.type]}}}
         \\hline
         {headers_dict[self.type]} \\\\
         \\hline
@@ -99,5 +100,6 @@ class SymbolLatex:
             \\hline
             """
 
-        footer = "\\end{longtable}"
+        footer = """\\end{tabular}
+                    """
         return header + body + footer
