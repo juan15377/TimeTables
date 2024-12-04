@@ -4,8 +4,8 @@ from flet import View
 
 from src.GUI.SubjectEditor import SubjectEditor
 
-def load_subjects_page(bd, page_to_route):
-    subject_editor = SubjectEditor(bd, reference_page_router = page_to_route)
+def load_subjects_page(bd, page_to_route, page):
+    subject_editor = SubjectEditor(bd, reference_page_router = page_to_route, page = page)
     return subject_editor
     pass
 
@@ -78,8 +78,8 @@ class EnrouterPage():
         self.page.update()
         
     
-    def navigate_to_new_subject(self, page_to_route):
-        page_content = load_subjects_page(self.bd, page_to_route)
+    def navigate_to_new_subject(self, page_to_route, page):
+        page_content = load_subjects_page(self.bd, page_to_route, page)
         self.load_page_content(page_content)
         
         pass 

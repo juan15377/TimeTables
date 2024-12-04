@@ -144,6 +144,7 @@ def initialize_control_board():
 
 
 
+
 def decompose_vector(vector):
     pos_in = 0
     positions = []

@@ -141,7 +141,8 @@ def delete_subject_from_DB(subject):
         group.availability_matrix = np.logical_or(group.availability_matrix, subject.allocated_subject_matrix)
     
     professor.remove_subject(subject)
-    classroom.remove_subject(subject)
+    if  not type(classroom) == ClassroomOnline:
+        classroom.remove_subject(subject)
     for group in groups:
         group.remove_subject(subject)
 

@@ -82,7 +82,7 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
 
 def delete_exceptions(texto):
 
-    reemplazos = {
+    replace_ = {
     # Letras minúsculas con acentos y diéresis
     'á': r"\'a", 'é': r"\'e", 'í': r"\'i", 'ó': r"\'o", 'ú': r"\'u",
     'à': r"\`a", 'è': r"\`e", 'ì': r"\`i", 'ò': r"\`o", 'ù': r"\`u",
@@ -102,7 +102,7 @@ def delete_exceptions(texto):
 
 
     
-    for caracter, latex in reemplazos.items():
+    for caracter, latex in replace_.items():
         texto = texto.replace(caracter, latex)
     
     return texto

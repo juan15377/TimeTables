@@ -70,16 +70,17 @@ class MainPage():
             professor_page.update()
             classroom_page.update()
             group_page.update()
+            page.update()
             
             
         def reference_to_add_subject_professors():
-            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page("/PROFESSORS"))
+            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page("/PROFESSORS"), self.page)
             
         def reference_to_add_subject_classrooms():
-            enrouter_page.navigate_to_new_subject(lambda :enrouter_page.change_page('/CLASSROOMS'))
+            enrouter_page.navigate_to_new_subject(lambda :enrouter_page.change_page('/CLASSROOMS'), self.page)
             
         def reference_to_add_subject_groups():
-            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page('/GROUPS'))
+            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page('/GROUPS'), self.page)
         
         professors_page = ProfessorsPage(bd, change_to_mainpage, reference_to_add_subject_professors)
         classrooms_page = ClassroomsPage(bd, change_to_mainpage, reference_to_add_subject_classrooms)
@@ -188,17 +189,21 @@ class MainPage():
             min_width=100,
             min_extended_width=400,
             leading=ft.Column(
-                    controls = [ft.FloatingActionButton(icon=ft.icons.DATA_OBJECT, 
+                    controls = [ft.FloatingActionButton(icon=ft.icons.PALETTE, 
                                             text="Print",
-                                            on_click = lambda e: pick_file_printer.save_file(
-                        )),
+                                            on_click = lambda e: pick_file_printer.save_file(),
+                                            width=100
+                                            ),
                                 ft.FloatingActionButton(icon=ft.icons.SAVE, 
                                             text="Guargar",
-                                            on_click = lambda e:  pick_file_save_db.save_file()),
-                                ft.FloatingActionButton(icon=ft.icons.CHARGING_STATION, 
+                                            on_click = lambda e:  pick_file_save_db.save_file(),
+                                            width=100
+                                            ),
+                                ft.FloatingActionButton(icon=ft.icons.DOWNLOAD_ROUNDED, 
                                             text="Cargar",
-                                            on_click = lambda e: pick_files_load_bd.pick_files(
-                        ),)
+                                            on_click = lambda e: pick_files_load_bd.pick_files(),
+                                            width=100
+                                            )
                     ]
                     ),
             group_alignment=-0.9,

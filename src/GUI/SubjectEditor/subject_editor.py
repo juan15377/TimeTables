@@ -45,13 +45,86 @@ class NavigatorBarBack(ft.Container):
             height=50,
             width=1450
         )
+        
+
+class Alert():
+    
+    def __init__(self, alert : str, page):
+        self.page = page
+        self.alert = alert
+        
+        def show_alert():
+            # Configurar el contenido del diálogo
+            alert = ft.AlertDialog(
+                title=ft.Text("¡Error!"),
+                content=ft.Text(self.alert),
+                actions=[
+                    ft.TextButton("Aceptar", on_click= lambda e : self.close_alert()),
+                    ft.TextButton("Cancelar", on_click= lambda e : self.close_alert()),
+                ],
+            )
+            # Mostrar el diálogo
+            page.dialog = alert
+            alert.open = True
+            page.update()
+
+            def cerrar_alerta(e):
+                # Cerrar el diálogo
+                page.dialog.open = False
+                page.update()
+
+        self.show_alert = show_alert
+
+    def show(self):
+        self.show_alert()
+        
+    def close_alert(self):
+        self.page.dialog.open = False
+        self.page.update()
+
+class Data:
+    def __init__(self) -> None:
+        self.counter = 0
+
+class AlertNewSubject():
+    
+    def __init__(self, page):
+        d = Data()
+        page.snack_bar = ft.SnackBar(
+        content=ft.Text("Hello, world!"),
+        action="Alright!",
+        )
+    
+        
+        def on_click():
+            page.snack_bar = ft.SnackBar(ft.Text(f"Hello {d.counter}"))
+            page.snack_bar.open = True
+            d.counter += 1
+            page.update()
+        
+        self.show = lambda : on_click()
+        
 
 # esta clase tiene dos objectivos, que carguen los datos de una materia y desde este se puedan editar estos
 # otro es que esta clase tiene es que sea capaz de crear una nueva materia 
 
-def is_avaible_subject(professor, classroom, groups, hours_distribution, is_online):
+def is_avaible_subject(professor, classroom, groups, hours_distribution, is_online, page):
     
-    if professor == None or groups == [] or hours_distribution.total()== 0:
+    if professor == None:
+        alert = Alert("No se ah seleccionado el professor", page)
+        alert.show()
+        return False
+    if classroom == None and not is_online:
+        alert = Alert("No se ah seleccionado el Aula correctamente", page)
+        alert.show()
+        return False 
+    if groups == []:
+        alert = Alert("No se ah seleccionado ningun Grupo", page)
+        alert.show()
+        return False
+    if sum(hours_distribution. get_avaible_hours()) == 0:
+        alert = Alert("La seleccion de distribuccion de horas es incorrecta", page)
+        alert.show()
         return False
     if is_online:
         return True
@@ -63,9 +136,12 @@ def is_avaible_subject(professor, classroom, groups, hours_distribution, is_onli
 
 class SubjectEditor(ft.Container):
     
-    def __init__(self, bd, reference_page_router, subject = False):
+    def __init__(self, bd, reference_page_router, page, subject = False):
         print(reference_page_router)
         self.bd = bd
+        self.page = page
+        
+        self.show_to_new_subject = lambda e : AlertNewSubject(self.page).show()
         
         name_code_subject = NameCodeSubject("", "")
         self.name_code_subject = name_code_subject
@@ -242,21 +318,32 @@ class SubjectEditor(ft.Container):
          #                     hours_distribution,
          #                     is_online):
          #   return None    
-    
         
-        info_subject = InfoSubject(
-            name, 
-            code, 
-            professor, 
-            classroom, 
-            groups, 
-            hours_distribution,
-            is_online = is_online
-        )
-        
-        self.bd.subjects.add(info_subject)
-        
-        print("Se ah Creado Una Materia")
+        if is_avaible_subject(
+                        professor,
+                        classroom,
+                        groups,
+                        hours_distribution,
+                        is_online,
+                        self.page
+                        ):
+            
+            info_subject = InfoSubject(
+                name, 
+                code, 
+                professor, 
+                classroom, 
+                groups, 
+                hours_distribution,
+                self.page,
+                is_online = is_online
+            )
+            
+            self.bd.subjects.add(info_subject)
+            
+            # show to create new subject 
+            self.show_to_new_subject()
+            
         
         pass
         

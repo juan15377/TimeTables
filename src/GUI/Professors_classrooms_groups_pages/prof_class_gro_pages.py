@@ -245,6 +245,12 @@ class ListViewPCG(ft.Container):
         self.DB = DB  
         self.reference_pcgs = reference_pcgs
         self.expansions = []
+        
+        height = 400
+        width = 1500
+        
+        self.height_ = height
+        self.width_ = width
 
         def search(e):
             coincidence = search_textfield.value
@@ -253,8 +259,9 @@ class ListViewPCG(ft.Container):
                 expansions_column = ft.Column(
                     controls = all_expansions,
                     scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
-                    width=1300,
-                    height=500,
+                    width= width,
+                    height= height,
+                    expand = True
                 )
                 self.content.controls[1] = expansions_column
                 self.content.update()
@@ -279,8 +286,8 @@ class ListViewPCG(ft.Container):
         self.expansions_column = ft.Column(
             controls = self.expansions,
             scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
-            width=1300,
-            height=500,
+            width= width,
+            height= height,
             )
                 
         self.charges_expansions(all_expansions, update = False)
@@ -289,9 +296,8 @@ class ListViewPCG(ft.Container):
             content=ft.Column(
                 controls=[search_textfield] + [self.expansions_column],
             ),
-            width=1300,
-            height=600,
-            
+            width= width,
+            height=height,
             )        
         
     def charges_expansions(self, expansions, update = True):
@@ -300,8 +306,9 @@ class ListViewPCG(ft.Container):
             expansions_column = ft.Column(
                 controls = expansions,
                 scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                width=1300,
-                height=500,
+                width=self.width_,
+                height=self.height_,
+                expand = True
             )
             self.content=ft.Column(
                     controls=[self.search_textfield] + [expansions_column],
@@ -326,8 +333,9 @@ class ListViewPCG(ft.Container):
         expansions_column = ft.Column(
                 controls = expansions_filter,
                 scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                width=1300,
-                height=500,
+                width=self.width_,
+                height= self.height_,
+                expand = True
             )
         self.content.controls[1] = expansions_column
         self.content.update()
@@ -337,8 +345,9 @@ class ListViewPCG(ft.Container):
         expansions_column = ft.Column(
                 controls = all_expansions,
                     scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                    width=1300,
-                    height=500,
+                    width=self.width_,
+                    height= self.height_,
+                    expand = True
                 )
         print("Tamaño_de_expansiones :", len(all_expansions))
         self.content.controls[1].controls.clear()
@@ -405,15 +414,15 @@ class ProfessorsPage(ft.Container):
             content= ft.Column(
                 controls = [
                     navigatorbar,
+                    
                     ft.Row(
                         controls = [NewProfessor(self.bd, listviewprofessor),
                                    button_new_subject],
-                        spacing= 400
                     ),
                     listviewprofessor
                 ],
                 height=1000,
-                width=1600
+                width=1600,
             )
         )
         
@@ -447,16 +456,12 @@ class ClassroomsPage(ft.Container):
             content= ft.Column(
                 controls = [
                     navigatorbar,
-                    button_new_subject,
                     ft.Row(
                         controls = [NewClassroom(self.bd, listviewclassrooms),
-                                    ],
+                                     button_new_subject,]
                     ),
                     listviewclassrooms
                 ],
-                spacing=20,
-                height=1000,
-                width=1600
             )
         )
         pass
@@ -475,10 +480,12 @@ class GroupsPage(ft.Container):
         
         listviewgroups =  ListViewPCG(bd.groups.get, bd, reference_to_add_subject)
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
-
+        
         button_new_subject = ft.FloatingActionButton(
             text="add subject",
             on_click=lambda e: reference_to_add_subject(),
+            width=200,
+            height=60,
             icon = ft.icons.DELETE
         )
 
@@ -494,8 +501,8 @@ class GroupsPage(ft.Container):
                     ),
                     listviewgroups
                 ],
-                height=1400,
-                width=1600
+                height=1600,
+                width=1600,
             )
         )
         pass
