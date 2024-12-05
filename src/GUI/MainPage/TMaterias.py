@@ -180,13 +180,11 @@ def generate_subject_blocks(pga, control_board, subject):
     for column in range(7):
         column_ = hours_placed[:, column]
         positions = decompose_vector(column_)
-        print(positions)
         for position in positions:
             row = position[0]
             block_size = position[1] - position[0] 
             if position[1] == 29:
                 block_size += 1
-            print(block_size)
             block = SubjectBlock(pga, control_board, subject, block_size, (row, column))
             blocks.append(block)
     return blocks
@@ -289,7 +287,6 @@ def get_absolute_position(vector, req_pos):
                 return k
             continue
         size = ele.size
-        print("Size = ", c + ele.size)
         c = c + size
         k = k + 1
         if c == req_pos:
@@ -364,7 +361,6 @@ class ControlBoardSubjectSlots(ft.Container):
                                             subject_block)
         
         
-        print(subject_block.subject.allocated_subject_matrix)
         self.day_columns[j].controls = news_elements
         self.subject_blocks.new(subject_block, (i, j))
         if update_slots_block:
@@ -504,8 +500,6 @@ class SubjectBlock(ft.Container):
         color = RGB_to_hex(color)
         self.content.controls[0].content.bgcolor = color
         self.content.update()
-        print("actualizado")
-        print(self.content.controls[0].content.bgcolor)
 
 # !!! principal class 
 class ControlBlocksSubject(ft.Container):

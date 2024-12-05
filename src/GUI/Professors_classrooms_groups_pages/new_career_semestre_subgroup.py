@@ -165,9 +165,6 @@ class NewGroup(ft.Container):
             
             bd.groups.new(career, semester, subgroup)
             list_groups.update_()
-            
-            for gr in bd.groups.get():
-                print(gr.career.name + " " + gr.semester.name + " " + gr.subgroup.name)
         
         button_add_group = ft.IconButton(
             on_click= lambda e: add_group(e),

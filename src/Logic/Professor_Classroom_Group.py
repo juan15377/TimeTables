@@ -152,14 +152,12 @@ class Careers:
         # grupo, materias que 
         related_groups = [group for group in self.bd.groups.get() if group.career == career]
         related_subjects = []
-        print("Cantidad de grupos relacionados", len(related_groups))
         for group in related_groups:
                 related_subjects.extend(group.subjects)
                 
         delete_groups_subjects(related_groups, related_subjects, self.bd)
         self.careers.remove(career)
-        print("Cantidad de grupos", len(self.bd.groups.get()))
-        print("Cantidad de Carreraas", len(self.bd.groups.careers.get()))
+
         
 
     def new(self, name):

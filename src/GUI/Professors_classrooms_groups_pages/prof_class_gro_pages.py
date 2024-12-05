@@ -32,38 +32,45 @@ class Header(ft.Container):
             else:
                 self.DB.groups.remove(pga)
             self.listviewpga.update_()
-
-        Title = ft.Container(
-                content=ft.Row(
-                    controls=[
-                        ft.Text(self.name),
-                        pb,
-                        ft.Container(
-                            content=ft.Text("Delete"),
-                            on_click=lambda e, pga=pga: delete_pga(pga),
-                            bgcolor=ft.colors.RED,
-                            width=70,
-                            height=30,
-                            alignment=ft.alignment.center
-                            ),
-                        ft.Container(
-                            content=ft.Text("Edit"),
-                            on_click=lambda e: self.listviewpga.edit(pga),
-                            bgcolor=ft.colors.YELLOW,
-                            width=70,
-                            height=30,
-                            alignment=ft.alignment.center
-                        )           
-                    ],
-                    spacing=50
-                ),
-                height=50,
-                width=1600,
-                border_radius=10,
+            
+        column_Title = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("Name")),
+                ft.DataColumn(ft.Text("progress")),
+                ft.DataColumn(ft.Text("Delete")),
+                ft.DataColumn(ft.Text("Edit")),
+            ],
+            heading_row_color= ft.colors.WHITE30,
+            checkbox_horizontal_margin= 30,
+            data_row_color= ft.colors.WHITE60,
+            animate_offset= 10,
+            
             )
         
+        button_delete = ft.IconButton(
+            on_click=lambda e, pga=pga: delete_pga(pga),
+            icon = ft.icons.DELETE_SHARP
+        )
+        
+        button_edit = ft.IconButton(
+            on_click=lambda e: self.listviewpga.edit(pga),
+            icon = ft.icons.EDIT
+        )
+        
+        column_Title.rows.append(
+            ft.DataRow(
+                cells=[
+                        ft.DataCell(ft.Text(self.name, expand=True)),
+                        ft.DataCell(pb),
+                        ft.DataCell(button_delete),
+                        ft.DataCell(button_edit),
+                        ]
+            )
+        )
+      
+        
         super().__init__(
-            content=Title,
+            content=column_Title,
             width=1600,
             )
         
@@ -212,11 +219,9 @@ class SubjectListView(ft.Column):
 def filter_expansions(expansions, coincidence):
     # This should filter expansions that match the coincidence
     new_expansions = []
-    print("Ejecutando filtro de expansiones")
     for expansion in expansions:
         if coincidence.lower() in expansion.data.lower():  # Data stores the name of the PGA
             new_expansions.append(expansion)
-            print(len(new_expansions))
     return new_expansions
 
 def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
@@ -224,7 +229,6 @@ def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
     subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject, header)
     expansion = ft.ExpansionTile(
                     title=header,
-                    subtitle=ft.Text("Subjects"),
                     affinity=ft.TileAffinity.LEADING,
                     controls=[
                             ft.Container(
@@ -288,6 +292,7 @@ class ListViewPCG(ft.Container):
             scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
             width= width,
             height= height,
+            expand = True
             )
                 
         self.charges_expansions(all_expansions, update = False)
@@ -296,8 +301,7 @@ class ListViewPCG(ft.Container):
             content=ft.Column(
                 controls=[search_textfield] + [self.expansions_column],
             ),
-            width= width,
-            height=height,
+            expand = True
             )        
         
     def charges_expansions(self, expansions, update = True):
@@ -312,6 +316,7 @@ class ListViewPCG(ft.Container):
             )
             self.content=ft.Column(
                     controls=[self.search_textfield] + [expansions_column],
+                    expand = True
                 )
             self.update()   #self.content.controls= [self.search_textfield] + [self.expansions_column],
             
@@ -323,8 +328,6 @@ class ListViewPCG(ft.Container):
         for pcg in self.reference_pcgs():
             expansion = generate_expansion_view(pcg, self.DB, self, self.reference_to_add_subject)
             expansions.append(expansion)
-        print("Ingresando ala funcion de obtener todas las expanciones")
-        print("Tamaño_de_expansiones :", len(expansions))
         return expansions
     
     def search(self, coincidence):
@@ -349,7 +352,6 @@ class ListViewPCG(ft.Container):
                     height= self.height_,
                     expand = True
                 )
-        print("Tamaño_de_expansiones :", len(all_expansions))
         self.content.controls[1].controls.clear()
         self.content.controls[1] = expansions_column
         if update:
@@ -419,10 +421,11 @@ class ProfessorsPage(ft.Container):
                         controls = [NewProfessor(self.bd, listviewprofessor),
                                    button_new_subject],
                     ),
-                    listviewprofessor
+                    listviewprofessor,
                 ],
                 height=1000,
                 width=1600,
+                expand = True
             )
         )
         

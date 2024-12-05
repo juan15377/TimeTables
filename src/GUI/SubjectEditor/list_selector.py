@@ -12,7 +12,6 @@ class ListSelector(ft.Container):
             self.search_bar.close_view()
             self.controls = self.controls
             self.load_tag(tag)
-            print(tag)
 
         def close_search_bar():
             self.controls = self.controls 

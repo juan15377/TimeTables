@@ -100,7 +100,6 @@ class ElementSearch():
 
     def execute_function(self, pga):
         f = self.function_dict[pga.key]
-        print(pga.name)
         self.search_bar.close_view()
 
     def search_value(self, value):

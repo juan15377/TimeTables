@@ -49,11 +49,6 @@ def save_latex_to_file_and_compile(latex_content, file_path):
         result = subprocess.run(['pdflatex', file_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Verificar si la compilación fue exitosa
-        if result.returncode == 0:
-            print(f"PDF generado exitosamente en: {os.path.join(save_path, f'{file_name}.pdf')}")
-        else:
-            print("Hubo un error durante la compilación de LaTeX:")
-            print(result.stderr.decode())  # Mostrar el error si la compilación falla
     finally:
         # Eliminar archivos temporales generados por pdflatex
         latex_files = [f'{file_name}.aux', f'{file_name}.log', f'{file_name}.out', f'{file_name}.toc', f'{file_name}.fls', f'{file_name}.synctex.gz']
@@ -61,11 +56,9 @@ def save_latex_to_file_and_compile(latex_content, file_path):
             file_path_temp = os.path.join(save_path, file)
             if os.path.exists(file_path_temp):
                 os.remove(file_path_temp)
-                print(f"Archivo temporal eliminado: {file_path_temp}")
 
         os.chdir(original_directory)  # Restaurar el directorio original
 
-    print(f"Archivo .tex guardado en: {file_path}")
 
 
 def save_object_to_pickle(obj, path):
@@ -83,7 +76,6 @@ def save_object_to_pickle(obj, path):
     with open(path, "wb") as file:
         pickle.dump(obj, file)
 
-    print(f"Objeto guardado exitosamente en {path}")
 
 
 
@@ -128,14 +120,12 @@ def save_object_to_pickle(obj, path):
     with open(path, "wb") as file:
         pickle.dump(obj, file)
 
-    print(f"Objeto guardado exitosamente en {path}")
 
 def save_data_base(page, bd):
     def save_file_result(e: FilePickerResultEvent):
         if e.path:
             save_object_to_pickle(bd, e.path)
             page.remove(save_file_dialog)
-            print("Archivo guardado exitosamente")
 
     save_file_dialog = FilePicker(on_result=save_file_result)
 
@@ -178,7 +168,6 @@ def generate_pdf_latex(page, bd):
             latex_content = schedule_latex.compile_to_latex()
             save_latex_to_file_and_compile(latex_content, e.path)
             page.remove(save_file_dialog)
-            print("Archivo guardado exitosamente")
 
     save_file_dialog = FilePicker(on_result=save_file_result)
 
@@ -212,7 +201,6 @@ class BD():
             self.classrooms = new_bd.classrooms
             self.groups = new_bd.groups
             self.subjects = new_bd.subjects
-            print("Cantidad Profesores, ", len(self.professors.get()))
         
         
     

@@ -146,14 +146,12 @@ class MainPage():
             selected_files.value = (
                 ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
             )
-            print("BHJHGFDCFVGBHNJKMLGFDFGVHBJNKMLJGFCDXSDCFGVHBJNKM")
             self.bd.load_db(e.files[0].path)
             professor_page.update()
             classroom_page.update()
             group_page.update()
             self.restart()
             #selected_files.update()
-            print("Cargar base de datos")
 
         pick_files_load_bd = FilePicker(on_result=load_db)
         selected_files = Text()
@@ -162,7 +160,6 @@ class MainPage():
         def save_db(e: FilePickerResultEvent):
             save_file_path.value = e.path if e.path else "Cancelled!"
             self.bd.save_db(e.path)
-            print("Guardar Base de Datos")
             #save_file_path.update()
 
         pick_file_save_db = FilePicker(on_result=save_db)
@@ -173,7 +170,6 @@ class MainPage():
             directory_path.value = e.path if e.path else "Cancelled!"
             if e.path:
                 self.bd.generate_pdf(e.path)
-            print("imprimir Base de datos")
             #directory_path.update()
 
         pick_file_printer = FilePicker(on_result=printer_db)

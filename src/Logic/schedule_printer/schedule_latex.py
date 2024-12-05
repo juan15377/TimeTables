@@ -62,11 +62,6 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
         result = subprocess.run(['pdflatex', f'{file_name}.tex'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Verificar si la compilación fue exitosa
-        if result.returncode == 0:
-            print(f"PDF generado exitosamente en: {save_path}/{file_name}.pdf")
-        else:
-            print("Hubo un error durante la compilación de LaTeX:")
-            print(result.stderr.decode())  # Mostrar el error si la compilación falla
     finally:
         # Eliminar archivos temporales generados por pdflatex
         latex_files = [f'{file_name}.aux', f'{file_name}.log', f'{file_name}.out', f'{file_name}.toc', f'{file_name}.fls', f'{file_name}.synctex.gz']
@@ -74,11 +69,9 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
             file_path = os.path.join(save_path, file)
             if os.path.exists(file_path):
                 os.remove(file_path)
-                print(f"Archivo temporal eliminado: {file_path}")
 
         os.chdir(original_directory)  # Restaurar el directorio original
 
-    print(f"Archivo .tex guardado en: {tex_file_path}")
 
 def delete_exceptions(texto):
 
@@ -132,7 +125,6 @@ class ScheduleLatex():
                 )
                 
                 professor_tex.add_subject(subject_tex)
-            print(professors_tex)
             professors_tex.append(professor_tex)
         
         for classroom in bd.classrooms.get():

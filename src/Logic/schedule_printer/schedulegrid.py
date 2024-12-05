@@ -51,7 +51,6 @@ class GridLatex:
         self.latex_matrix[:, 0] = self.hours_labels
         self.latex_matrix[0, :] = self.days_labels
         
-        print(self.latex_matrix)
 
     def add_subject(self, subject):
         latex_matrix = self.latex_matrix
@@ -147,7 +146,6 @@ def lineas_fila(vector_bool):
     return cadena
 
 def unir_elementos_de_un_vector(vector):
-    print(vector)
     return " & ".join(vector)
 
 

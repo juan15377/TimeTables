@@ -13,7 +13,6 @@ from src.Logic.Subjects import InfoSubject
 class NavigatorBarBack(ft.Container):
     
     def __init__(self, funct_to_back):
-        print("funct_to_back", funct_to_back)
 
         pagelet = ft.Pagelet(
             appbar=ft.AppBar(
@@ -137,7 +136,6 @@ def is_avaible_subject(professor, classroom, groups, hours_distribution, is_onli
 class SubjectEditor(ft.Container):
     
     def __init__(self, bd, reference_page_router, page, subject = False):
-        print(reference_page_router)
         self.bd = bd
         self.page = page
         
@@ -286,7 +284,6 @@ class SubjectEditor(ft.Container):
         pass 
     
     def save_changes(self):
-        print(len(self.bd.subjects.get()))
         pass
     
     
@@ -308,7 +305,6 @@ class SubjectEditor(ft.Container):
         classroom = self.classroom_selector.get_value()
         hours_distribution = self.selector_hours_distribution.get_hours_distribution()
         is_online = self.online_switch.is_online()
-        print("Total de horas", hours_distribution.total())
         
         # crear nueva materia en la base de datos
         
