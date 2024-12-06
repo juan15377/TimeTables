@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{geometry}
+\usepackage{multirow}
+\usepackage{pdflscape} % Para orientación horizontal
+\usepackage{adjustbox} % Para ajustar el tamaño de la tabla
+\geometry{margin=0cm} % Elimina los márgenes
+
+\begin{document}
+
+\begin{landscape} % Inicia la página en orientación horizontal
+
+\begin{table}[h!]
+\centering
+\adjustbox{max width=\textwidth, max height=\textheight}{ % Ajusta la tabla al tamaño de la hoja
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} % 17 columnas en total
+\hline
+\rowcolor[rgb]{0.8,0.8,0.8} % Color gris claro
+\multirow{2}{*}{\textbf{Semestre}} 
+& \multirow{2}{*}{\textbf{Grupo}} 
+& \multirow{2}{*}{\textbf{Profesor}} 
+& \multicolumn{2}{|c|}{\textbf{Lunes}} 
+& \multicolumn{2}{|c|}{\textbf{Martes}} 
+& \multicolumn{2}{|c|}{\textbf{Miércoles}} 
+& \multicolumn{2}{|c|}{\textbf{Jueves}} 
+& \multicolumn{2}{|c|}{\textbf{Viernes}} 
+& \multicolumn{2}{|c|}{\textbf{Sábado}} 
+& \multicolumn{2}{|c|}{\textbf{Domingo}} \\
+\cline{4-17}
+& & & \textbf{Hora Entrada} & \textbf{Hora Salida} 
+& \textbf{Hora Entrada} & \textbf{Hora Salida} 
+& \textbf{Hora Entrada} & \textbf{Hora Salida} 
+& \textbf{Hora Entrada} & \textbf{Hora Salida} 
+& \textbf{Hora Entrada} & \textbf{Hora Salida} 
+& \textbf{Hora Entrada} & \textbf{Hora Salida} 
+& \textbf{Hora Entrada} & \textbf{Hora Salida} \\
+\hline
+
+\cellcolor[rgb]{0.9,0.9,1} & A & Prof. Pérez & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 \\
+\cline{2-17}
+\multirow{-2}{*}{\cellcolor[rgb]{0.9,0.9,1}{\textbf{Semestre 1}}}& B & Prof. Sánchez & 10:00 & 11:00 & 10:00 & 11:00 & 10:00 & 11:00 & 10:00 & 11:00 & 10:00 & 11:00 & 10:00 & 11:00 & 10:00 & 11:00 \\
+\hline
+\multirow{3}{*}{\cellcolor[rgb]{1,0.9,0.9} \textbf{Semestre 2}} & A & Prof. López & 8:00 & 9:00 & 8:00 & 9:00 & 8:00 & 9:00 & 8:00 & 9:00 & 8:00 & 9:00 & 8:00 & 9:00 & 8:00 & 9:00 \\
+\cline{2-17}
+ & B & Prof. Martínez & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 & 9:00 & 10:00 \\
+\cline{2-17}
+ & C & Prof. Gómez & 11:00 & 12:00 & 11:00 & 12:00 & 11:00 & 12:00 & 11:00 & 12:00 & 11:00 & 12:00 & 11:00 & 12:00 & 11:00 & 12:00 \\
+\hline
+\end{tabular}
+}
+\caption{Horario de clases con colores y combinación de celdas}
+\end{table}
+
+\end{landscape}
+
+\end{document}
