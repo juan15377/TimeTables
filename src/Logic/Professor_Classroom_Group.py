@@ -45,9 +45,9 @@ class SubjectColors:
 
     def add_subject(self, subject):
         """Assigns a random color to a new subject."""
-        red = rn.randint(0, 255)
-        green = rn.randint(0, 255)
-        blue = rn.randint(0, 255)
+        red = rn.randint(150, 255)
+        green = rn.randint(150, 255)
+        blue = rn.randint(150, 255)
         color = MyColorRGB(red, green, blue)
         self.colors[subject] = color
 

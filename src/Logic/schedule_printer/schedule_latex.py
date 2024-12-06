@@ -172,9 +172,9 @@ class ScheduleLatex():
                 group_tex.add_subject(subject_tex)
             groups_tex.append(group_tex)
             
-            self.professors = professors_tex
-            self.classrooms = classrooms_tex
-            self.groups = groups_tex
+        self.professors = professors_tex
+        self.classrooms = classrooms_tex
+        self.groups = groups_tex
         
         
         
@@ -188,7 +188,6 @@ class ScheduleLatex():
         {create_classrooms_latex(self.classrooms)}
         
     
-        
         """
         
         latex_content = f"""
