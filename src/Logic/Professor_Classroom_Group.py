@@ -31,6 +31,15 @@ class PCGMethods:
             total_hours += subject.hours_distribution.total()
             missing_hours += subject.hours_distribution.remaining()
         return 1 - missing_hours / total_hours if total_hours != 0 else 1
+    
+    def get_status_completed(self):
+        """Calculates the completion rate of assigned hours."""
+        total_hours = 0
+        missing_hours = 0
+        for subject in self.pcg.subjects:
+            total_hours += subject.hours_distribution.total()
+            missing_hours += subject.hours_distribution.remaining()
+        return 1 - missing_hours / total_hours if total_hours != 0 else 1
 
 
 class SubjectColors:
@@ -83,7 +92,7 @@ class PCG:
         return self.subjects
 
 # ? Profesor
-# ? Professor, Classroom, and Group classes extend from PGA
+# ? Professor, Classroom, and Group classes extend from PCG
 
 DEFAULT_PCG = PCG()
 

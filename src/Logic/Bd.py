@@ -201,6 +201,7 @@ class BD():
             self.classrooms = new_bd.classrooms
             self.groups = new_bd.groups
             self.subjects = new_bd.subjects
+            self.subjects.BD = self
         
         
     
@@ -209,4 +210,18 @@ class BD():
 
     def update_bd(self):
         pass
+    
+    
+    def get_status_completed(self):
+        sum_hours_total = 0
+        sum_hours_restart = 0
+        
+        for subject in self.subjects.get():
+            sum_hours_total += subject.hours_distribution.total
+            sum_hours_remaining += subject.hours_distribution.remaining
+        
+        return 1 - sum_hours_remaining / sum_hours_total if sum_hours_total != 0 else 1 
+    
+
+    
 

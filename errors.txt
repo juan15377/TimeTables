@@ -5,3 +5,4 @@
 # mejorar la interaz inicial para que tenga color, y ademas el boton de mas se encuentre a la derecha 
 # mejorar la barra de navegacion
 
+# una vez que se carga la pantalla de professores esta parece ligarse a la base de datos con la que se incializo

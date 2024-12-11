@@ -19,7 +19,7 @@ class Header(ft.Container):
             pga_name = pga.name
         self.name = pga_name
 
-        pb = ft.ProgressBar(width=400)
+        pb = ft.ProgressBar(width=400, bgcolor= ft.colors.RED, color = "green")
         pb.value = pga.methods.completion_rate()
 
         self.pb = pb 
@@ -40,9 +40,7 @@ class Header(ft.Container):
                 ft.DataColumn(ft.Text("Delete")),
                 ft.DataColumn(ft.Text("Edit")),
             ],
-            heading_row_color= ft.colors.WHITE30,
             checkbox_horizontal_margin= 30,
-            data_row_color= ft.colors.WHITE60,
             animate_offset= 10,
             
             )
@@ -85,7 +83,6 @@ class Header(ft.Container):
     def update(self):
         self.pb.value = self.pga.methods.completion_rate()
         self.pb.update()
-
         pass  
 
 class SubjectListView(ft.Column):
@@ -96,17 +93,30 @@ class SubjectListView(ft.Column):
         self.pga = pga
         self.reference_to_add_subject = reference_to_add_subject
         self.header_subject = header_subject
-        
-        
-        button_new_subject = ft.FloatingActionButton(
-            text="Add Subject",
-            on_click=lambda e: self.add_subject(),
-            width=1600,
-            height=60,
-            icon = ft.icons.ADD
+            
+        super().__init__(
+            controls=[],  # Add button for adding new subjects
+            scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
+            expand = True,
+            alignment = ft.alignment.top_left
         )
         
-        subjects = ft.DataTable(
+        self.update(update = False)
+
+            
+    def edit_subject(self, s):
+        # This should open a new window to edit subject information
+        pass 
+
+    def add_subject(self):
+        self.reference_to_add_subject()
+        pass
+    
+    def update(self, update = True):
+        # tambie se tiene que actualizar el header
+        
+        
+        subjects_list = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("name Subject")),
                 ft.DataColumn(ft.Text("progress")),
@@ -114,8 +124,9 @@ class SubjectListView(ft.Column):
                 ft.DataColumn(ft.Text("Classroom")),
                 ft.DataColumn(ft.Text("total hours")),
                 ft.DataColumn(ft.Text("delete")),
-            ]
-            )
+                ft.DataColumn(ft.Text("edit")),
+            ],
+        )
 
         for subject in self.pga.get_subjects():
             
@@ -123,11 +134,15 @@ class SubjectListView(ft.Column):
                 self.DB.subjects.remove(subject)
                 self.update()
                 
+            def edit_subject_from_bd(subject):
+                self.edit_subject(subject)
+                self.update()
+                
             name = subject.name 
             progress = ft.ProgressBar(width=400)
             progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
             
-            subjects.rows.append(
+            subjects_list.rows.append(
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text(name)),
@@ -140,89 +155,21 @@ class SubjectListView(ft.Column):
                                                  
                                                  ), 
                         ),
-                    ],
-                )
-            )
-        
-            
-        super().__init__(
-            controls=[subjects],  # Add button for adding new subjects
-            alignment=ft.alignment.top_left,
-            scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-            width=1600,
-            height=1800,
-        )
-        
-        self.button_new_subject = button_new_subject
-    
-    def edit_subject(self, s):
-        # This should open a new window to edit subject information
-        pass 
-
-    def add_subject(self):
-        self.reference_to_add_subject()
-        pass
-    
-    def update(self):
-        # tambie se tiene que actualizar el header
-        
-
-        button_new_subject = ft.FloatingActionButton(
-            text="Add Subject",
-            on_click=lambda e: self.add_subject(),
-            width=1600,
-            height=60,
-            icon = ft.icons.DELETE
-        )
-        
-        subjects = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("name Subject")),
-                ft.DataColumn(ft.Text("progress")),
-                ft.DataColumn(ft.Text("professor")),
-                ft.DataColumn(ft.Text("Classroom")),
-                ft.DataColumn(ft.Text("total hours")),
-                ft.DataColumn(ft.Text("delete")),
-            ]
-        )
-
-        for subject in self.pga.get_subjects():
-            
-            def delete_subject_from_bd(subject):
-                self.DB.subjects.remove(subject)
-                self.update()
-                
-            name = subject.name 
-            progress = ft.ProgressBar(width=400)
-            progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
-            
-            subjects.rows.append(
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(name)),
-                        ft.DataCell(progress),
-                        ft.DataCell(ft.Text(subject.professor.name)),
-                        ft.DataCell(ft.Text(subject.classroom.name)),
-                        ft.DataCell(ft.Text(str(subject.hours_distribution.total()))),
-                        ft.DataCell(ft.Container(content=ft.Text("Delete"),
-                                                 on_click=lambda e, s=subject: delete_subject_from_bd(s)), 
+                        ft.DataCell(ft.Container(content=ft.IconButton(icon = ft.icons.EDIT,
+                                                                       on_click=lambda e, s=subject: edit_subject_from_bd(s)),
+                                                 
+                                                 )
                         ),
                     ],
+                    
                 )
             )
         
-        self.controls = [subjects]
-        self.header_subject.update()
-        super().update()
+        self.controls = [subjects_list]
+        if update:
+            self.header_subject.update()
+            super().update()
 
-
-def filter_expansions(expansions, coincidence):
-    # This should filter expansions that match the coincidence
-    new_expansions = []
-    for expansion in expansions:
-        if coincidence.lower() in expansion.data.lower():  # Data stores the name of the PGA
-            new_expansions.append(expansion)
-    return new_expansions
 
 def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
     header = Header(DB, pcg, listviewpcg)
@@ -233,94 +180,68 @@ def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
                     controls=[
                             ft.Container(
                                     content=subject_list,
-                                    height=200,  # Set height to allow scrolling
+                                    height=400,  # Set height to allow scrolling
+                                    alignment= ft.alignment.top_left
                                 )
                             ],
-                            data=header.name
+                            data=header.name,                            
                         )
     return expansion
 # simplemente es una lista de los grupo, aulas, y profesores, simplemente tiene un buscador arriba
 # solo actualizar la columas de expansiones
 
-class ListViewPCG(ft.Container):
+
+# methods: update
+class ListViewPCG(ft.Column):
 
     def __init__(self, reference_pcgs, DB, reference_to_add_subject):
         self.reference_to_add_subject = reference_to_add_subject
         self.DB = DB  
-        self.reference_pcgs = reference_pcgs
+        self.reference_pcgs = reference_pcgs # to get pcgs 
         self.expansions = []
         
-        height = 400
-        width = 1500
-        
-        self.height_ = height
-        self.width_ = width
-
         def search(e):
             coincidence = search_textfield.value
-            if coincidence == "":
-                all_expansions = self.get_all_expansions()
-                expansions_column = ft.Column(
-                    controls = all_expansions,
-                    scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
-                    width= width,
-                    height= height,
-                    expand = True
-                )
-                self.content.controls[1] = expansions_column
-                self.content.update()
-                return None
-            self.search(coincidence)
-            
-
-
+            new_expansions = self.filter_expansions(coincidence)
+            ft.ListView(expand=1, spacing=10, item_extent=50)
+            self.controls[1].content = ft.ListView(expand=1, spacing=10, item_extent=50,
+                                                   controls = new_expansions)
+            self.controls[1].update()
+        
+        all_expansions = self.get_all_expansions()
+        
+        column_pcgs = ft.Column(
+            controls = all_expansions,
+            scroll=ft.ScrollMode.AUTO, 
+        )
+        
+        content_column = ft.Container(
+            content = column_pcgs,
+            expand = True
+        )
+        
         search_textfield = ft.TextField(
                         label="Search now",
                         on_change=search,
-                        width=500,
-                        height=70,
-                    )
+                        )
         
-        self.search_textfield = search_textfield
-                
-        all_expansions = self.get_all_expansions()
-        
-        self.expansions = all_expansions
-        
-        self.expansions_column = ft.Column(
-            controls = self.expansions,
-            scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
-            width= width,
-            height= height,
-            expand = True
-            )
-                
-        self.charges_expansions(all_expansions, update = False)
-
         super().__init__(
-            content=ft.Column(
-                controls=[search_textfield] + [self.expansions_column],
-            ),
-            expand = True
-            )        
+            controls = [search_textfield] + [content_column],
+            expand=True
+        )
         
-    def charges_expansions(self, expansions, update = True):
-        self.expansions = expansions
-        if update:
-            expansions_column = ft.Column(
-                controls = expansions,
-                scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                width=self.width_,
-                height=self.height_,
-                expand = True
-            )
-            self.content=ft.Column(
-                    controls=[self.search_textfield] + [expansions_column],
-                    expand = True
-                )
-            self.update()   #self.content.controls= [self.search_textfield] + [self.expansions_column],
-            
-            
+        
+    def filter_expansions(self, coincidence):
+        if coincidence == "":
+            return self.get_all_expansions()
+        new_expansions = []
+        all_expansions = self.get_all_expansions()
+        for expansion in all_expansions:
+            if coincidence.lower() in expansion.data.lower():  # Data stores the name of the PGA
+                new_expansions.append(expansion)
+        return new_expansions
+        pass    
+        
         
     def get_all_expansions(self):
         expansions = []
@@ -330,33 +251,16 @@ class ListViewPCG(ft.Container):
             expansions.append(expansion)
         return expansions
     
-    def search(self, coincidence):
-        all_expansions =  self.get_all_expansions()
-        expansions_filter = filter_expansions(all_expansions, coincidence)
-        expansions_column = ft.Column(
-                controls = expansions_filter,
-                scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                width=self.width_,
-                height= self.height_,
-                expand = True
-            )
-        self.content.controls[1] = expansions_column
-        self.content.update()
 
     def update_(self, update = True):
         all_expansions = self.get_all_expansions()
-        expansions_column = ft.Column(
-                controls = all_expansions,
-                    scroll=ft.ScrollMode.ALWAYS,  # Enable scrolling in the column
-                    width=self.width_,
-                    height= self.height_,
-                    expand = True
-                )
-        self.content.controls[1].controls.clear()
-        self.content.controls[1] = expansions_column
+
+        self.controls[1].content  = ft.ListView(expand=1, spacing=10, item_extent=50,
+                                                   controls = all_expansions)
         if update:
-            self.content.update()       
-        
+            self.controls[1].update()
+   
+       
         
 class NavigatorBarBack(ft.Container):
     
@@ -383,14 +287,16 @@ class NavigatorBarBack(ft.Container):
                     ),
                 ],
             ),
-            content=ft.Container(),
+            content=ft.Container(
+                expand=False),
+            height=50,
+            
         )
             
         
         super().__init__(
             content = pagelet,
-            height=50,
-            width=1450
+            expand=True
         )
 
          
@@ -415,24 +321,26 @@ class ProfessorsPage(ft.Container):
         super().__init__(
             content= ft.Column(
                 controls = [
-                    navigatorbar,
+                    
+                    ft.Row(
+                        controls = [
+                            navigatorbar,
+                        ],
+                    ),
                     
                     ft.Row(
                         controls = [NewProfessor(self.bd, listviewprofessor),
-                                   button_new_subject],
+                                   button_new_subject
+                        ],
                     ),
+                    
                     listviewprofessor,
                 ],
-                height=1000,
-                width=1600,
-                expand = True
-            )
+                #expand = True
+            ),
+            expand = True,
+            theme_mode=ft.ThemeMode.DARK,
         )
-        
-        def update(self):
-            self.listviewprofessor.update_()
-            
-        pass
     
     def update(self, update = True):
         self.listviewprofessor.update_(update)
@@ -458,14 +366,21 @@ class ClassroomsPage(ft.Container):
         super().__init__(
             content= ft.Column(
                 controls = [
-                    navigatorbar,
+                    ft.Row(
+                        controls = [
+                            navigatorbar,
+                        ],
+                    ),
+                    
                     ft.Row(
                         controls = [NewClassroom(self.bd, listviewclassrooms),
-                                     button_new_subject,]
+                                     button_new_subject,],
                     ),
                     listviewclassrooms
                 ],
-            )
+                expand=True
+            ),
+            expand = True
         )
         pass
     
@@ -496,17 +411,22 @@ class GroupsPage(ft.Container):
         super().__init__(
             content= ft.Column(
                 controls = [
-                    navigatorbar,
+                    ft.Row(
+                        controls = [
+                            navigatorbar,
+                        ],
+                    ),
+                    
                     button_new_subject,
                     ft.Row(
                         controls = [NewGroup(self.bd, listviewgroups),
-                                    ]
+                                    ],
                     ),
                     listviewgroups
                 ],
-                height=1600,
-                width=1600,
-            )
+                spacing=30
+            ),
+            expand = True
         )
         pass
     

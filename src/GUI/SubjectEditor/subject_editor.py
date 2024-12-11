@@ -90,13 +90,14 @@ class AlertNewSubject():
     def __init__(self, page):
         d = Data()
         page.snack_bar = ft.SnackBar(
-        content=ft.Text("Hello, world!"),
+        content=ft.Text("New Subject Created"),
         action="Alright!",
         )
     
         
         def on_click():
-            page.snack_bar = ft.SnackBar(ft.Text(f"Hello {d.counter}"))
+            page.snack_bar = ft.SnackBar(ft.Text(f"New Subject Created"),
+                                         bgcolor=ft.colors.GREEN_200)
             page.snack_bar.open = True
             d.counter += 1
             page.update()
@@ -129,6 +130,7 @@ def is_avaible_subject(professor, classroom, groups, hours_distribution, is_onli
         return True
     if classroom == None:
         return False
+    return True
     
 
 
@@ -313,7 +315,17 @@ class SubjectEditor(ft.Container):
          #                     groups,
          #                     hours_distribution,
          #                     is_online):
-         #   return None    
+         #   return None
+        
+        print("is viable")
+        print(is_avaible_subject(
+                        professor,
+                        classroom,
+                        groups,
+                        hours_distribution,
+                        is_online,
+                        self.page
+                        )  )
         
         if is_avaible_subject(
                         professor,
@@ -331,14 +343,14 @@ class SubjectEditor(ft.Container):
                 classroom, 
                 groups, 
                 hours_distribution,
-                self.page,
-                is_online = is_online
+                is_online,
             )
             
             self.bd.subjects.add(info_subject)
+            print("Juan de Jesus Venegas Flores")
             
             # show to create new subject 
-            self.show_to_new_subject()
+            self.show_to_new_subject(1)
             
         
         pass

@@ -47,70 +47,43 @@ class Pages():
         self.groups_page = groups_page
         
 # falta un boton para regresar a la pagina principal
-
-class MainPage():
+# MainPage es donde se puede se presentan las paginas principales
+class MainPage(ft.Row):
     
     
     def __init__(self, bd, page) -> None:
         
         self.page = page
-        self.bd = bd
-        self.restart()
+        self.restart(bd)
         #return None 
 
         
-    def restart(self):
-        
-        page = self.page
-        bd = self.bd
-     
-        def change_to_mainpage():
-            enrouter_page.main_page = main_page
-            enrouter_page.change_page('/')
-            professor_page.update()
-            classroom_page.update()
-            group_page.update()
-            page.update()
-            
-            
-        def reference_to_add_subject_professors():
-            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page("/PROFESSORS"), self.page)
-            
-        def reference_to_add_subject_classrooms():
-            enrouter_page.navigate_to_new_subject(lambda :enrouter_page.change_page('/CLASSROOMS'), self.page)
-            
-        def reference_to_add_subject_groups():
-            enrouter_page.navigate_to_new_subject(lambda : enrouter_page.change_page('/GROUPS'), self.page)
-        
-        professors_page = ProfessorsPage(bd, change_to_mainpage, reference_to_add_subject_professors)
-        classrooms_page = ClassroomsPage(bd, change_to_mainpage, reference_to_add_subject_classrooms)
-        groups_page = GroupsPage(bd, change_to_mainpage, reference_to_add_subject_groups)  
-        
-
-        pages = Pages(
-            professors_page,
-            classrooms_page,
-            groups_page
-        )
-        
-        enrouter_page = EnrouterPage(self.page, pages, bd)
-        self.page = page
+    def restart(self, bd):
         self.bd = bd
+        page = self.page
+
+ 
+        enrouter_page = EnrouterPage(self, self.bd, self.page)
         
         
-        function_reference_change_to_page = enrouter_page.change_page
-        professor_page = ProfesorMainPage(self.bd, function_reference_change_to_page)
-        classroom_page = ClassroomMainPage(self.bd, function_reference_change_to_page)
-        group_page = GroupMainPage(self.bd, function_reference_change_to_page)
         
+        
+        
+        professor_page = ProfesorMainPage(self.bd, lambda route : enrouter_page.change_page(route))
+        classroom_page = ClassroomMainPage(self.bd, lambda route : enrouter_page.change_page(route))
+        group_page = GroupMainPage(self.bd, lambda route : enrouter_page.change_page(route))
+        
+        self.professor_page = professor_page
+        self.classroom_page = classroom_page
+        self.group_page = group_page
         
         
         content = ft.Container(
             content= ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
-                        height=800,
-                        width=600
                         ), 
             expand=True)
+        
+        #professor_page.update()
 
 
         # Callback para manejar los cambios de la NavigationRail
@@ -122,20 +95,21 @@ class MainPage():
             if selected_index == 0:  # Profesor
                 content.content = ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             height=800,
-                                            width=600)
-                professor_page.update()
+                                            width=600,
+                                            )
+                professor_page.update(update= False)
 
             elif selected_index == 1:  # Aula
                 content.content = ft.Column([classroom_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             height=800,
                                             width=600)
-                classroom_page.update()
+                classroom_page.update(update = False)
 
             elif selected_index == 2:  # Grupo
                 content.content = ft.Column([group_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             height=800,
                                             width=60)
-                group_page.update()
+                group_page.update(update = False)
 
             content.update()        
             # Actualizar la página
@@ -147,11 +121,14 @@ class MainPage():
                 ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
             )
             self.bd.load_db(e.files[0].path)
-            professor_page.update()
-            classroom_page.update()
-            group_page.update()
-            self.restart()
-            #selected_files.update()
+            professor_page.update(update = False)
+            classroom_page.update(update = False)
+            group_page.update(update = False)
+            enrouter_page.update_db(self.bd)
+            self.restart(self.bd)
+            content.update()
+            
+            
 
         pick_files_load_bd = FilePicker(on_result=load_db)
         selected_files = Text()
@@ -205,52 +182,68 @@ class MainPage():
             group_alignment=-0.9,
             destinations=[
                 ft.NavigationRailDestination(
-                    icon=ft.icons.FAVORITE_BORDER,
-                    selected_icon=ft.icons.FAVORITE,
+                    icon=ft.icons.SCHOOL,
+                    selected_icon=ft.icons.SCHOOL,
                     label="Profesor",
                 ),
                 ft.NavigationRailDestination(
-                    icon_content=ft.Icon(ft.icons.BOOKMARK_BORDER),
+                    icon_content=ft.Icon(ft.icons.BOOKMARK),
                     selected_icon_content=ft.Icon(ft.icons.BOOKMARK),
                     label="Aula",
                 ),
                 ft.NavigationRailDestination(
-                    icon=ft.icons.SETTINGS_OUTLINED,
-                    selected_icon_content=ft.Icon(ft.icons.SETTINGS),
+                    icon=ft.icons.PEOPLE,
+                    selected_icon_content=ft.Icon(ft.icons.PEOPLE),
                     label_content=ft.Text("Grupo"),
                 ),
             ],
             on_change=on_change,  # Llamar al callback
+            #expand=True
         )
+        
+        
 
         # Layout principal
         
-        main_page = ft.Row(
-                [
-                    rail,
-                    ft.VerticalDivider(width=1),
-                    content,  # Contenedor dinámico
-                ],
-                expand=True,
-            )
         
-        page.controls.clear()
-        page.add(
-            main_page
+        
+        super().__init__(
+             controls = [
+                rail,
+                ft.VerticalDivider(width=2),
+                content
+            ],
+            expand = True
         )
+    
+        enrouter_page.main_page = self
         
+        
+        
+    #function to update page in cual 
+    def update(self, update = False):
+        
+        self.professor_page.update(update)
+        self.classroom_page.update(update)
+        self.group_page.update(update)
 
-
+# al momento de agregar una materia todos los bloques que se colocaron dentro de el deben actualizarsede
         
 # al momento de eliminar una materia todos los bloques que se colocaron dentro de el deben actualizarse
 
 
-
 def main(page: ft.Page):
-    
+    page.theme = ft.Theme(
+        color_scheme_seed=ft.colors.BLUE
+        )
     Bd = BD()
     
-    MainPage(Bd, page)
+    main_page = MainPage(Bd, page)
+    
+    page.add(
+        main_page
+    )
+    
 
 
 

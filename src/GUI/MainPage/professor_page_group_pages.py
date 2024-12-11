@@ -27,17 +27,17 @@ class ProfesorMainPage(ControlBlocksSubject):
         
         self.professor_search = professor_search
         
-        self.professor_search.width = 600
-        self.professor_search.height = 110
-        
         def change_to_professors():
             reference_enrouter_page('/PROFESSORS') # cambiar la pagina de profesores
         
         super().__init__(bd, DEFAULT_PCG, professor_search, change_to_professors)
         
-    def update(self):
+    def update(self, update = True):
         self.professor_search.update()
-        super().update()
+        if update:
+            super().update()
+            #self.professor_search.on_change()  # actualizar la lista de profesores cuando cambia el valor de la búsqueda
+            
         pass
         
 
@@ -62,6 +62,7 @@ class ClassroomMainPage(ControlBlocksSubject):
             on_change = change_classroom
         )
         
+        
         self.classroom_search = classroom_search
         
         def change_to_classrooms():
@@ -69,9 +70,12 @@ class ClassroomMainPage(ControlBlocksSubject):
         
         super().__init__(bd, DEFAULT_PCG, classroom_search, change_to_classrooms)
         
-    def update(self):
+    def update(self, update = True):
         self.classroom_search.update()
-        super().update()
+        if update:
+            super().update()
+            #self.classroom_search.on_change()
+            
         
 class GroupMainPage(ControlBlocksSubject):
     
@@ -93,14 +97,18 @@ class GroupMainPage(ControlBlocksSubject):
             on_change = change_group
         )
         
+        
         def change_to_groups():
             reference_enrouter_page('/GROUPS') # cambiar la pagina a 
 
         super().__init__(bd, DEFAULT_PCG, self.group_search, change_to_groups)
     
-    def update(self):
+    def update(self, update = False):
         self.group_search.update()
-        super().update()
+        if update:
+            super().update()
+            #self.group_search.on_change()  # para que se actualice el boton en caso de que haya cambiado el grupo seleccionado en la lista
+            
     
 
 #lista = [0]

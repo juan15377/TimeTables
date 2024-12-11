@@ -113,7 +113,8 @@ class LoadSubject():
             controls = [
                 self.block_selection,
                 self.subject_container
-            ]
+            ],
+            expand = True
         )
         
     def update_subject(self, subject):
@@ -173,7 +174,7 @@ class SubjectSelector(ft.Container):
                 content = ft.Text(subject.code, size = 20, expand = True, color = ft.colors.BLACK),
                 bgcolor= color,
                 width=100,
-                height=30,
+                height=60,
                 padding=0,
                 margin=ft.Margin(top=0, right=0, bottom=0, left=0),
                 border_radius=5,
@@ -199,7 +200,7 @@ class SubjectSelector(ft.Container):
         subject_list = ft.Column(spacing=10, alignment=ft.alignment.top_center,
                                    height= 420,
                                    width= 300,
-                                   scroll= ft.ScrollMode.AUTO)
+                                   scroll= ft.ScrollMode.AUTO,)
         self.subject_list = subject_list
 
 
@@ -209,7 +210,7 @@ class SubjectSelector(ft.Container):
 
         content =ft.Column( 
             controls = [self.subject_list,
-                        self.subject_loader.content]
+                        self.subject_loader.content],
                         
             )
         

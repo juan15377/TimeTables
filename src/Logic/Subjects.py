@@ -156,7 +156,7 @@ class InfoSubject():
                  classroom, 
                  groups, 
                  hours_distribution,
-                 is_online = False) -> None:
+                 is_online) -> None:
         
         self.name = name
         self.code = code
@@ -192,6 +192,7 @@ class Subjects:
         for group in groups:
             group.add_subject(subject)
 
+
     def remove(self, subject):
         self.subjects.remove(subject)
 
@@ -207,7 +208,7 @@ DEFAULT_SUBJECT = Subject(
     None,
     None,
     [],
-    HoursComposition(0, 0, 0),
+    HoursComposition(30, 30, 30),
 )
 
 DEFAULT_PCG.subjects.append(DEFAULT_SUBJECT)

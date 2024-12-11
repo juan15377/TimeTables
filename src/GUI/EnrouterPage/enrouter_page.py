@@ -3,7 +3,7 @@ import flet as ft
 from flet import View
 
 from src.GUI.SubjectEditor import SubjectEditor
-
+from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
 def load_subjects_page(bd, page_to_route, page):
     subject_editor = SubjectEditor(bd, reference_page_router = page_to_route, page = page)
     return subject_editor
@@ -13,7 +13,7 @@ def load_subjects_page(bd, page_to_route, page):
 #/main/juan_de_jesus/calculo/
 
 # En el enrouter deben cargarse las 3 paginas principales
-
+# de una vez se incorporara la funcionalidad de pode editar una materia 
 
 
 
@@ -38,33 +38,101 @@ ROUTE_SUBJECTS = '/GROUPS'
 # va ser unos de los puntos de los cuales la aplicacion va arrancar
 # esta clase sera la encargada de recibir una ruta o un profesor, aula o grupo, materia 
 # de esta forma generara y cambiara la pagina 
+# se necesita cambiar la estrcutura de enrutamiento por que ya llevo mas de 20 horas buscando un error, lo que indica que 
+# al codigo le falta estrcuturacion, la referencia de la base de datos actualizada la tendra el enrouterpage
+
+# existira una main_page, que esta tambien esta ligada a una base de datos, 
+
+# Enrouter_page("/") -> Main_page
+# Enrouter_page("/CLASSROOMS") -> Classrooms_page
+# Enrouter_page("/PROFESSORS") -> Professors_page
+# Enrouter_page("/GROUPS") -> Groups_page
+# Enrouter_page("/CLASSROOMS/SUBJECT_DETAILS") -> Subject_edit with reference to back in /CLASSROOMS 
+
+class Pages():
+    
+    def __init__(self,
+                        professors_page,
+                        classrooms_page,
+                        groups_page):
+
+    
+        self.professors_page = professors_page
+        self.classrooms_page = classrooms_page
+        self.groups_page = groups_page
+
 class EnrouterPage():
     
     
-    def __init__(self, page, pages, bd) -> None:
-        page.title = "TimeTables"
-        self.main_page = None
-        self.pages = pages
-        self.page =  page
-        self.bd = bd
+    def __init__(self, main_page, bd, page) -> None:
+        self.page = page
+        self.db = bd
+        professors_page = ProfessorsPage(self.db, 
+                                         lambda : self.change_page("/"), 
+                                         lambda : self.change_page("/PROFESSORS/SUBJECT_DETAILS"))
         
+        classrooms_page = ClassroomsPage(self.db, 
+                                         lambda : self.change_page("/"), 
+                                         lambda : self.change_page("/CLASSROOMS/SUBJECT_DETAILS"))
         
-    def change_page(self,route):
+        groups_page = GroupsPage(self.db, 
+                                 lambda :self.change_page("/"), 
+                                 lambda : self.change_page("/GROUPS/SUBJECT_DETAILS"))
+        
+        self.pages = Pages(professors_page, classrooms_page, groups_page)
+        self.main_page = main_page
+
+        
+    def change_page(self,route, subject = False):
         
         if route == '/PROFESSORS':
             page_content = self.pages.professors_page
             self.pages.professors_page.update(update = False)
+            
         elif route == '/CLASSROOMS':
             page_content = self.pages.classrooms_page
             self.pages.classrooms_page.update(update = False)
+            
         elif route == '/GROUPS':
             page_content = self.pages.groups_page
             self.pages.groups_page.update(update = False)
+            
+        elif route == '/PROFESSORS/SUBJECT_DETAILS':
+            page_to_route = lambda : self.change_page("/PROFESSORS")
+            page_content = load_subjects_page(self.db, page_to_route, self.page)
+            
+        elif route == '/CLASSROOMS/SUBJECT_DETAILS':
+            page_to_route = lambda : self.change_page("/CLASSROOMS")
+            page_content = load_subjects_page(self.db, page_to_route, self.page)
+            
+        elif route == '/GROUPS/SUBJECT_DETAILS':
+            page_to_route = lambda : self.change_page("/GROUPS")
+            page_content = load_subjects_page(self.db, page_to_route, self.page)
+            
         elif route == '/':
             page_content = self.main_page
         self.load_page_content(page_content)  
-  
+        
+        if route == "/":
+            self.main_page.update(update = True)
+        self.page.update() 
 
+    def update_db(self, bd):
+        self.db = bd
+        professors_page = ProfessorsPage(self.db, 
+                                         lambda : self.change_page("/"), 
+                                         lambda : self.change_page("/PROFESSORS/SUBJECT_DETAILS"))
+        
+        classrooms_page = ClassroomsPage(self.db, 
+                                         lambda : self.change_page("/"), 
+                                         lambda : self.change_page("/CLASSROOMS/SUBJECT_DETAILS"))
+        
+        groups_page = GroupsPage(self.db, 
+                                 lambda :self.change_page("/"), 
+                                 lambda : self.change_page("/GROUPS/SUBJECT_DETAILS"))
+        
+        self.pages = Pages(professors_page, classrooms_page, groups_page)
+        pass
 
 
     def load_page_content(self, page_content):

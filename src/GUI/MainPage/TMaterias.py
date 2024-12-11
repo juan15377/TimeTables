@@ -18,6 +18,13 @@ from src.Logic.Subjects import Subject
 # ! operaciones permitidas deben ser bien escogidas  
 # el tiempo permitido maximo poara la generacion de un tablero deberiaser de de 0.2 segundos 
 
+import flet as ft
+import numpy as np
+
+
+HEIGHT_BUTTON = 50
+WIDTH_BUTTON = 150
+
 def initialize_control_board():
 
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -41,10 +48,9 @@ def initialize_control_board():
                 padding=2,
                 alignment=ft.alignment.center,
                 bgcolor=ft.colors.WHITE24,
-                width=100,
-                height=30,
+                width=WIDTH_BUTTON,
+                height=HEIGHT_BUTTON,
                 border_radius=5,
-                expand = False
             )
         return b
 
@@ -60,10 +66,9 @@ def initialize_control_board():
                     margin=1,
                     padding=0,
                     alignment=ft.alignment.center,
-                    width=100,
-                    height=30,
+                    width=WIDTH_BUTTON,
+                    height=HEIGHT_BUTTON,
                     border_radius=1,
-                    expand=False
                 )
         
     def day_container(i):
@@ -74,10 +79,9 @@ def initialize_control_board():
                     margin=2,
                     padding=0,
                     alignment=ft.alignment.center,
-                    width=98,
-                    height=30,
+                    width=WIDTH_BUTTON - 2,
+                    height=HEIGHT_BUTTON,
                     border_radius=1,
-                    expand=False
                 )
         
     special_container = ft.Container(
@@ -87,9 +91,10 @@ def initialize_control_board():
                             margin=2,
                             padding=0,
                             alignment=ft.alignment.center,
-                            width=99,
-                            height=30,
+                            width=WIDTH_BUTTON - 1,
+                            height=HEIGHT_BUTTON,
                             border_radius=1,
+                            #expand = True
                         )
         
     time_containers = [special_container] + [time_container(i) for i in range(30)]
@@ -99,14 +104,14 @@ def initialize_control_board():
                     controls=time_containers,
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=0,
+                    #expand = True
                     )
     
 
     day_columns = [ft.Column(controls=[day_containers[i]],
                     horizontal_alignment=ft.alignment.center, 
-                    alignment=ft.alignment.center, spacing=2) for i in range(7)]
+                    alignment=ft.alignment.center, spacing=2,) for i in range(7)]
         
-
     
     # Add the buttons contained in the button matrix 
 
@@ -125,26 +130,27 @@ def initialize_control_board():
             spacing=0,
             vertical_alignment=ft.CrossAxisAlignment.START,
             scroll=ft.ScrollMode.AUTO,
-            width=840,
-            height=995,  
-            expand = False
+            #width=500,
+            #height=995,  
+            #expand = True
             )
 
-    grid = ft.Column(
+    grid = ft.ListView(
             controls=[row],
-            alignment=ft.MainAxisAlignment.START,
+            #alignment=ft.MainAxisAlignment.START,
             spacing=0,
-            scroll=ft.ScrollMode.AUTO,
-            width=840,
-            height=550,    
+            #scroll=ft.ScrollMode.AUTO,
+            #width=100,
+            #height=550,    
             expand = True
         )
     
+    grid = ft.Container(
+        content = grid,
+        #expand = True
+    )
+    
     return button_matrix, grid, day_columns
-
-
-
-
 
 def decompose_vector(vector):
     pos_in = 0
@@ -298,8 +304,8 @@ class SubjectBlock(ft.Container):
         # Subject block container with color and tooltip
         subject_container = ft.Container(
             content=text_name,
-            width=100,
-            height=(30 * self.size + (self.size - 1) * 2),
+            width=WIDTH_BUTTON,
+            height=(HEIGHT_BUTTON * self.size + (self.size - 1) * 2),
             alignment=ft.alignment.center,
             bgcolor=RGB_to_hex(original_color),
             padding=0,
@@ -319,8 +325,8 @@ class SubjectBlock(ft.Container):
                         menuitem_MOVE,
                         menuitem_COLOR,
                     ],
-                    width=100,
-                    height=(30 * self.size + (self.size - 1) * 2),
+                    width=WIDTH_BUTTON,
+                    height=(HEIGHT_BUTTON * self.size + (self.size - 1) * 2),
                     menu_style=ft.MenuStyle(padding=0),
                     style=ft.ButtonStyle(padding=0)
                 ),
@@ -544,7 +550,8 @@ class ControlBoardSubjectSlots(ft.Container):
         self.pga = pga
 
         super().__init__(
-            content=self.grid
+            content=self.grid,
+            expand = True
         )
         
         # Generate subject blocks for each subject in the PGA
@@ -627,6 +634,7 @@ class ControlBoardSubjectSlots(ft.Container):
         self.subject_selector.update()
 
 
+ft.Container()
 # !!! principal class 
 class ControlBlocksSubject(ft.Container):
 
@@ -645,83 +653,68 @@ class ControlBlocksSubject(ft.Container):
     
         self.search = search
         self.pcg = pcg
-        row = ft.Column(
+        
+        layout = self.get_layout_page(pcg)
+
+        super().__init__(
+            content = ft.Row(
+                controls = [layout],
+                expand=True
+            ),
+            expand=True,
+        )
+        
+    def get_layout_page(self, pcg):
+        boardsubjects = ControlBoardSubjectSlots(pcg)
+        layout = ft.Column(
             controls = [
                     ft.Row(
                         controls = [
                                     self.search,
                                     self.button_to_change_page,
-                        ]
+                        ],
+                        expand = False,
+                        spacing=30
                     ),
                     ft.Row(
                         controls = [      
                             boardsubjects,
                             boardsubjects.subject_selector,
-                        ]
+                        ],
+                        expand = True
                     )
                     ],
-                expand=False,
-                spacing=40,
+                expand=True,
+                spacing=50,
             )
+        
+        return layout 
     
-
-        super().__init__(
-            content = ft.Row(
-                controls = [row],
-            ),
-        )
+    
                 
         
     def set_pcg(self, pcg):
+        
+        new_layout = self.get_layout_page(pcg)
+        
         boardsubjects = ControlBoardSubjectSlots(pcg)
         self.pcg = pcg
-        row = ft.Column(
-            controls = [
-                    ft.Row(
-                        controls = [
-                                self.search,
-                                self.button_to_change_page,
-                        ]
-                    ),
-                    ft.Row(
-                        controls = [      
-                            boardsubjects,
-                            boardsubjects.subject_selector,
-                        ]
-                    )
-                    ],
-                expand=False,
-                spacing=40,
-            )
-        
+
         del super().content.controls[0]
-        super().content.controls.append(row)
+        super().content.controls.append(new_layout)
+        super().content.expand = True
         
         super().update()
         
-    def update(self):
-        boardsubjects = ControlBoardSubjectSlots(self.pcg)
-        row = ft.Column(
-            controls = [
-                    ft.Row(
-                        controls = [
-                                self.search,
-                                self.button_to_change_page,
-                        ]
-                    ),
-                    ft.Row(
-                        controls = [      
-                            boardsubjects,
-                            boardsubjects.subject_selector,
-                        ]
-                    )
-                    ],
-                expand=False,
-                spacing=40,
-            )
+    def update(self, update = True):
+        new_layout = self.get_layout_page(self.pcg)
+       
         
         del super().content.controls[0]
-        super().content.controls.append(row)   
+        super().content.controls.append(new_layout) 
+        
+        if update:
+            super().update()  
     
 # programar el caso base de no hay profesor ni ninguna materia
 
