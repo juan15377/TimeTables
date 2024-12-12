@@ -1,0 +1,13 @@
+\documentclass{article}
+\usepackage{pdfcomment}% http://ctan.org/pkg/pdfcomment
+\usepackage{amsmath}% http://ctan.org/pkg/amsmath
+\usepackage{mathtools}% http://ctan.org/pkg/mathtools
+\begin{document}
+% \pdftooltip{<text>}{<tooltip>}
+\begin{align*}
+  \mathrlap{\pdftooltip[mathstyle=\displaystyle]{\phantom{\sum_{i=1}^n i=\frac{n}{2}(n+1)}}{sum\string_\{i=1\}\string^n i=tfrac\{n\}\{2\}(n+1)}}%
+  \sum_{i=1}^n i &= \tfrac{n}{2}(n+1) \\
+  \mathrlap{\pdftooltip[mathstyle=\displaystyle]{\phantom{E=mc^2}}{E=mc\textasciicircum 2}}%
+  E &= mc^2
+\end{align*}
+\end{document}

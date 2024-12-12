@@ -1,10 +1,12 @@
 # Fdb version 4
-["pdflatex"] 1733460605.1037 "/home/juan/GitHub/TimeTables/src/Logic/schedule_printer/Official Formats/design.tex" "design.pdf" "design" 1733460605.68352 0
+["pdflatex"] 1733905171.32503 "/home/juan/GitHub/TimeTables/src/Logic/schedule_printer/Official Formats/design.tex" "design.pdf" "design" 1733905172.12834 0
   "/etc/texmf/web2c/texmf.cnf" 1730350425.54524 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/juan/GitHub/TimeTables/src/Logic/schedule_printer/Official Formats/design.tex" 1733460604.90742 2392 fced7a06dfcc2f210b700c0d9c5b7807 ""
+  "/home/juan/GitHub/TimeTables/src/Logic/schedule_printer/Official Formats/design.tex" 1733905171.03933 2718 2322046d2a588c50e5d06dcc4a49084a ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
+  "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1248133631 34811 78b52f49e893bcba91bd7581cdc144c0 ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1248133631 32080 340ef9bf63678554ee606688e7b5339d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
   "/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1461363279 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty" 1644112042 7237 bdd120a32c8fdb4b433cf9ca2e7cd98a ""
@@ -35,6 +37,7 @@
   "/usr/share/texlive/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty" 1666126449 2142 eae42205b97b7a3ad0e58db5fe99e3e6 ""
   "/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1704491087 30006 57b07afb710ee2f649c65cfbafda39c1 ""
   "/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg" 1279039959 678 4792914a8f45be57bb98413425e4c7af ""
+  "/usr/share/texlive/texmf-dist/tex/latex/makecell/makecell.sty" 1249334690 15773 2dd7dde1ec1c2a3d0c85bc3b273e04d8 ""
   "/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty" 1615845910 6149 2398eec4faa1ee24ff761581e580ecf1 ""
   "/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty" 1667072951 6572 ea530fbbe537629fd97736d33babc07d ""
   "/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty" 1667072951 2224 1230ab76aa62221ccbd90bca8c8c015e ""
@@ -46,8 +49,8 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1730350446.49525 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1730350589 8212595 b39961ba3c41b5a79d2ccc93ff1cfce2 ""
-  "design.aux" 1733460605.6324 225 3500a60b3e1b144207713efcf2326680 "pdflatex"
-  "design.tex" 1733460604.90742 2392 fced7a06dfcc2f210b700c0d9c5b7807 ""
+  "design.aux" 1733905172.05533 225 2bed0eefc1076c537bbb8697d879d878 "pdflatex"
+  "design.tex" 1733905171.03933 2718 2322046d2a588c50e5d06dcc4a49084a ""
   (generated)
   "design.aux"
   "design.log"

@@ -6,6 +6,10 @@
 \usepackage{multirow}
 \usepackage{pdflscape} % Para orientación horizontal
 \usepackage{adjustbox} % Para ajustar el tamaño de la tabla
+\usepackage{makecell}
+\usepackage{pdfcomment}
+
+
 \geometry{margin=0cm} % Elimina los márgenes
 
 \begin{document}
@@ -54,5 +58,14 @@
 \end{table}
 
 \end{landscape}
+
+
+
+
+Texto con un comentario emergente al pasar el cursor: 
+\pdfcomment[color=yellow, icon=Note]{Este es un comentario emergente.}
+
+Haz hover sobre \pdfmarkupcomment{este texto}{Texto emergente al pasar el cursor.} para más información.
+
 
 \end{document}
