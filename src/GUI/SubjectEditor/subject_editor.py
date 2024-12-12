@@ -342,6 +342,8 @@ class SubjectEditor(ft.Container):
                 is_online,
             )
             
+            self.name_code_subject.restart()
+            
             self.bd.subjects.add(info_subject)
             print("Juan de Jesus Venegas Flores")
             

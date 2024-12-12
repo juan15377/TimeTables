@@ -60,7 +60,7 @@ class LoadSubject():
                     icon_size=20,
                     tooltip="Pause record",
                     on_click = lambda e : up_value(self),
-                    width=35
+                    width=40
                     ) 
         
         down_button = ft.IconButton(
@@ -69,7 +69,7 @@ class LoadSubject():
                     icon_size=20,
                     tooltip="Play record",
                     on_click=lambda e : down_value(self),
-                    width = 35
+                    width = 40
                     )
         
         block_selection = ft.Column(
@@ -78,12 +78,12 @@ class LoadSubject():
                     controls = [
                         up_button,
                         down_button
-                    ]
+                    ],
                 ),
                 vbloque_drop,
             ],
-            width= 80,
-            height= 120
+            width= 130,
+            height= 120,
         )
 
         def load_subject():
@@ -114,7 +114,6 @@ class LoadSubject():
                 self.block_selection,
                 self.subject_container
             ],
-            expand = True
         )
         
     def update_subject(self, subject):
@@ -177,7 +176,7 @@ class SubjectSelector(ft.Container):
                 height=60,
                 padding=0,
                 margin=ft.Margin(top=0, right=0, bottom=0, left=0),
-                border_radius=5,
+                border_radius=10,
                 alignment= ft.alignment.center
                 )
             
@@ -190,17 +189,17 @@ class SubjectSelector(ft.Container):
                 on_click= lambda e, s = subject : self.subject_loader.update_subject(s),
                 #on_hover= lambda e : paint(e),
                 ink = True,
-                ink_color= "blue40",
+                ink_color= ft.colors.GREEN_100,
                     )
             self.subject_list.controls.append(subject_container)
 
 
     def load_subject_list(self):
 
-        subject_list = ft.Column(spacing=10, alignment=ft.alignment.top_center,
-                                   height= 420,
+        subject_list = ft.ListView(spacing=10,
+                                   height= 800,
                                    width= 300,
-                                   scroll= ft.ScrollMode.AUTO,)
+                                   expand = True)
         self.subject_list = subject_list
 
 
@@ -211,7 +210,7 @@ class SubjectSelector(ft.Container):
         content =ft.Column( 
             controls = [self.subject_list,
                         self.subject_loader.content],
-                        
+            expand = False           
             )
         
         contenedor_borde = ft.Container(

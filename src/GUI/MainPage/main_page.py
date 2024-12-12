@@ -81,7 +81,8 @@ class MainPage(ft.Row):
         content = ft.Container(
             content= ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
                         ), 
-            expand=True)
+            expand=True,
+            animate=ft.animation.Animation(600, "ease_in_out"))
         
         #professor_page.update()
 
@@ -94,24 +95,21 @@ class MainPage(ft.Row):
             # Cambiar el contenido basado en la selección
             if selected_index == 0:  # Profesor
                 content.content = ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
-                                            height=800,
-                                            width=600,
                                             )
                 professor_page.update(update= False)
 
             elif selected_index == 1:  # Aula
                 content.content = ft.Column([classroom_page], alignment=ft.MainAxisAlignment.START, expand=True,
-                                            height=800,
-                                            width=600)
+                                            )
                 classroom_page.update(update = False)
 
             elif selected_index == 2:  # Grupo
                 content.content = ft.Column([group_page], alignment=ft.MainAxisAlignment.START, expand=True,
-                                            height=800,
-                                            width=60)
+                                            )
                 group_page.update(update = False)
 
-            content.update()        
+            content.update()    
+            #print("Juan de Jesus")    
             # Actualizar la página
             
             

@@ -709,9 +709,10 @@ class ControlBlocksSubject(ft.Container):
     def update(self, update = True):
         new_layout = self.get_layout_page(self.pcg)
        
-        
+        #print("Se ejecuto")
         del super().content.controls[0]
         super().content.controls.append(new_layout) 
+        super().content.expand = True
         
         if update:
             super().update()  

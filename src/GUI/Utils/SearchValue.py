@@ -53,6 +53,7 @@ class SearchValue(ft.Container):
         self.drop.options.clear()
         self.drop.options = [ft.dropdown.Option(name) for name in dict_values.keys()]
         #self.drop.update()
+        #print("Hola Mundo")
     
     def deactivate(self):
         self.drop.options = []

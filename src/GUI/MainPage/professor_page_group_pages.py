@@ -37,7 +37,6 @@ class ProfesorMainPage(ControlBlocksSubject):
         if update:
             super().update()
             #self.professor_search.on_change()  # actualizar la lista de profesores cuando cambia el valor de la búsqueda
-            
         pass
         
 

@@ -14,7 +14,7 @@ class NameCodeSubject(ft.Container):
         def change_code(e):
             self.code = e.control.value
 
-        name_textfield = ft.TextField(
+        self.name_textfield = ft.TextField(
             value = self.name,
             label="Nombre",
             border=ft.InputBorder.UNDERLINE,
@@ -25,7 +25,7 @@ class NameCodeSubject(ft.Container):
             expand = True
         )
 
-        code_textfield = ft.TextField(
+        self.code_textfield = ft.TextField(
             value = self.code,
             label="Codigo",
             border=ft.InputBorder.UNDERLINE,
@@ -40,8 +40,8 @@ class NameCodeSubject(ft.Container):
 
         layout = ft.Row(
             controls = [
-                name_textfield,
-                code_textfield,
+                self.name_textfield,
+                self.code_textfield,
             ],
             expand = True
         )
@@ -64,6 +64,9 @@ class NameCodeSubject(ft.Container):
         self.code_textfield.update()
         self.name_textfield.update()
 
+    def restart(self):
+        self.set_name_and_abrevation("", "")
+    
 
 # def main(page : ft.Page):
 #     na = NameCodeSubject("Nombre", "MATAC")
