@@ -36,13 +36,15 @@ class NavigatorBarBack(ft.Container):
                 ],
             ),
             content=ft.Container(),
+            expand=True
         )
             
         
         super().__init__(
             content = pagelet,
             height=50,
-            width=1450
+            width=100,
+            expand = True
         )
         
 
@@ -165,7 +167,7 @@ class SubjectEditor(ft.Container):
         self.professor_selector = professor_selector
         
         
-        professor_selector.width = 400
+        #professor_selector.width = 400
         
         
         
@@ -182,11 +184,11 @@ class SubjectEditor(ft.Container):
         self.online_switch = online_switch
         
         
-        classroom_selector.width = 400
+        #classroom_selector.width = 400
         
         self.classroom_selector = classroom_selector
         # Diseño del sector de aula y de professor 
-        classroom_selector.spacing = 100
+        #classroom_selector.spacing = 100
         
         selector_hours_distribution = SelectorDistributionHours()
         self.selector_hours_distribution = selector_hours_distribution
@@ -196,89 +198,83 @@ class SubjectEditor(ft.Container):
         button_new_subject = ft.FloatingActionButton(
             text = "New Subject",
             icon = ft.icons.ADD,
-            on_click = lambda e: self.new_subject_in_bd()
+            on_click = lambda e: self.new_subject_in_bd(),
+            expand = True
         )
         
+        left_layout = ft.Column(
+                        controls=[
+                            ft.Row(
+                                controls = [name_code_subject],
+                                expand = False,
+                                #width=800,
+                                height=100
+                                
+                            ),
+                            groups_selector,
+                            #button_new_subject  
+                            
+                        ],
+                        alignment= ft.alignment.top_right,
+                        spacing=10,
+                        expand=True
+                    )
+        
+        
+        right_layout = ft.Column(
+            controls = [
+                ft.Row(
+                    controls = [
+                        button_new_subject,
+                        online_switch
+                    ],
+                    height=100
+                ),
+
+                ft.Column(
+                        controls = [ft.Text("Aula"),
+                                    classroom_selector,
+                                    ],
+                        expand = True,
+                        #width = 100,
+                        height= 50
+                        ),
+                ft.Column(
+                        controls = [
+                            ft.Text("Profesor"),
+                            professor_selector,
+                        ],
+                        expand=True,
+                        #width = 100,
+                        height= 50
+                ),
+                selector_hours_distribution,
+                #ft.Row(
+            ],
+            expand = True
+        )
         
         
         navigator = NavigatorBarBack(reference_page_router)
         
-        
-        down_layout = ft.Row(
+            
+        super().__init__(
+            content = ft.Column(
                 controls = [
-                    ft.Column(
-                        controls=[
-                            name_code_subject,
-                            #professor_selector,
-                            #classroom_selector
-                            groups_selector,
-                            
+                    ft.Row(
+                        controls = [
+                            navigator
                         ],
-                        alignment= ft.alignment.top_right
-                    ),
-                    ft.Column(
-                        controls=[
-                            #selector_hours_distribution,
-                            #groups_selector,
-                            ft.Row(
-                                controls = [
-                                    ft.Column(
-                                        controls=[
-                                            ft.Row(
-                                                controls = [
-                                                    ft.Column(
-                                                        controls = [ft.Text("Aula"),
-                                                                    classroom_selector]
-                                                    ),
-                                                    online_switch,  
-                                                ]
-                                            ),
-                                            ft.Column(
-                                                controls = [ft.Text("Profesor"),
-                                                            professor_selector,],
-                                                spacing=10
-                                            )
-                                        ],
-                                        spacing=50
-                                    ),
-                                    ft.Column(
-                                        controls=[
-                                            
-                                        ]
-                                    )
-                                ],
-                            ),
-                            selector_hours_distribution,
-                            ft.Row(
-                                controls = [
-                                            button_new_subject                        
-
-                                ],
-                                alignment= ft.alignment.bottom_left
-                            )
-                            
-                        ],
-                        spacing=30
                     ),
                     ft.Row(
                         controls=[
-
-                            
+                            left_layout,
+                            right_layout,
                         ],
-                    ),
-                    
+                        expand = True
+                    )
                 ],
-                spacing=30
-            )
-        
-        head_layout = navigator
-        
-        super().__init__(
-            content = ft.Column(
-                controls=[
-                    head_layout,
-                    down_layout
-                ],
+                expand = True
             ),
             expand = True
         )
@@ -359,11 +355,10 @@ class SubjectEditor(ft.Container):
     def set_values_subject(self):
         pass 
         
-#    
+    
 #    
 #def main(page : ft.page):
 #    subject_editor = SubjectEditor(Bd, lambda: print("hola"))
 #    page.add(subject_editor)
 #    
 #ft.app(target=main)
-#

@@ -37,9 +37,10 @@ class SearchValue(ft.Container):
         
         super().__init__(
             ft.Column(controls=[search_entry, self.drop]),
-            expand=False,
-            height=100,
-            width=600
+            expand=True,
+            #height=100,
+            #width=600
+            #expand = True
         )
         
     def get_value(self):

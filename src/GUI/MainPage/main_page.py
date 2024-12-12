@@ -201,6 +201,8 @@ class MainPage(ft.Row):
             #expand=True
         )
         
+        self.rail = rail
+        
         
 
         # Layout principal
@@ -223,9 +225,15 @@ class MainPage(ft.Row):
     #function to update page in cual 
     def update(self, update = False):
         
-        self.professor_page.update(update)
-        self.classroom_page.update(update)
-        self.group_page.update(update)
+        selected_index = self.rail.selected_index
+        
+        if selected_index == 0:
+            self.professor_page.update(update)
+        elif selected_index == 1:
+            self.classroom_page.update(update)
+        elif selected_index == 2:
+            self.group_page.update(update)
+        
 
 # al momento de agregar una materia todos los bloques que se colocaron dentro de el deben actualizarsede
         

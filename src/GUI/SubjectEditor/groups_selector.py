@@ -12,16 +12,22 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
             columns=[
                 ft.DataColumn(ft.Text("Carrera")),
                 ft.DataColumn(ft.Text("Semestre")),
-                ft.DataColumn(ft.Text("SubGrupo"), numeric=True),
+                ft.DataColumn(ft.Text("SubGrupo")),
                 ft.DataColumn(ft.Text("Eliminar")),
             ],
-            rows=[]  # Inicialmente vacío
+            rows=[],  # Inicialmente vacío
+            expand = True,
+            #height=300,
+            width = 1000
         )
         
         super().__init__(
-            content = self.table,
+            content = ft.ListView(controls = [self.table]),
             height= 370,
-            width = 500)  # Inicialización de UserControl
+            #
+            width = 700,
+            expand = True
+            )  # Inicialización de UserControl
 
 
     def add_group(self, group):
@@ -82,7 +88,7 @@ class GroupSelector(ft.Container):
             get_actual_groups,  # setear los valores de la búsqueda
         )
         #search_values_textfield.height = 400
-        search_values_textfield.width = 600
+        #search_values_textfield.width = 600
         
         self.search_values_textfield = search_values_textfield
         
@@ -90,12 +96,21 @@ class GroupSelector(ft.Container):
         
         super().__init__(
             content = ft.Column(
+
                 controls=[
-                    search_values_textfield,
+                    ft.Row(
+                        controls = [
+                            search_values_textfield
+                        ],
+                        expand = False
+                    ),
                     tablegroups,
                     button_add_group_to_table,  # Botón para agregar un grupo a la tabla
-                ]
+                ],
+                spacing=50,
+                expand = True
             ),
+            expand = True
         )
         
         

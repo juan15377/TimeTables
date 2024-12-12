@@ -52,6 +52,7 @@ class EditorHours(ft.Container):
                         total_hours,
                         check
                     ],
+                    expand = True
                 ),
                 
                 ft.Row(
@@ -61,10 +62,13 @@ class EditorHours(ft.Container):
                         ft.Text("Maximum Hours"),
                         maximum_hours
                     ],
-                    spacing=20
+                    spacing=20,
+                    expand = True
+                    
                 )
             ],
-            spacing= 30
+            spacing= 30,
+            expand = True
         )
         
         self.total_hours = total_hours
@@ -74,7 +78,8 @@ class EditorHours(ft.Container):
         
         super().__init__(
             content = layout,
-            padding= 30
+            padding= 5,
+            expand = True
         )
 
     def get(self):
@@ -131,7 +136,8 @@ class EditorBlocks(ft.Container):
                         ft.Text("Blocks"),
                         self.counter_hours,
                         self.drop_blocks,
-                    ]
+                    ],
+                    expand = True
                 ),
                 ft.Row(
                     controls = [
@@ -139,14 +145,17 @@ class EditorBlocks(ft.Container):
                         button_remove,
                         button_reset,
                         self.check,
-                    ]
+                    ],
+                    expand = True
                 )
             ],
-            spacing= 10
+            spacing= 10,
+            expand = True
         )
         
         super().__init__(
-            content = layout
+            content = layout,
+            expand = True
         )
         
     def add_block(self):
@@ -228,14 +237,15 @@ class SelectorDistributionHours(ft.Container):
                         )
                 ),
             ],
-            width= 500,
-            height=500
+            width= 600,
+            height=600
         )
 
         super().__init__(
             content=tabs,
             width=650,
             height=230,
+            expand = True
         )
 
     def get_hours_distribution(self):

@@ -76,6 +76,7 @@ class ListSelector(ft.Container):
             height = 100,
             alignment=ft.alignment.center,
             ink=True,
+            expand = True
         )
 
     def restart_controls(self):

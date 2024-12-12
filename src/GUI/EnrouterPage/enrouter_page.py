@@ -115,7 +115,7 @@ class EnrouterPage():
         
         if route == "/":
             self.main_page.update(update = True)
-        self.page.update() 
+        #self.page.update() 
 
     def update_db(self, bd):
         self.db = bd

@@ -21,7 +21,8 @@ class NameCodeSubject(ft.Container):
             filled=True,
             hint_text="Insertar Nombre Materia",
             on_change = change_name,
-            max_length = 50
+            max_length = 50,
+            expand = True
         )
 
         code_textfield = ft.TextField(
@@ -31,20 +32,24 @@ class NameCodeSubject(ft.Container):
             filled=True,
             hint_text = "Insertar Codigo Materia",
             on_change = change_code,
-            max_length = 7
+            max_length = 7,
+            expand = True,
+            width = 500,
+            
         )
 
         layout = ft.Row(
             controls = [
                 name_textfield,
                 code_textfield,
-            ]
+            ],
+            expand = True
         )
 
         super().__init__(
             content = layout,
-            width = 500,
             height = 80,
+            expand = True
         )
 
     def get_name_and_code(self):
