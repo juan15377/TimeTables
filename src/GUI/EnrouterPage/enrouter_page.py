@@ -67,6 +67,7 @@ class EnrouterPage():
     def __init__(self, main_page, bd, page) -> None:
         self.page = page
         self.db = bd
+        
         professors_page = ProfessorsPage(self.db, 
                                          lambda : self.change_page("/"), 
                                          lambda : self.change_page("/PROFESSORS/SUBJECT_DETAILS"))
@@ -111,14 +112,17 @@ class EnrouterPage():
             
         elif route == '/':
             page_content = self.main_page
+            
         self.load_page_content(page_content)  
         
         if route == "/":
             self.main_page.update(update = True)
-        #self.page.update() 
+    
+        self.page.update() 
 
     def update_db(self, bd):
         self.db = bd
+        print(len(self.db.professors.get()))
         professors_page = ProfessorsPage(self.db, 
                                          lambda : self.change_page("/"), 
                                          lambda : self.change_page("/PROFESSORS/SUBJECT_DETAILS"))
@@ -137,11 +141,7 @@ class EnrouterPage():
 
     def load_page_content(self, page_content):
         
-        self.page.views.clear()
-        
-        
-        self.page.views.append(View('hola',
-                                   controls = [page_content]))
+        self.page.controls[0]=page_content
             
         self.page.update()
         

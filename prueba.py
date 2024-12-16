@@ -1,39 +1,16 @@
-# Variables que se van a insertar
-code = "Centro"
-initiaL_hour = "9:00 am"
-end_hour = "10:00 pm"
+import flet as ft
 
-# LaTeX con escapado de llaves
-latex_code = (
-    "\\stackunder{"
-    "\\stackon{"
-    "\\textbf{" + f"{code}" + "}"
-    "{\\scalebox{0.6}{\\tiny " + f"{initiaL_hour}" + "}}"
-    "}"
-    "{\\scalebox{0.6}{\\tiny " + f"{end_hour}" + "}}"
-    "}"
-)
+def main(page: ft.Page):
+    def on_keyboard(e: ft.KeyboardEvent):
+        page.add(
+            ft.Text(
+                f"Key: {e.key}, Shift: {e.shift}, Control: {e.ctrl}, Alt: {e.alt}, Meta: {e.meta}"
+            )
+        )
 
-length_block = 4
+    page.on_keyboard_event = on_keyboard
+    page.add(
+        ft.Text("Press any key with a combination of CTRL, ALT, SHIFT and META keys...")
+    )
 
-red = 100
-green = 100
-blue = 100
-
-colors = f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
-
-block = (
-    "\\multirow{" + f"{-length_block}""}{*}{" + f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
-    " \\stackunder{"
-    "\\stackon{"
-    "\\textbf{" + f"{code}" + "}" + "}"
-    "{\\scalebox{0.6}{\\tiny " + f"{initiaL_hour}" + "}}"
-    "}"
-    "{\\scalebox{0.6}{\\tiny " + f"{end_hour}" + "}}"
-    "}" 
-)
-
-
-bueno = "\multirow{-4}{*}{\cellcolor[RGB]{254,230,74} \stackunder{\stackon{\\textbf{Centro}}{\scalebox{0.6}{\\tiny 9:00 am}}}{\scalebox{0.6}{\\tiny 10:00 pm }} } "
-
-print(block)
+ft.app(main)

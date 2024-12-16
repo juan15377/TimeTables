@@ -160,7 +160,6 @@ def load_data_base(page, db):
     
 
 
-
 def generate_pdf_latex(page, bd):
     def save_file_result(e: FilePickerResultEvent):
         if e.path:

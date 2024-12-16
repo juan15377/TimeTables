@@ -145,11 +145,16 @@ def initialize_control_board():
             expand = True
         )
     
-    grid = ft.Container(
+    grid = ft.AnimatedSwitcher(
         content = grid,
         #expand = True
+        transition=ft.AnimatedSwitcherTransition.SCALE,
+        duration=500,
+        reverse_duration=100,
+        switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
+        switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
     )
-    
+
     return button_matrix, grid, day_columns
 
 def decompose_vector(vector):
@@ -532,7 +537,7 @@ def get_absolute_position(vector, req_pos):
         if c == req_pos:
             return k
 
-class ControlBoardSubjectSlots(ft.Container):
+class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
 
     def __init__(self, pga = DEFAULT_PCG, update = False) -> None:
         self.update_pga(pga, update)
@@ -551,10 +556,15 @@ class ControlBoardSubjectSlots(ft.Container):
 
         super().__init__(
             content=self.grid,
-            expand = True
+            expand = True,
+            transition=ft.AnimatedSwitcherTransition.SCALE,
+            duration=500,
+            reverse_duration=100,
+            switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
+            switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         )
         
-        # Generate subject blocks for each subject in the PGA
+        # Generate subject blocks for each subject in the PCG
         for subject in pga.subjects:
             subject_blocks = generate_subject_blocks(pga, self, subject)
             for subject_block in subject_blocks:
@@ -593,7 +603,7 @@ class ControlBoardSubjectSlots(ft.Container):
         size = subject_block.size # 1
 
         # Reset the j-column, but before doing that, we make a copy
-        previous_elements = copy.copy(self.day_columns[j].controls)
+        previous_elements = self.day_columns[j].controls
 
         row_rel = get_absolute_position(previous_elements, i + 1)
         news_elements = replace_element(previous_elements,
@@ -634,13 +644,10 @@ class ControlBoardSubjectSlots(ft.Container):
         self.subject_selector.update()
 
 
-ft.Container()
 # !!! principal class 
-class ControlBlocksSubject(ft.Container):
+class ControlBlocksSubject(ft.AnimatedSwitcher):
 
     def __init__(self, Bd, pcg, search, to_change):
-        boardsubjects = ControlBoardSubjectSlots(pcg)
-        self.boardsubjects = boardsubjects
         
         button_to_change_page =  ft.FloatingActionButton(
             icon=ft.icons.ADD,
@@ -650,7 +657,7 @@ class ControlBlocksSubject(ft.Container):
         )
         
         self.button_to_change_page = button_to_change_page
-    
+        
         self.search = search
         self.pcg = pcg
         
@@ -662,10 +669,17 @@ class ControlBlocksSubject(ft.Container):
                 expand=True
             ),
             expand=True,
+            transition=ft.AnimatedSwitcherTransition.SCALE,
+            duration=500,
+            reverse_duration=100,
+            switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
+            switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         )
         
     def get_layout_page(self, pcg):
         boardsubjects = ControlBoardSubjectSlots(pcg)
+        self.boardsubjects = boardsubjects
+        
         layout = ft.Column(
             controls = [
                     ft.Row(
@@ -690,19 +704,17 @@ class ControlBlocksSubject(ft.Container):
         
         return layout 
     
-    
+
                 
         
     def set_pcg(self, pcg):
         
         new_layout = self.get_layout_page(pcg)
         
-        boardsubjects = ControlBoardSubjectSlots(pcg)
         self.pcg = pcg
 
         del super().content.controls[0]
         super().content.controls.append(new_layout)
-        super().content.expand = True
         
         super().update()
         
@@ -712,7 +724,6 @@ class ControlBlocksSubject(ft.Container):
         #print("Se ejecuto")
         del super().content.controls[0]
         super().content.controls.append(new_layout) 
-        super().content.expand = True
         
         if update:
             super().update()  
