@@ -141,7 +141,7 @@ def delete_subject_from_DB(subject):
         group.availability_matrix = np.logical_or(group.availability_matrix, subject.allocated_subject_matrix)
     
     professor.remove_subject(subject)
-    if  not type(classroom) == ClassroomOnline:
+    if not type(classroom) == ClassroomOnline:
         classroom.remove_subject(subject)
     for group in groups:
         group.remove_subject(subject)
@@ -194,13 +194,16 @@ class Subjects:
 
 
     def remove(self, subject):
-        self.subjects.remove(subject)
+        if subject in self.subjects:
+            self.subjects.remove(subject)
 
         # The subject must also be removed from the teacher, classrooms, and groups
         delete_subject_from_DB(subject)
 
     def get(self):
-        return self.subjects
+        return self._subjects
+
+
 
 DEFAULT_SUBJECT = Subject(
     "",

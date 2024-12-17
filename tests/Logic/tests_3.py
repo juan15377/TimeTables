@@ -4,11 +4,11 @@
 # 5 materias 
 # 3 grupos 
 import sys  
-
+from src.Logic.Bd import BD
 sys.path.append("src/Logic/")
 # agregar un bloque en una materia de una materia y ver si se propagan las disponibilidades de las materias
 
-from BD import BD
+from Bd import BD
 from Subjects import InfoSubject, HoursComposition,  HoursSlotsComposition
 Bd = BD()
 
@@ -94,6 +94,9 @@ Bd.subjects.add(info3)
 comp_horas = HoursComposition(0.5, 2, 5)
 info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
 Bd.subjects.add(info3)
+
+
+Bd.subjects.remove(Bd.subjects.get())[0]
 
 #comp_horas = HoursComposition(1, 2, 5)
 #info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.groups.get()[2]], comp_horas)
