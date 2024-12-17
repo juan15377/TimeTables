@@ -10,6 +10,9 @@ from src.GUI.MainPage.subject_selector import SubjectSelector
 from src.Logic.Colors import RGB_to_hex, MyColorPicker
 from src.Logic.Professor_Classroom_Group import Professor, Group, Classroom
 from src.Logic.Subjects import Subject
+from src.GUI.Utils.SearchValue import SearchValue
+
+
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
 # ! este a partir de una inicializacion se debe mantener con operaciones que permitan 
 # ! añadir bloques, este debe tener una forma eficiemte de actualizar ciertas partes del objecto para 
@@ -647,7 +650,9 @@ class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
 # !!! principal class 
 class ControlBlocksSubject(ft.AnimatedSwitcher):
 
-    def __init__(self, Bd, pcg, search, to_change):
+    def __init__(self, bd, pcg, search, to_change, reference_to_get_dict):
+        
+        self.db = bd
         
         button_to_change_page =  ft.FloatingActionButton(
             icon=ft.icons.ADD,
@@ -656,9 +661,27 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
             focus_elevation= 10,
         )
         
+        self.reference_to_get_dict = reference_to_get_dict
+        
         self.button_to_change_page = button_to_change_page
         
         self.search = search
+        
+        def change_professor():
+            selected = self.search.get_value()
+            self.set_pcg(selected)
+            
+        def get_actual_profesors():
+            return 
+
+        
+        self.search =  SearchValue({
+            professor.name: professor for professor in self.db.professors.get()
+            },
+            get_actual_profesors,
+            on_change = change_professor
+        )
+                
         self.pcg = pcg
         
         layout = self.get_layout_page(pcg)
@@ -680,6 +703,33 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
         boardsubjects = ControlBoardSubjectSlots(pcg)
         self.boardsubjects = boardsubjects
         
+        def change_professor():
+            selected = self.search.get_value()
+            self.set_pcg(selected)
+            
+        def get_actual_profesors():
+            return self.reference_to_get_dict()
+
+        
+        self.search =  SearchValue(
+            self.reference_to_get_dict(),
+            get_actual_profesors,
+            on_change = change_professor
+        )
+        
+        name = ""
+        
+        if type(pcg) == Group:
+            name = pcg.career.name + ' ' + pcg.semester.name + ' ' + pcg.subgroup.name
+        elif type(pcg) == Professor:
+            name = pcg.name
+        elif type(pcg) == Classroom:
+            name = pcg.name
+        
+
+        self.search.text.value = name
+
+        
         layout = ft.Column(
             controls = [
                     ft.Row(
@@ -692,8 +742,8 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
                     ),
                     ft.Row(
                         controls = [      
-                            boardsubjects,
-                            boardsubjects.subject_selector,
+                            self.boardsubjects,
+                            self.boardsubjects.subject_selector,
                         ],
                         expand = True
                     )
@@ -703,12 +753,9 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
             )
         
         return layout 
-    
-
                 
         
     def set_pcg(self, pcg):
-        
         new_layout = self.get_layout_page(pcg)
         
         self.pcg = pcg
@@ -716,6 +763,7 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
         del super().content.controls[0]
         super().content.controls.append(new_layout)
         
+        #self.boardsubjects.update()
         super().update()
         
     def update(self, update = True):

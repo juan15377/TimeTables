@@ -30,7 +30,7 @@ class ProfesorMainPage(ControlBlocksSubject):
         def change_to_professors():
             reference_enrouter_page('/PROFESSORS') # cambiar la pagina de profesores
         
-        super().__init__(bd, DEFAULT_PCG, professor_search, change_to_professors)
+        super().__init__(bd, DEFAULT_PCG, professor_search, change_to_professors, get_actual_profesors)
         
     def update(self, update = True):
         self.professor_search.update()
@@ -67,7 +67,7 @@ class ClassroomMainPage(ControlBlocksSubject):
         def change_to_classrooms():
             reference_enrouter_page('/CLASSROOMS') # cambiar la pagina de aulas 
         
-        super().__init__(bd, DEFAULT_PCG, classroom_search, change_to_classrooms)
+        super().__init__(bd, DEFAULT_PCG, classroom_search, change_to_classrooms, get_actual_classrooms)
         
     def update(self, update = True):
         self.classroom_search.update()
@@ -100,7 +100,7 @@ class GroupMainPage(ControlBlocksSubject):
         def change_to_groups():
             reference_enrouter_page('/GROUPS') # cambiar la pagina a 
 
-        super().__init__(bd, DEFAULT_PCG, self.group_search, change_to_groups)
+        super().__init__(bd, DEFAULT_PCG, self.group_search, change_to_groups, get_actual_groups)
     
     def update(self, update = False):
         self.group_search.update()

@@ -1,8 +1,4 @@
-# mejorar la logica para que exista la pobilidad de que se puedas materia en online 
-# mejorar la pagina de añadir materia para que exista la posibilidad de añadir materia 
-# al SearchValue agregarle dos metodos, uno de bloqueo y otro de desbliqueo, donnde ambos no hay forma de 
-# seleccionar nada 
-# mejorar la interaz inicial para que tenga color, y ademas el boton de mas se encuentre a la derecha 
-# mejorar la barra de navegacion
+# mejorar la eficiencia de la creacion de tableros
+# despues falta una segunda refactorizacion de todo el codigo 
+# falta una implementacion de muchos modulos 
 
-# una vez que se carga la pantalla de professores esta parece ligarse a la base de datos con la que se incializo

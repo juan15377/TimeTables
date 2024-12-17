@@ -169,7 +169,8 @@ class MainPage(ft.Container):
                                             )
                 self.group_page.update(update = False)
 
-            self.page.update()    
+            self.page.update() 
+            self.update(update = True)   
         
         
         # Pick files dialog
@@ -269,8 +270,6 @@ class MainPage(ft.Container):
    
         pass
         
-
-    
     #function to update page in cual 
     def update(self, update = False):
         
@@ -310,8 +309,6 @@ class MainPage(ft.Container):
     def update_professor(self):
         self.professor_page.update(update = False)
         
-    
-    
 
 # al momento de agregar una materia todos los bloques que se colocaron dentro de el deben actualizarsede
         
@@ -324,15 +321,13 @@ def main(page: ft.Page):
         )
     Bd = BD()
     
+    page.theme_mode = "dark"
     main_page = MainPage(Bd, page)
     
     page.add(
         main_page
     )
     
-
-
-
 
 # ? arreglar el problema de deslizamiento hacia abajo
 # ! arreglar el caso de un tablero cuando no se tiene matterias
