@@ -67,9 +67,8 @@ class NameCodeSubject(ft.Container):
     def restart(self):
         self.set_name_and_abrevation("", "")
     
-
-# def main(page : ft.Page):
-#     na = NameCodeSubject("Nombre", "MATAC")
-#     page.add(na)
-
-# ft.app(main)
+#
+#def main(page : ft.Page):
+#    na = NameCodeSubject("Nombre", "MATAC")
+#    page.add(na)
+#ft.app(main)

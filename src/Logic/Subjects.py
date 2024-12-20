@@ -211,7 +211,7 @@ DEFAULT_SUBJECT = Subject(
     None,
     None,
     [],
-    HoursComposition(30, 30, 30),
+    HoursComposition(0, 0, 0),
 )
 
 DEFAULT_PCG.subjects.append(DEFAULT_SUBJECT)
