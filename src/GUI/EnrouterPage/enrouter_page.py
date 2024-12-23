@@ -1,7 +1,7 @@
 import sys
 import flet as ft
 from flet import View
-
+from src.GUI.Professors_classrooms_groups_pages.professor_classroom_group_page_editor import EditorPCG
 from src.GUI.SubjectEditor import SubjectEditor
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
 def load_subjects_page(bd, page_to_route, page):
@@ -61,29 +61,47 @@ class Pages():
         self.classrooms_page = classrooms_page
         self.groups_page = groups_page
 
+class EnrouterPCG():
+    
+    def __init__(self, db, enrouter):
+        
+        self.db = db 
+        self.enrouter = enrouter
+        
+    
+        pass 
+
+    def change_page(self, pcg):
+        content_page = None 
+        
+        if type(pcg) == Professor:
+            content_page = EditorPCG(pcg, db, enrouter_page)            
+        elif type(pcg) == Classroom:
+            content_page = EditorPCG(pcg, db, enrouter_page)
+        else:
+            content_page = EditorPCG(pcg, db, enrouter_page)
+        self.enrouter.change_page(content_page)
+        pass 
+
+
 class EnrouterPage():
     
     
     def __init__(self, main_page, bd, page) -> None:
         self.page = page
         self.db = bd
+        self.pcg = EnrouterPCG(db, self)
         
-        professors_page = ProfessorsPage(self.db, 
-                                         lambda : self.change_page("/"), 
-                                         lambda : self.change_page("/PROFESSORS/SUBJECT_DETAILS"))
+
+        professors_page = ProfessorsPage(self.db, self)
         
-        classrooms_page = ClassroomsPage(self.db, 
-                                         lambda : self.change_page("/"), 
-                                         lambda : self.change_page("/CLASSROOMS/SUBJECT_DETAILS"))
+        classrooms_page = ClassroomsPage(self.db, self)
         
-        groups_page = GroupsPage(self.db, 
-                                 lambda :self.change_page("/"), 
-                                 lambda : self.change_page("/GROUPS/SUBJECT_DETAILS"))
+        groups_page = GroupsPage(self.db, self)
         
         self.pages = Pages(professors_page, classrooms_page, groups_page)
         self.main_page = main_page
 
-        
     def change_page(self,route, subject = False):
         
         if route == '/PROFESSORS':

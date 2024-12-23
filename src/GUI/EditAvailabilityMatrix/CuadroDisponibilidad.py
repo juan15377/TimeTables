@@ -4,7 +4,7 @@ import numpy as np
 import time as tm
 
 
-class TablaDisponibilidad(ft.Container):
+class EditAvailabilityMatrix(ft.Container):
 
     def __init__(self) -> None:
         self.__disponibilidad = np.random.choice([False], size=(30, 7))

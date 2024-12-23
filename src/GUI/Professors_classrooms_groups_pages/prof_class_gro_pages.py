@@ -70,6 +70,8 @@ class Header(ft.Container):
         super().__init__(
             content=column_Title,
             width=1600,
+            expand=True,
+            theme_mode= ft.colors.AMBER_ACCENT
             )
         
     def edit_availability_matrix(self):
@@ -98,7 +100,7 @@ class SubjectListView(ft.Column):
             controls=[],  # Add button for adding new subjects
             scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
             expand = True,
-            alignment = ft.alignment.top_left
+            alignment = ft.alignment.top_left,
         )
         
         self.update(update = False)
@@ -126,12 +128,14 @@ class SubjectListView(ft.Column):
                 ft.DataColumn(ft.Text("delete")),
                 ft.DataColumn(ft.Text("edit")),
             ],
+            width = 1200
         )
 
         for subject in self.pga.get_subjects():
             
             def delete_subject_from_bd(subject):
                 self.DB.subjects.remove(subject)
+                self.listviewpga.update()
                 self.update()
                 
             def edit_subject_from_bd(subject):
@@ -139,7 +143,7 @@ class SubjectListView(ft.Column):
                 self.update()
                 
             name = subject.name 
-            progress = ft.ProgressBar(width=400)
+            progress = ft.ProgressBar(expand=True)
             progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
             
             subjects_list.rows.append(
@@ -147,8 +151,8 @@ class SubjectListView(ft.Column):
                     cells=[
                         ft.DataCell(ft.Text(name)),
                         ft.DataCell(progress),
-                        ft.DataCell(ft.Text(subject.professor.name)),
-                        ft.DataCell(ft.Text(subject.classroom.name)),
+                        ft.DataCell(ft.Text(subject.professor.name, expand = True)),
+                        ft.DataCell(ft.Text(subject.classroom.name, expand = True)),
                         ft.DataCell(ft.Text(str(subject.hours_distribution.total()))),
                         ft.DataCell(ft.Container(content=ft.IconButton(icon = ft.icons.DELETE,
                                                                        on_click=lambda e, s=subject: delete_subject_from_bd(s)),
@@ -161,8 +165,8 @@ class SubjectListView(ft.Column):
                                                  )
                         ),
                     ],
-                    
-                )
+                ),
+
             )
         
         self.controls = [subjects_list]
@@ -171,22 +175,40 @@ class SubjectListView(ft.Column):
             super().update()
 
 
+class ExpansionPCG(ft.ExpansionTile):
+    
+    def __init__(self, pcg, DB, listviewpcg, reference_to_add_subject):
+        header = Header(DB, pcg, listviewpcg)
+        subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject, header)
+        
+        self.subject_list = subject_list
+        self.header = header
+        
+        super().__init__(
+                        title=header,
+                        affinity=ft.TileAffinity.LEADING,
+                        controls=[
+                                ft.Container(
+                                        content=self.subject_list,
+                                        height=400,  # Set height to allow scrolling
+                                        alignment= ft.alignment.top_left
+                                    )
+                                ],
+                                data=header.name,
+                                on_change = lambda e : subject_list.update(update = True),
+                            )
+
+    def update(self):
+        self.header.update()
+        #self.subject_list.update()
+        super().update()
+        
+
 def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
-    header = Header(DB, pcg, listviewpcg)
-    subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject, header)
-    expansion = ft.ExpansionTile(
-                    title=header,
-                    affinity=ft.TileAffinity.LEADING,
-                    controls=[
-                            ft.Container(
-                                    content=subject_list,
-                                    height=400,  # Set height to allow scrolling
-                                    alignment= ft.alignment.top_left
-                                )
-                            ],
-                            data=header.name,                            
-                        )
-    return expansion
+    
+    expansion_pcg = ExpansionPCG(pcg, DB, listviewpcg, reference_to_add_subject)
+
+    return expansion_pcg
 # simplemente es una lista de los grupo, aulas, y profesores, simplemente tiene un buscador arriba
 # solo actualizar la columas de expansiones
 
@@ -203,8 +225,9 @@ class ListViewPCG(ft.Column):
         def search(e):
             coincidence = search_textfield.value
             new_expansions = self.filter_expansions(coincidence)
-            ft.ListView(expand=1, spacing=10, item_extent=50)
-            self.controls[1].content = ft.ListView(expand=1, spacing=10, item_extent=50,
+            self.expansions = new_expansions
+            ft.ListView(expand=1, spacing=10, item_extent=50, on_scroll= lambda e: print("Hola Mundo"))
+            self.controls[1].content = ft.ListView(expand=1, spacing=10, item_extent=1,
                                                    controls = new_expansions)
             self.controls[1].update()
         
@@ -254,11 +277,17 @@ class ListViewPCG(ft.Column):
 
     def update_(self, update = True):
         all_expansions = self.get_all_expansions()
+        self.expansions = all_expansions
 
         self.controls[1].content  = ft.ListView(expand=1, spacing=10, item_extent=50,
                                                    controls = all_expansions)
         if update:
             self.controls[1].update()
+    
+    def update(self):
+        for expansion in self.expansions:
+            expansion.update()
+        
    
        
         
