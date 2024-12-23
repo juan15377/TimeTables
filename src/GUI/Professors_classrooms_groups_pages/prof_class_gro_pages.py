@@ -7,7 +7,7 @@ from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
 from src.GUI.Professors_classrooms_groups_pages.new_career_semestre_subgroup import NewGroup
 from src.GUI.Professors_classrooms_groups_pages.new_professor_classroom import NewProfessor, NewClassroom
 
-class Header(ft.Container):
+class PCGListItem(ft.Container):
 
     def __init__(self, DB, pga, listviewpga):
         self.DB = DB 
@@ -86,129 +86,7 @@ class Header(ft.Container):
         self.pb.value = self.pga.methods.completion_rate()
         self.pb.update()
         pass  
-
-class SubjectListView(ft.Column):
-
-    def __init__(self, DB, pga, listviewpga, reference_to_add_subject, header_subject):
-        self.DB = DB 
-        self.listviewpga = listviewpga
-        self.pga = pga
-        self.reference_to_add_subject = reference_to_add_subject
-        self.header_subject = header_subject
-            
-        super().__init__(
-            controls=[],  # Add button for adding new subjects
-            scroll=ft.ScrollMode.AUTO,  # Enable scrolling in the column
-            expand = True,
-            alignment = ft.alignment.top_left,
-        )
-        
-        self.update(update = False)
-
-            
-    def edit_subject(self, s):
-        # This should open a new window to edit subject information
-        pass 
-
-    def add_subject(self):
-        self.reference_to_add_subject()
-        pass
     
-    def update(self, update = True):
-        # tambie se tiene que actualizar el header
-        
-        
-        subjects_list = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("name Subject")),
-                ft.DataColumn(ft.Text("progress")),
-                ft.DataColumn(ft.Text("professor")),
-                ft.DataColumn(ft.Text("Classroom")),
-                ft.DataColumn(ft.Text("total hours")),
-                ft.DataColumn(ft.Text("delete")),
-                ft.DataColumn(ft.Text("edit")),
-            ],
-            width = 1200
-        )
-
-        for subject in self.pga.get_subjects():
-            
-            def delete_subject_from_bd(subject):
-                self.DB.subjects.remove(subject)
-                self.listviewpga.update()
-                self.update()
-                
-            def edit_subject_from_bd(subject):
-                self.edit_subject(subject)
-                self.update()
-                
-            name = subject.name 
-            progress = ft.ProgressBar(expand=True)
-            progress.value = 1 - subject.remaining() / subject.total() if subject.total() != 0 else 1 
-            
-            subjects_list.rows.append(
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(ft.Text(name)),
-                        ft.DataCell(progress),
-                        ft.DataCell(ft.Text(subject.professor.name, expand = True)),
-                        ft.DataCell(ft.Text(subject.classroom.name, expand = True)),
-                        ft.DataCell(ft.Text(str(subject.hours_distribution.total()))),
-                        ft.DataCell(ft.Container(content=ft.IconButton(icon = ft.icons.DELETE,
-                                                                       on_click=lambda e, s=subject: delete_subject_from_bd(s)),
-                                                 
-                                                 ), 
-                        ),
-                        ft.DataCell(ft.Container(content=ft.IconButton(icon = ft.icons.EDIT,
-                                                                       on_click=lambda e, s=subject: edit_subject_from_bd(s)),
-                                                 
-                                                 )
-                        ),
-                    ],
-                ),
-
-            )
-        
-        self.controls = [subjects_list]
-        if update:
-            self.header_subject.update()
-            super().update()
-
-
-class ExpansionPCG(ft.ExpansionTile):
-    
-    def __init__(self, pcg, DB, listviewpcg, reference_to_add_subject):
-        header = Header(DB, pcg, listviewpcg)
-        subject_list = SubjectListView(DB, pcg, listviewpcg, reference_to_add_subject, header)
-        
-        self.subject_list = subject_list
-        self.header = header
-        
-        super().__init__(
-                        title=header,
-                        affinity=ft.TileAffinity.LEADING,
-                        controls=[
-                                ft.Container(
-                                        content=self.subject_list,
-                                        height=400,  # Set height to allow scrolling
-                                        alignment= ft.alignment.top_left
-                                    )
-                                ],
-                                data=header.name,
-                                on_change = lambda e : subject_list.update(update = True),
-                            )
-
-    def update(self):
-        self.header.update()
-        #self.subject_list.update()
-        super().update()
-        
-
-def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
-    
-    expansion_pcg = ExpansionPCG(pcg, DB, listviewpcg, reference_to_add_subject)
-
-    return expansion_pcg
 # simplemente es una lista de los grupo, aulas, y profesores, simplemente tiene un buscador arriba
 # solo actualizar la columas de expansiones
 
@@ -216,25 +94,24 @@ def generate_expansion_view(pcg, DB, listviewpcg, reference_to_add_subject):
 # methods: update
 class ListViewPCG(ft.Column):
 
-    def __init__(self, reference_pcgs, DB, reference_to_add_subject):
-        self.reference_to_add_subject = reference_to_add_subject
-        self.DB = DB  
+    def __init__(self, reference_pcgs, DB,):
+        self.db = db
         self.reference_pcgs = reference_pcgs # to get pcgs 
-        self.expansions = []
+        self.items = []
         
         def search(e):
             coincidence = search_textfield.value
-            new_expansions = self.filter_expansions(coincidence)
-            self.expansions = new_expansions
+            new_items = self.filter(coincidence)
+            self.items = new_items
             ft.ListView(expand=1, spacing=10, item_extent=50, on_scroll= lambda e: print("Hola Mundo"))
             self.controls[1].content = ft.ListView(expand=1, spacing=10, item_extent=1,
-                                                   controls = new_expansions)
+                                                   controls = new_items)
             self.controls[1].update()
         
-        all_expansions = self.get_all_expansions()
+        all_items = self.get_all()
         
         column_pcgs = ft.Column(
-            controls = all_expansions,
+            controls = all_items,
             scroll=ft.ScrollMode.AUTO, 
         )
         
@@ -254,11 +131,11 @@ class ListViewPCG(ft.Column):
         )
         
         
-    def filter_expansions(self, coincidence):
+    def filter(self, coincidence):
         if coincidence == "":
-            return self.get_all_expansions()
+            return self.get_all()
         new_expansions = []
-        all_expansions = self.get_all_expansions()
+        all_expansions = self.get_all()
         for expansion in all_expansions:
             if coincidence.lower() in expansion.data.lower():  # Data stores the name of the PGA
                 new_expansions.append(expansion)
@@ -266,18 +143,18 @@ class ListViewPCG(ft.Column):
         pass    
         
         
-    def get_all_expansions(self):
-        expansions = []
+    def get_all(self):
+        all_items = []
         
         for pcg in self.reference_pcgs():
-            expansion = generate_expansion_view(pcg, self.DB, self, self.reference_to_add_subject)
-            expansions.append(expansion)
-        return expansions
-    
+            item = PCGListViewer(self.db, pcg, self)
+            all_items.append(item)
+        return all_items
+
 
     def update_(self, update = True):
-        all_expansions = self.get_all_expansions()
-        self.expansions = all_expansions
+        all_items = self.get_all()
+        self.items = all_items
 
         self.controls[1].content  = ft.ListView(expand=1, spacing=10, item_extent=50,
                                                    controls = all_expansions)
@@ -293,7 +170,10 @@ class ListViewPCG(ft.Column):
         
 class NavigatorBarBack(ft.Container):
     
-    def __init__(self, funct_to_back):
+    def __init__(self, enrouter_page):
+        
+        def funct_to_back():
+            enrouter_page.change_page("/")
 
         pagelet = ft.Pagelet(
             appbar=ft.AppBar(
@@ -331,13 +211,13 @@ class NavigatorBarBack(ft.Container):
          
 class ProfessorsPage(ft.Container):
     
-    def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
+    def __init__(self, bd, enrouter_page):
         self.bd = bd  # Database connection
         
 
-        listviewprofessor =  ListViewPCG(bd.professors.get, bd, reference_to_add_subject)
+        listviewprofessor =  ListViewPCG(bd.professors.get, bd)
         self.listviewprofessor = listviewprofessor
-        navigatorbar = NavigatorBarBack(navigate_to_main_page)
+        navigatorbar = NavigatorBarBack(enrouter_page)
         
         button_new_subject = ft.FloatingActionButton(
             text="add subject",
@@ -377,10 +257,13 @@ class ProfessorsPage(ft.Container):
 class ClassroomsPage(ft.Container):
 
     
-    def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
+    def __init__(self, bd, enrouter_page):
         self.bd = bd  # Database connection
         
-        listviewclassrooms =  ListViewPCG(bd.classrooms.get, bd, reference_to_add_subject)
+        def navigate_to_main_page():
+            enrouter_page.change_page("/")
+        
+        listviewclassrooms =  ListViewPCG(bd.classrooms.get, bd)
         self.listviewclassrooms = listviewclassrooms
         navigatorbar = NavigatorBarBack(navigate_to_main_page)
         
@@ -422,7 +305,7 @@ class ClassroomsPage(ft.Container):
 class GroupsPage(ft.Container):
 
     
-    def __init__(self, bd, navigate_to_main_page, reference_to_add_subject):
+    def __init__(self, bd, enrouter_page):
         self.bd = bd  # Database connection
         
         listviewgroups =  ListViewPCG(bd.groups.get, bd, reference_to_add_subject)

@@ -201,7 +201,7 @@ class Subjects:
         delete_subject_from_DB(subject)
 
     def get(self):
-        return self._subjects
+        return self.subjects
 
 
 

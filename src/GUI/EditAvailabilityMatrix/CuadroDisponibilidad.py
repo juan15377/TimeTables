@@ -231,25 +231,6 @@ class EditAvailabilityMatrix(ft.Container):
 #print(np.array([1,2,3] + np.array([1,2,3])))
 
 
-def main(page: ft.page):
-
-
-    H = TablaDisponibilidad()
-
-    page.add(H)
-    page.size = (300,300)
-
-    tm.sleep(3)
-
-    print("AH iniciado")
-    H.set_matrix(np.random.choice([False,True], size=(30, 7)))
-    print("\n \n")
-    print(H.get_matrix())
-
-
-
-ft.app(main)
-
 
     
 

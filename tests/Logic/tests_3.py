@@ -5,11 +5,9 @@
 # 3 grupos 
 import sys  
 from src.Logic.Bd import BD
-sys.path.append("src/Logic/")
 # agregar un bloque en una materia de una materia y ver si se propagan las disponibilidades de las materias
 
-from Bd import BD
-from Subjects import InfoSubject, HoursComposition,  HoursSlotsComposition
+from src.Logic.Subjects import InfoSubject, HoursComposition,  HoursSlotsComposition
 Bd = BD()
 
 # ? Añadir 3 profesores
@@ -47,56 +45,12 @@ comp_horas = HoursComposition(1, 2, 5)
 
 
 comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Calculo Diferencial", "CALC1", Bd.professors.get()[0], Bd.classrooms.get()[1], [Bd.groups.get()[2]], comp_horas)
+info3 = InfoSubject("Calculo Diferencial", "CALC1", Bd.professors.get()[0], Bd.classrooms.get()[1], [Bd.groups.get()[2]], comp_horas, False)
 Bd.subjects.add(info3)
 
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
+print(Bd.subjects.get())
 
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-comp_horas = HoursComposition(0.5, 2, 5)
-info3 = InfoSubject("Algebra Lineal", "ALGLI", Bd.professors.get()[0], Bd.classrooms.get()[2], [Bd.groups.get()[0]], comp_horas)
-Bd.subjects.add(info3)
-
-
-Bd.subjects.remove(Bd.subjects.get())[0]
+#Bd.subjects.remove(Bd.subjects.get()[0])
 
 #comp_horas = HoursComposition(1, 2, 5)
 #info3 = InfoSubject("Algebra Lineal", "ALGE", Bd.professors.get()[1], Bd.classrooms.get()[2], [Bd.groups.get()[2]], comp_horas)
@@ -119,21 +73,27 @@ Bd.subjects.remove(Bd.subjects.get())[0]
 
 
 #BD.materias.get()[0].colocar_horas((0, 4), 1)
-materia_1 = Bd.subjects.get()[0]
-materia_2 = Bd.subjects.get()[1]
+
 #materia_3 = Bd.subjects.get()[2]
 
 #materia_3.assign_class_block((5,4), 5)
-materia_1.assign_class_block((27,1), 3)
+materia_1 = Bd.subjects.get()[0]
+materia_1.assign_class_block((27,2), 3)
 #materia_2.assign_class_block((1,2), 5)
 
 # print(materia_1.disponibilidad, "\n")
 # print(materia_2.disponibilidad, "\n")
 # print(materia_3.disponibilidad)
 
-print(len(Bd.groups.get()[0].get_subjects()))
-print(len(Bd.classrooms.get()[0].get_subjects()))
+import numpy as np
+print(materia_1.allocated_subject_matrix)
 
+nueva_matrix_disponibilidad = np.full((30, 7), True)
+nueva_matrix_disponibilidad[27,2] = False
+
+Bd.professors.set_availability_matrix(Bd.professors.get()[0], nueva_matrix_disponibilidad)
+
+print(materia_1.allocated_subject_matrix)
 # el colocar horas el la primera materia deberia propagar la disponibilidad en la tercer materia 
 # al parecer funciona bien la propagacion de la disponibilidad a las materias 
 

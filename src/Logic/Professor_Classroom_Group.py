@@ -90,7 +90,18 @@ class PCG:
     def get_subjects(self):
         """Returns the list of subjects."""
         return self.subjects
-
+    
+    def get_allocate_subjects_matrix(self):
+        if len(self.subjects) == 0:
+            return np.full((30, 7), False)
+        result = self.subjects[0].allocated_subject_matrix
+        for subject in self.subjects[1:]:
+            result = np.logical_or(result, subject.allocated_subject_matrix)
+        return result
+    
+    def initial_availability_matrix(self):
+        return np.logical_or(self.get_allocate_subjects_matrix(), self.availability_matrix)
+    
 # ? Profesor
 # ? Professor, Classroom, and Group classes extend from PCG
 
@@ -226,6 +237,77 @@ class Subgroups:
         self.subgroups.append(subgroup)
 
 
+def generate_subject_blocks(pga, control_board, subject):
+    # Given a set of subjects, it will return a list of subject blocks that will be inserted
+    # using internal methods.
+    hours_placed = subject.allocated_subject_matrix
+    blocks = []
+    for column in range(7):
+        column_ = hours_placed[:, column]
+        positions = decompose_vector(column_)
+        for position in positions:
+            row = position[0]
+            block_size = position[1] - position[0] 
+            if position[1] == 29:
+                block_size += 1
+            block = SubjectBlock(pga, control_board, subject, block_size, (row, column))
+            blocks.append(block)
+    return blocks
+
+def decompose_vector(vector):
+    pos_in = 0
+    positions = []
+    start_sequence = False
+
+    for num, ele in enumerate(vector):
+        if ele == 0 and start_sequence:
+            start_sequence = False
+            positions.append((pos_in, num))
+            continue 
+        if ele == 1 and (not start_sequence):
+            start_sequence = True
+            pos_in = num
+            continue 
+    if start_sequence:
+        positions.append((pos_in, len(vector)-1))
+
+    return positions
+
+
+#print(decompose_vector([0, 1, 1, 0, 1]))
+
+def delete_blocks_subject_with_new_availability(pcg, old_matrix, new_matrix, bd):
+
+
+    print("New Matrix")
+    print(new_matrix)
+    
+    print("Old Matrix")
+    print(old_matrix)
+    
+    
+    old_not_avalailability_matrix = np.logical_and(old_matrix, np.logical_not(new_matrix))
+    
+    print("esta es las posiciones que cualquier que intersecte con los bloques de materias deberian quitarse")
+    print(old_not_avalailability_matrix)
+    
+    for subject in pcg.get_subjects():
+        hours_placed = subject.allocated_subject_matrix
+        for column in range(7):
+            column_ = hours_placed[:, column]
+            positions = decompose_vector(column_)
+            for position in positions:
+                row = position[0]
+                block_size = position[1] - position[0] 
+                if position[1] == 29:
+                    block_size += 1
+                print(row, column, block_size)
+                print(old_not_avalailability_matrix[row:row + block_size, column])
+                if sum(old_not_avalailability_matrix[row: row + block_size, column]) != 0:
+                    subject.remove_class_block((row, column), block_size)
+    pass 
+
+
 class Groups:
     def __init__(self, BD) -> None:
         self.bd = BD
@@ -252,6 +334,14 @@ class Groups:
         self.groups.remove(group)
         #eliminar todas las materias relacionadas con este grupo
 
+    def set_availability_matrix(self, group, new_availability_matrix):
+        old_availability_matrix = group.initial_availability_matrix()
+        
+        group.availability_matrix = new_availability_matrix
+        
+        delete_blocks_subject_with_new_availability(group, old_availability_matrix, new_availability_matrix, self.bd)
+        
+        
 
 class Professors:
     def __init__(self, BD) -> None:
@@ -272,12 +362,23 @@ class Professors:
         self.professors.remove(professor)
         
         # borrar todas las materias relaciondas con este professor
+    
+    def set_availability_matrix(self, professor, new_availability_matrix):
+        old_availability_matrix = professor.initial_availability_matrix()
         
-
-
+        professor.availability_matrix = new_availability_matrix
+        
+        delete_blocks_subject_with_new_availability(professor, old_availability_matrix, new_availability_matrix, self.bd)
+        
+        
+        
+        # eliminar todas las materias de la matriz que 
+        
+        
 class Classrooms:
-    def __init__(self, BD) -> None:
+    def __init__(self, db) -> None:
         self.classrooms = []
+        self.db = db
 
     def new(self, name):
         classroom = Classroom(name)
@@ -291,3 +392,11 @@ class Classrooms:
             self.subjects.remove(subject)
         self.classrooms.remove(classroom)
 
+    def set_availability_matrix(self, classroom, new_availability_matrix):
+        old_availability_matrix = classroom.initial_availability_matrix()
+        
+        classroom.availability_matrix = new_availability_matrix
+        
+        delete_blocks_subject_with_new_availability(classroom, old_availability_matrix, new_availability_matrix, self.bd)
+        
+      
