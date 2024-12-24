@@ -9,7 +9,7 @@ from src.GUI.Professors_classrooms_groups_pages.new_professor_classroom import N
 
 class PCGListItem(ft.Container):
 
-    def __init__(self, DB, pga, listviewpga):
+    def __init__(self, DB, pga, listviewpga, enrouter_page):
         self.DB = DB 
         self.pga = pga
         self.listviewpga = listviewpga
@@ -51,7 +51,7 @@ class PCGListItem(ft.Container):
         )
         
         button_edit = ft.IconButton(
-            on_click=lambda e: self.listviewpga.edit(pga),
+            on_click=lambda e: enrouter_page.pcg.change_page(pga),
             icon = ft.icons.EDIT
         )
         
@@ -65,13 +65,15 @@ class PCGListItem(ft.Container):
                         ]
             )
         )
-      
+
+        print(pga.name)
         
         super().__init__(
             content=column_Title,
             width=1600,
             expand=True,
-            theme_mode= ft.colors.AMBER_ACCENT
+            theme_mode= ft.colors.AMBER_ACCENT,
+            data = pga.name
             )
         
     def edit_availability_matrix(self):
@@ -94,10 +96,11 @@ class PCGListItem(ft.Container):
 # methods: update
 class ListViewPCG(ft.Column):
 
-    def __init__(self, reference_pcgs, DB,):
+    def __init__(self, reference_pcgs, db, enrouter_page):
         self.db = db
         self.reference_pcgs = reference_pcgs # to get pcgs 
         self.items = []
+        self.enrouter_page = enrouter_page
         
         def search(e):
             coincidence = search_textfield.value
@@ -147,7 +150,7 @@ class ListViewPCG(ft.Column):
         all_items = []
         
         for pcg in self.reference_pcgs():
-            item = PCGListViewer(self.db, pcg, self)
+            item = PCGListItem(self.db, pcg, self, self.enrouter_page )
             all_items.append(item)
         return all_items
 
@@ -157,13 +160,13 @@ class ListViewPCG(ft.Column):
         self.items = all_items
 
         self.controls[1].content  = ft.ListView(expand=1, spacing=10, item_extent=50,
-                                                   controls = all_expansions)
+                                                   controls = all_items)
         if update:
             self.controls[1].update()
     
     def update(self):
-        for expansion in self.expansions:
-            expansion.update()
+        for item in self.items:
+            item.update()
         
    
        
@@ -215,7 +218,7 @@ class ProfessorsPage(ft.Container):
         self.bd = bd  # Database connection
         
 
-        listviewprofessor =  ListViewPCG(bd.professors.get, bd)
+        listviewprofessor =  ListViewPCG(bd.professors.get, bd, enrouter_page)
         self.listviewprofessor = listviewprofessor
         navigatorbar = NavigatorBarBack(enrouter_page)
         
@@ -263,9 +266,9 @@ class ClassroomsPage(ft.Container):
         def navigate_to_main_page():
             enrouter_page.change_page("/")
         
-        listviewclassrooms =  ListViewPCG(bd.classrooms.get, bd)
+        listviewclassrooms =  ListViewPCG(bd.classrooms.get, bd, enrouter_page)
         self.listviewclassrooms = listviewclassrooms
-        navigatorbar = NavigatorBarBack(navigate_to_main_page)
+        navigatorbar = NavigatorBarBack(enrouter_page)
         
         button_new_subject = ft.FloatingActionButton(
             text="add subject",
@@ -308,8 +311,12 @@ class GroupsPage(ft.Container):
     def __init__(self, bd, enrouter_page):
         self.bd = bd  # Database connection
         
-        listviewgroups =  ListViewPCG(bd.groups.get, bd, reference_to_add_subject)
-        navigatorbar = NavigatorBarBack(navigate_to_main_page)
+        listviewgroups =  ListViewPCG(bd.groups.get, bd, enrouter_page)
+        
+        def navigate_to_main_page():
+            enrouter_page.change_page("/")
+    
+        navigatorbar = NavigatorBarBack(enrouter_page)
         
         button_new_subject = ft.FloatingActionButton(
             text="add subject",

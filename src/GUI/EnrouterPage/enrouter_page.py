@@ -4,6 +4,7 @@ from flet import View
 from src.GUI.Professors_classrooms_groups_pages.professor_classroom_group_page_editor import EditorPCG
 from src.GUI.SubjectEditor import SubjectEditor
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
+from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
 def load_subjects_page(bd, page_to_route, page):
     subject_editor = SubjectEditor(bd, reference_page_router = page_to_route, page = page)
     return subject_editor
@@ -63,10 +64,10 @@ class Pages():
 
 class EnrouterPCG():
     
-    def __init__(self, db, enrouter):
+    def __init__(self, db, enrouter_page):
         
         self.db = db 
-        self.enrouter = enrouter
+        self.enrouter_page = enrouter_page
         
     
         pass 
@@ -75,12 +76,12 @@ class EnrouterPCG():
         content_page = None 
         
         if type(pcg) == Professor:
-            content_page = EditorPCG(pcg, db, enrouter_page)            
+            content_page = EditorPCG(pcg, self.db, self.enrouter_page)            
         elif type(pcg) == Classroom:
-            content_page = EditorPCG(pcg, db, enrouter_page)
+            content_page = EditorPCG(pcg, self.db, self.enrouter_page)
         else:
-            content_page = EditorPCG(pcg, db, enrouter_page)
-        self.enrouter.change_page(content_page)
+            content_page = EditorPCG(pcg, self.db, self.enrouter_page)
+        self.enrouter_page.load_page_content(content_page)
         pass 
 
 
@@ -90,7 +91,7 @@ class EnrouterPage():
     def __init__(self, main_page, bd, page) -> None:
         self.page = page
         self.db = bd
-        self.pcg = EnrouterPCG(db, self)
+        self.pcg = EnrouterPCG(self.db, self)
         
 
         professors_page = ProfessorsPage(self.db, self)
@@ -142,16 +143,13 @@ class EnrouterPage():
         self.db = bd
         print(len(self.db.professors.get()))
         professors_page = ProfessorsPage(self.db, 
-                                         lambda : self.change_page("/"), 
-                                         lambda : self.change_page("/PROFESSORS/SUBJECT_DETAILS"))
+                                         self)
         
         classrooms_page = ClassroomsPage(self.db, 
-                                         lambda : self.change_page("/"), 
-                                         lambda : self.change_page("/CLASSROOMS/SUBJECT_DETAILS"))
+                                         self)
         
         groups_page = GroupsPage(self.db, 
-                                 lambda :self.change_page("/"), 
-                                 lambda : self.change_page("/GROUPS/SUBJECT_DETAILS"))
+                                 self)
         
         self.pages = Pages(professors_page, classrooms_page, groups_page)
         pass

@@ -44,9 +44,7 @@ class SubjectList(ft.ListView):
         
         super().__init__(
             controls = [],
-            scroll = ft.ScrollMode.AUTO,
             expand = True,
-            alignment = ft.alignment.top_left,
         )
         
         self.update(update = False)
@@ -74,7 +72,6 @@ class SubjectList(ft.ListView):
                 ft.DataColumn(ft.Text("delete")),
                 ft.DataColumn(ft.Text("edit")),
             ],
-            width = 1200
         )
 
         for subject in subjects:
@@ -143,17 +140,25 @@ class EditorPCG(ft.Container):
         
         left_layout = ft.Column(
             controls = [
-                self.pcg_name_editor,
                 self.edit_matrix_availability,
                 button_save_changes_matrix_availability,
-            ]
+            ],
+            expand = True
         )
         
         right_layout = ft.Column(
             controls = [
+                ft.Row(
+                    controls = [
+                    self.pcg_name_editor,
+                    ],
+                    expand = False
+                    
+                ),
                 self.subject_list,
                 button_add_subject,
-            ]
+            ],
+            expand = True
         )
         
         super().__init__(
@@ -161,7 +166,9 @@ class EditorPCG(ft.Container):
                 controls = [
                     left_layout,
                     right_layout,
-                ]
-            )
+                ],
+                expand = True
+            ),
+            expand = True
         )
         

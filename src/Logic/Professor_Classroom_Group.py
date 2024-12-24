@@ -150,6 +150,10 @@ class Group(PCG):
         self.career = career
         self.semester = semester
         self.subgroup = subgroup
+        
+        self.name = self.career.name + " " + self.semester.name + " " + self.subgroup.name
+        
+    
 
 def delete_groups_subjects(groups, subjects, bd):
     for group in groups:
@@ -272,8 +276,6 @@ def decompose_vector(vector):
         positions.append((pos_in, len(vector)-1))
 
     return positions
-
-
 #print(decompose_vector([0, 1, 1, 0, 1]))
 
 def delete_blocks_subject_with_new_availability(pcg, old_matrix, new_matrix, bd):
