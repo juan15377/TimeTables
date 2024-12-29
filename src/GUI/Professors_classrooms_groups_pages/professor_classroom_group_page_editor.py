@@ -1,6 +1,6 @@
 import flet as ft 
 from src.GUI.EditAvailabilityMatrix.CuadroDisponibilidad import EditAvailabilityMatrix
-
+from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
 class NameEditor(ft.Container):
     
     def __init__(self, name):
@@ -115,11 +115,68 @@ class SubjectList(ft.ListView):
         if update:
             super().update()
 
+
+
+class NavigatorBarBackPCG(ft.Container):
+    
+    def __init__(self, page_back_callback, pcg):
+        
+        def funct_to_back():
+            page_back_callback()
+
+        pagelet = ft.Pagelet(
+            appbar=ft.AppBar(
+                leading=ft.IconButton(icon = ft.icons.ARROW_BACK, 
+                                    on_click = lambda x: funct_to_back()),
+                leading_width=50,
+                title=ft.Text(""),
+                center_title=False,
+                bgcolor=ft.colors.SURFACE_VARIANT,
+                actions=[
+                    ft.PopupMenuButton(
+                        items=[
+                            ft.PopupMenuItem(text="Item 1"),
+                            ft.PopupMenuItem(),  # divider
+                            ft.PopupMenuItem(
+                                text="Checked item",
+                                checked=False,
+                            ),
+                        ]
+                    ),
+                ],
+            ),
+            content=ft.Container(
+                expand=False),
+            height=50,
+            
+        )
+            
+        
+        super().__init__(
+            content = pagelet,
+            expand=True
+        )
+
 class EditorPCG(ft.Container):
     
     def __init__(self, pcg, db, enrouter_page):
         
+        page_back_callback = None 
+        
+        if type(pcg) == Professor:
+            page_back_callback = lambda : enrouter_page.change_page("/PROFESSORS") 
+        elif type(pcg) == Classroom:
+            page_back_callback = lambda : enrouter_page.change_page("/CLASSROOMS") 
+        else:
+            page_back_callback = lambda : enrouter_page.change_page("/GROUPS") 
+            
+            
+            
+        
         self.edit_matrix_availability = EditAvailabilityMatrix()
+        
+        self.edit_matrix_availability.set_matrix(pcg.availability_matrix, update = False)
+        
         self.pcg_name_editor = NameEditor(pcg.name)
         
         def get_subjects():
@@ -131,8 +188,8 @@ class EditorPCG(ft.Container):
         
         self.subject_list = SubjectList(db, get_subjects, enrouter_page)
         
-        button_add_subject = ft.IconButton(icon = ft.icons.DELETE,
-                                            on_click=lambda e: enrouter_page.change_page("EDITSUBJECT", pcg = pcg) )
+        button_add_subject = ft.IconButton(icon = ft.icons.ADD,
+                                            on_click=lambda e: enrouter_page.change_page("/PCG/SUBJECT_DETAILS",pcg = pcg) )
         
         button_save_changes_matrix_availability = ft.IconButton(icon = ft.icons.DELETE,
                                                     on_click = save_changes_matrix_availability)
@@ -155,17 +212,31 @@ class EditorPCG(ft.Container):
                     expand = False
                     
                 ),
-                self.subject_list,
                 button_add_subject,
+                self.subject_list,
             ],
             expand = True
         )
         
+        navigator_back = NavigatorBarBackPCG(page_back_callback, pcg)
+        
         super().__init__(
-            content = ft.Row(
+            content = ft.Column(
                 controls = [
-                    left_layout,
-                    right_layout,
+                    ft.Row(
+                        controls = [
+                            navigator_back,
+                        ],
+                        expand = False
+                    ),
+                    ft.Row(
+                        controls = [
+                            left_layout,
+                            right_layout,
+                        ],
+                        expand = True
+                    )
+
                 ],
                 expand = True
             ),

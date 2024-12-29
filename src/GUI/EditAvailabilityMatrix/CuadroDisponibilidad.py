@@ -26,12 +26,11 @@ class EditAvailabilityMatrix(ft.Container):
 
             return ft.CupertinoButton(
                     content=ft.Text(""),
-                    width=60,
-                    height=25,
                     bgcolor=ft.colors.RED,
                     padding=0,
                     border_radius=5,
-                    on_click =  lambda e: boton_presionado(e,fila,columna)
+                    on_click =  lambda e: boton_presionado(e,fila,columna),
+                    expand = True
             )
 
 
@@ -48,6 +47,8 @@ class EditAvailabilityMatrix(ft.Container):
 
 
         matriz_contendores = [[contenedor(fila,columna) for columna in range(7)] for fila in range(30)]
+        
+
 
         self.__matriz_contenedores = matriz_contendores
                 
@@ -71,42 +72,33 @@ class EditAvailabilityMatrix(ft.Container):
                         self.__matriz_contenedores[fila][columna].bgcolor = ft.colors.RED
                         self.__matriz_contenedores[fila][columna].update()
                         tm.sleep(0.01)
+        
+            accion = desactivar if derecha else activar
 
-
-            
-            if  not derecha:
-                return ft.CupertinoButton(
-                content=ft.Text(horas_del_dia[fila], theme_style=ft.TextThemeStyle.BODY_SMALL,color = ft.colors.BLACK,size = 10),
-                width=70,
-                height=25,
-                padding=1,
-                border_radius=1,
-                bgcolor = ft.colors.WHITE,
-                alignment=ft.alignment.center,
-                on_click = lambda e:activar(fila)
-                ) 
             return ft.CupertinoButton(
-            content=ft.Text(horas_del_dia[fila], theme_style=ft.TextThemeStyle.BODY_SMALL,color = ft.colors.BLACK,size = 10),
-            width=70,
-            height=25,
+            content=ft.Text(horas_del_dia[fila], weight="bold", color=ft.colors.WHITE),
+            #width=70,
+            #height=25,
             padding=1,
             border_radius=1,
-            bgcolor = ft.colors.WHITE,
+            bgcolor = ft.colors.LIGHT_BLUE_400,
             alignment=ft.alignment.center,
-            on_click = lambda e:desactivar(fila)
+            on_click = lambda e : accion(fila),
+            expand = True
             ) 
             
 
-        def contenedor_dia(columna,superior = True):
+        def contenedor_dia(columna, superior = True):
 
             def activar_(columna):
                 for fila in range(30):
                     if self.__disponibilidad[fila][columna]:
-                        continue
+                        continue # ya se encuentra activa esta celda
                     self.__disponibilidad[fila][columna] = True
                     self.__matriz_contenedores[fila][columna].bgcolor = ft.colors.GREEN
                     self.__matriz_contenedores[fila][columna].update()
-                    tm.sleep(0.01)
+                    tm.sleep(0.005)
+                print(f"se activo la columna {columna}")
 
 
 
@@ -116,75 +108,84 @@ class EditAvailabilityMatrix(ft.Container):
                             self.__disponibilidad[fila][columna] = False
                             self.__matriz_contenedores[fila][columna].bgcolor = ft.colors.RED
                             self.__matriz_contenedores[fila][columna].update()
-                            tm.sleep(0.01)
+                            tm.sleep(0.005)
+                print(f"se desactivo la columna {columna}")
 
-                
-            if superior:
-                return ft.CupertinoButton(
-                content=ft.Text(dias_de_la_semana[columna], theme_style=ft.TextThemeStyle.BODY_SMALL,color = ft.colors.BLACK,size = 10),
-                width=60,
-                height=30,
-                padding=1,
-                border_radius=1,
-                bgcolor = ft.colors.WHITE,
-                alignment=ft.alignment.center,
-                on_click = lambda e:activar_(columna)
-                ) 
+
+            action = activar_ if superior else desactivar_
+
             return ft.CupertinoButton(
-            content=ft.Text(dias_de_la_semana[columna], theme_style=ft.TextThemeStyle.BODY_SMALL,color = ft.colors.BLACK,size = 10),
-            width=60,
-            height=30,
+            content=ft.Text(dias_de_la_semana[columna], weight="bold", color=ft.colors.WHITE),
+            #width=60,
+            #height=30,
+            padding=1,
+            border_radius=1,
+            bgcolor = ft.colors.BLUE,
+            alignment=ft.alignment.center,
+            on_click = lambda e: action(columna),
+            expand = True
+            ) 
+    
+    
+        def contenedor_vacio():
+            return ft.CupertinoButton(
+            content= ft.Text(""),
+            #width=60,
+            #height=30,
             padding=1,
             border_radius=1,
             bgcolor = ft.colors.WHITE,
             alignment=ft.alignment.center,
-            on_click = lambda e:desactivar_(columna)
+            expand = True
             ) 
-    
         
         contenedores_horas_derecha = [ contenedor_horas(fila,derecha = True) for fila in range(30)]
         contenedores_horas_izquierda = [ contenedor_horas(fila,derecha = False) for fila in range(30)]
 
 
-        contenedores_dias_superior = [contenedor_dia(columna,superior = True) for columna in range(7)]
-        contenedores_dias_inferior = [contenedor_dia(columna,superior = False) for columna in range(7)]
+        contenedores_dias_superior = [contenedor_dia(columna, superior = True) for columna in range(7)]
+        contenedores_dias_inferior = [contenedor_dia(columna, superior = False) for columna in range(7)]
 
+        cont_vacio = contenedor_vacio()
+
+        fila_superior = ft.Row([cont_vacio] + contenedores_dias_superior )
+        fila_inferior = ft.Row([cont_vacio] + contenedores_dias_inferior )
+        
+        filas_matriz_principal = [ft.Row(controls = [hour_left] + fila , expand = True) 
+                                  for (hour_left, fila, hour_right) in zip(contenedores_horas_izquierda, matriz_contendores, contenedores_horas_derecha)]
+        
+        principal = ft.ListView(
+            controls = filas_matriz_principal,
+            spacing=10,
+            expand=True,
+            item_extent=10
+        )
 
         #print(contenedores_horas,"\n")
         #print(np.transpose(self.__matriz_contenedores))
 
-        def contenedor_vacio():
-            return ft.Container(
-                content = ft.Text(""),
-                width=70,
-                height=25,
-                padding=1,
-                border_radius=1,
-                bgcolor = ft.colors.GREEN,
-                alignment=ft.alignment.center,
-                ) 
 
 
-        contenedores_cuadricula = np.vstack((np.array([contenedores_horas_izquierda]), np.transpose(self.__matriz_contenedores),np.array([contenedores_horas_derecha])))
+        contenedores_cuadricula = np.vstack(np.transpose(self.__matriz_contenedores))
        #contenedores_cuadricula = np.vstack((np.array([contenedor_vacio()]) , contenedores_dias_superior , np.array([contenedor_vacio()]) ,contenedores_cuadricula))
        # contenedores_cuadricula = np.vstack(( contenedores_cuadricula , np.array([contenedor_vacio()]) , contenedores_dias_infierior , np.array([contenedor_vacio()])))
-        columnas_cuadricula = [ft.Column(controls=i, alignment=ft.MainAxisAlignment.START, spacing=2) for i in contenedores_cuadricula] 
+        columnas_cuadricula = [ft.Column(controls = i, alignment=ft.MainAxisAlignment.START, spacing=2, expand = True) for i in contenedores_cuadricula] 
 
         fila_superior_dias =  [contenedor_vacio()] + contenedores_dias_superior + [contenedor_vacio()]
 
-        fila_superior_dias = ft.Row(controls = fila_superior_dias,alignment=ft.MainAxisAlignment.START, spacing=2)
+        fila_superior_dias = ft.Row(controls = fila_superior_dias,alignment=ft.MainAxisAlignment.START, spacing=2,)
     
 
         fila_inferior_dias = [contenedor_vacio()] + contenedores_dias_inferior + [contenedor_vacio()]
 
-        fila_inferior_dias = ft.Row(controls = fila_inferior_dias,alignment=ft.MainAxisAlignment.START, spacing=2)
+        fila_inferior_dias = ft.Row(controls = fila_inferior_dias,alignment=ft.MainAxisAlignment.START, spacing=2,)
 
         parte_intermedia = ft.Row(
         controls=columnas_cuadricula,
         alignment=ft.MainAxisAlignment.START,
         spacing=2,
         #scroll = ft.ScrollMode.ALWAYS,
-        #expand = True
+        expand = True
 
         )
         
@@ -193,6 +194,7 @@ class EditAvailabilityMatrix(ft.Container):
             controls = [fila_superior_dias] + [parte_intermedia] + [fila_inferior_dias],
             scroll = ft.ScrollMode.ALWAYS,
             on_scroll_interval=0,
+            expand = True
         )
 
         parte_total = ft.Column(
@@ -200,20 +202,26 @@ class EditAvailabilityMatrix(ft.Container):
             scroll = ft.ScrollMode.ALWAYS,
             on_scroll_interval=0,
             expand = True,
-            height= 600,
-            width= 550
+            #height= 600,
+            #width= 550,
 
         )
 
         super().__init__(
-            content= parte_total
+            content= ft.Column(
+                controls = [fila_superior,
+                            principal,
+                            ],
+                expand = True
+            ),
+            expand = True
         )
 
 
     def get_matrix(self):
         return self.__disponibilidad
     
-    def set_matrix(self,matriz):
+    def set_matrix(self, matriz, update = True):
 
         for fila in range(30):
             for columna in range(7):
@@ -225,7 +233,8 @@ class EditAvailabilityMatrix(ft.Container):
                     continue 
                 self.__disponibilidad[fila][columna] = False
                 self.__matriz_contenedores[fila][columna].bgcolor = ft.colors.RED
-        self.update()
+        if update:
+            self.update()
                 
 
 #print(np.array([1,2,3] + np.array([1,2,3])))

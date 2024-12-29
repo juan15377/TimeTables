@@ -103,7 +103,7 @@ class EnrouterPage():
         self.pages = Pages(professors_page, classrooms_page, groups_page)
         self.main_page = main_page
 
-    def change_page(self,route, subject = False):
+    def change_page(self,route, subject = False, pcg = False):
         
         if route == '/PROFESSORS':
             page_content = self.pages.professors_page
@@ -116,6 +116,11 @@ class EnrouterPage():
         elif route == '/GROUPS':
             page_content = self.pages.groups_page
             self.pages.groups_page.update(update = False)
+        
+        elif route == "/PCG/SUBJECT_DETAILS":
+            page_back_callback = lambda : self.pcg.change_page(pcg)
+            page_content = load_subjects_page(self.db, page_back_callback, self.page)
+        
             
         elif route == '/PROFESSORS/SUBJECT_DETAILS':
             page_to_route = lambda : self.change_page("/PROFESSORS")
