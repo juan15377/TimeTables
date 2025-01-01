@@ -86,7 +86,7 @@ def initialize_control_board():
                     height=HEIGHT_BUTTON,
                     border_radius=1,
                 )
-        
+    
     special_container = ft.Container(
                             theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
                             bgcolor=ft.colors.SURFACE_VARIANT,
@@ -100,22 +100,24 @@ def initialize_control_board():
                             #expand = True
                         )
         
-    time_containers = [special_container] + [time_container(i) for i in range(30)]
+    time_containers = [time_container(i) for i in range(30)]
     day_containers = [day_container(i) for i in range(7)]
 
     time_column = ft.Column(
                     controls=time_containers,
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=0,
-                    #expand = True
                     )
     
 
-    day_columns = [ft.Column(controls=[day_containers[i]],
+    day_columns = [ft.Column(controls=[],
                     horizontal_alignment=ft.alignment.center, 
                     alignment=ft.alignment.center, spacing=2,) for i in range(7)]
         
     
+    days_row = [special_container] + [ft.Column(controls=[day_containers[i]],
+                    horizontal_alignment=ft.alignment.center, 
+                    alignment=ft.alignment.center, spacing=2,) for i in range(7)]
     # Add the buttons contained in the button matrix 
 
     for i in range(30):
@@ -123,42 +125,50 @@ def initialize_control_board():
             button = button_matrix[i][j]
             day_columns[j].controls.append(button)
                 
-            
+    
+    day_row = ft.Row(controls = days_row, spacing=0)
 
     total_columns = [time_column] + day_columns
 
 
+
     row = ft.Row(
-            controls=total_columns,
-            spacing=0,
+            controls = total_columns,
+            spacing=2,
             vertical_alignment=ft.CrossAxisAlignment.START,
-            scroll=ft.ScrollMode.AUTO,
+            #scroll=ft.ScrollMode.AUTO,
             #width=500,
             #height=995,  
-            #expand = True
+            expand = True
             )
 
-    grid = ft.ListView(
+    grid = ft.Column(
             controls=[row],
             #alignment=ft.MainAxisAlignment.START,
             spacing=0,
-            #scroll=ft.ScrollMode.AUTO,
+            scroll=ft.ScrollMode.AUTO,
             #width=100,
             #height=550,    
             expand = True
         )
     
-    grid = ft.AnimatedSwitcher(
+    grid = ft.Column(
+        controls = [day_row] + [grid],
+    )
+    
+    grid = ft.Row(
+        controls = [grid],
+        scroll = ft.ScrollMode.ALWAYS,
+        expand = True
+    )
+    
+    cont = ft.Container(
         content = grid,
-        #expand = True
-        transition=ft.AnimatedSwitcherTransition.SCALE,
-        duration=500,
-        reverse_duration=100,
-        switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
-        switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
+        expand = True
     )
 
-    return button_matrix, grid, day_columns
+    return button_matrix, cont, day_columns
+
 
 def decompose_vector(vector):
     pos_in = 0

@@ -76,9 +76,7 @@ class EditAvailabilityMatrix(ft.Container):
             accion = desactivar if derecha else activar
 
             return ft.CupertinoButton(
-            content=ft.Text(horas_del_dia[fila], weight="bold", color=ft.colors.WHITE),
-            #width=70,
-            #height=25,
+            content=ft.Text(horas_del_dia[fila], weight="bold", color=ft.colors.WHITE, expand=True),
             padding=1,
             border_radius=1,
             bgcolor = ft.colors.LIGHT_BLUE_400,
@@ -98,7 +96,6 @@ class EditAvailabilityMatrix(ft.Container):
                     self.__matriz_contenedores[fila][columna].bgcolor = ft.colors.GREEN
                     self.__matriz_contenedores[fila][columna].update()
                     tm.sleep(0.005)
-                print(f"se activo la columna {columna}")
 
 
 
@@ -109,15 +106,12 @@ class EditAvailabilityMatrix(ft.Container):
                             self.__matriz_contenedores[fila][columna].bgcolor = ft.colors.RED
                             self.__matriz_contenedores[fila][columna].update()
                             tm.sleep(0.005)
-                print(f"se desactivo la columna {columna}")
 
 
             action = activar_ if superior else desactivar_
 
             return ft.CupertinoButton(
             content=ft.Text(dias_de_la_semana[columna], weight="bold", color=ft.colors.WHITE),
-            #width=60,
-            #height=30,
             padding=1,
             border_radius=1,
             bgcolor = ft.colors.BLUE,
@@ -142,7 +136,7 @@ class EditAvailabilityMatrix(ft.Container):
         contenedores_horas_derecha = [ contenedor_horas(fila,derecha = True) for fila in range(30)]
         contenedores_horas_izquierda = [ contenedor_horas(fila,derecha = False) for fila in range(30)]
 
-
+        
         contenedores_dias_superior = [contenedor_dia(columna, superior = True) for columna in range(7)]
         contenedores_dias_inferior = [contenedor_dia(columna, superior = False) for columna in range(7)]
 
@@ -242,6 +236,3 @@ class EditAvailabilityMatrix(ft.Container):
 
 
     
-
-
-

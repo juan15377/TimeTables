@@ -5,7 +5,7 @@ from src.Logic.Colors import RGB_to_hex, MyColorPicker
 from src.Logic.Subjects import DEFAULT_PCG, DEFAULT_SUBJECT
 
 
-class LoadSubject():
+class LoadSubject(ft.Container):
 
     def __init__(self, pga, subject, board):
         self.subject = subject
@@ -116,6 +116,10 @@ class LoadSubject():
             ],
         )
         
+        super().__init__(
+            content = self.content
+        )
+        
     def update_subject(self, subject):
         new_color = self.pga.subject_colors.colors[subject]
         new_name = subject.code
@@ -153,6 +157,7 @@ class SubjectSelector(ft.Container):
         self.subject_loader = subject_loader
 
         self.load_subject_list()
+        
 
     def update(self):
         self.subject_list.controls.clear()
@@ -161,6 +166,7 @@ class SubjectSelector(ft.Container):
         subject = self.subject_loader.subject 
         self.subject_loader.update_subject(subject)
         self.subject_list.update()
+        super().update()
 
     def add_subjects_to_list(self):
 
@@ -207,22 +213,19 @@ class SubjectSelector(ft.Container):
 
         
 
-        content =ft.Column( 
+        content = ft.Column( 
             controls = [self.subject_list,
-                        self.subject_loader.content],
+                        self.subject_loader.content
+                        ],
             expand = False           
             )
         
         contenedor_borde = ft.Container(
-        content=ft.Container(
-            content= content,
-            padding=10,
-            bgcolor=ft.colors.BLACK87,  # Color de fondo del contenedor interno
-        ),
-        padding=2,  # Espesor del borde
-        bgcolor="white",  # Color del borde
-
+        content=content,
+        padding=10,
+        bgcolor=ft.colors.BLACK87,  # Color de fondo del contenedor interno
         )
+    
         
         super().__init__(
             content = contenedor_borde,

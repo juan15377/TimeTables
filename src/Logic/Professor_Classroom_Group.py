@@ -185,6 +185,8 @@ class Careers:
         
 
     def new(self, name):
+        if name in [career.name for career in self.careers]:
+            return None
         career = Career(name)
         self.careers.append(career)
 
@@ -210,6 +212,8 @@ class Semesters:
         
 
     def new(self, name):
+        if name in [semester.name for semester in self.semesters]:
+            return None
         semester = Semester(name)
         self.semesters.append(semester)
 
@@ -237,6 +241,8 @@ class Subgroups:
         
 
     def new(self, name):
+        if name in [subgroup.name for subgroup in self.subgroups]:
+            return None
         subgroup = Subgroup(name)
         self.subgroups.append(subgroup)
 
@@ -303,8 +309,6 @@ def delete_blocks_subject_with_new_availability(pcg, old_matrix, new_matrix, bd)
                 block_size = position[1] - position[0] 
                 if position[1] == 29:
                     block_size += 1
-                print(row, column, block_size)
-                print(old_not_avalailability_matrix[row:row + block_size, column])
                 if sum(old_not_avalailability_matrix[row: row + block_size, column]) != 0:
                     subject.remove_class_block((row, column), block_size)
     pass 
@@ -316,25 +320,25 @@ class Groups:
         self.careers = Careers(BD)
         self.semesters = Semesters(BD)
         self.subgroups = Subgroups(BD)
-        self.groups = []
+        self._groups = []
 
     def new(self, career: Career, semester: Semester, subgroup: Subgroup):
         # If a group with the same career, semester, and subgroup already exists, do not create a new one.
-        for group in self.groups:
+        for group in self._groups:
             if group.career == career and group.semester == semester and group.subgroup == subgroup:
                 return None
 
         group = Group(career, semester, subgroup)
-        self.groups.insert(0, group)
+        self._groups.insert(0, group)
 
     def get(self):
-        return self.groups
+        return self._groups
 
     def remove(self, group):
         for subject in group.get_subjects():
             self.bd.subjects.remove(subject)
-        self.groups.remove(group)
-        #eliminar todas las materias relacionadas con este grupo
+        self._groups.remove(group)
+
 
     def set_availability_matrix(self, group, new_availability_matrix):
         old_availability_matrix = group.initial_availability_matrix()

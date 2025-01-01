@@ -66,7 +66,6 @@ class PCGListItem(ft.Container):
             )
         )
 
-        print(pga.name)
         
         super().__init__(
             content=column_Title,
@@ -169,7 +168,7 @@ class ListViewPCG(ft.Column):
             item.update()
         
    
-       
+
         
 class NavigatorBarBack(ft.Container):
     
