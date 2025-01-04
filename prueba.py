@@ -1,27 +1,43 @@
-class Singleton():
-    
-    _instances = {}
-    
-    def __new__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            instance = super().__new__(cls)
-            cls._instances[cls] = instance
-        return cls._instances[cls]
+import flet as ft
 
-    def __init__(self):
-        pass
+def main(page: ft.Page):
+    # Definir un tema personalizado
+    custom_theme = ft.Theme(
+        color_scheme=ft.ColorScheme(
+            primary=ft.colors.BLUE_500,
+            secondary=ft.colors.GREEN_500,
+            background=ft.colors.BLACK38,
+            surface=ft.colors.WHITE,
+            error=ft.colors.RED_500,
+            on_primary=ft.colors.WHITE,
+            on_secondary=ft.colors.BLACK,
+            on_background=ft.colors.BLACK,
+            on_surface=ft.colors.BLACK,
+            on_error=ft.colors.WHITE,
+        ),
+        use_material3=True  # Activar diseño Material 3
+    )
 
-class MyClass(Singleton):
-    
-    def __init__(self, p1):
-        self.p1 = p1
+    # Asignar el tema a la página
+    page.theme = custom_theme
+    page.title = "App con Tema Personalizado"
 
-c1 = MyClass(1)
-c2 = MyClass(2)
+    # Crear widgets que usen el tema
+    page.add(
+        ft.Container(
+            content=ft.Text("Texto usando el color primario", color=ft.colors.ON_PRIMARY),
+            bgcolor=ft.colors.PRIMARY,
+            padding=20,
+            border_radius=10,
+        ),
+        ft.ElevatedButton("Botón secundario", bgcolor=ft.colors.SECONDARY, color=ft.colors.ON_SECONDARY),
+        ft.Container(
+            content=ft.Text("Fondo usando el color de superficie"),
+            bgcolor=ft.colors.SURFACE,
+            padding=20,
+            border_radius=10,
+        ),
+    )
 
-print(c1.p1)
-print(c2.p1)
+ft.app(target=main)
 
-# Output:
-# Creating instance (inside __new__)
-# Initializing instance (inside __init__)

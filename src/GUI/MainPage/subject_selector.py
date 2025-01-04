@@ -26,7 +26,8 @@ class LoadSubject(ft.Container):
                 ft.dropdown.Option(str(block))
                 for block in blocks
             ],
-            width = 100
+            width = 100,
+            expand = True
         )
         self.vbloques_drop = vbloque_drop
         self.pos = 0
@@ -57,34 +58,33 @@ class LoadSubject(ft.Container):
         up_button = ft.IconButton(
                     icon=ft.icons.ARROW_UPWARD,
                     icon_color="blue400",
-                    icon_size=20,
-                    tooltip="Pause record",
+                    icon_size=30,
                     on_click = lambda e : up_value(self),
-                    width=40
+                    width=60,
                     ) 
         
         down_button = ft.IconButton(
                     icon=ft.icons.ARROW_DOWNWARD,
                     icon_color="blue400",
-                    icon_size=20,
-                    tooltip="Play record",
+                    icon_size=30,
                     on_click=lambda e : down_value(self),
-                    width = 40
+                    width = 60,
                     )
-        
-        block_selection = ft.Column(
+
+        block_selection = ft.Row(
             controls = [
-                ft.Row(
+                vbloque_drop,
+                ft.Column(
                     controls = [
                         up_button,
                         down_button
                     ],
-                ),
-                vbloque_drop,
+                    expand = True
+                )
             ],
-            width= 130,
-            height= 120,
+            expand = True
         )
+
 
         def load_subject():
             size = int(float(self.vbloques_drop.value) * 2) 
@@ -105,6 +105,7 @@ class LoadSubject(ft.Container):
                                     margin = ft.Margin(top=0, right=0, bottom=0, left=0),
                                     border_radius=5,
                                     on_click= lambda e : load_subject(),
+                                    expand = True,
                                     ink=True)
         
 
@@ -112,12 +113,21 @@ class LoadSubject(ft.Container):
         self.content = ft.Row(
             controls = [
                 self.block_selection,
-                self.subject_container
+                self.subject_container,
+                ft.Container(
+                    content = ft.Text("Cancel"),
+                    bgcolor= ft.colors.RED_500,
+                    expand = True,
+                    width=150,
+                    height=100,
+                )
             ],
+            spacing = 10,
+            expand = True
         )
         
         super().__init__(
-            content = self.content
+            content = self.content,
         )
         
     def update_subject(self, subject):
@@ -171,7 +181,7 @@ class SubjectSelector(ft.Container):
     def add_subjects_to_list(self):
 
         for subject in self.pga.get_subjects():
-            progress_bar = ft.ProgressBar(width = 150, height = 10)
+            progress_bar = ft.ProgressBar(expand = True)
             completed_value =  1 - subject.remaining() / subject.total() if subject.total() != 0 else 1
             progress_bar.value = completed_value
             color = RGB_to_hex(self.pga.subject_colors.colors[subject])
@@ -186,8 +196,15 @@ class SubjectSelector(ft.Container):
                 alignment= ft.alignment.center
                 )
             
+            name_subject = ft.Container(
+                content = ft.Text(subject.name, size = 20, color = ft.colors.WHITE),
+                alignment= ft.alignment.center,
+                expand = True
+            )
+            
             subject_container = ft.Container(
                 content= ft.Row(controls = [
+                    name_subject,
                     text_name,
                     ft.Text("    "),
                     progress_bar
@@ -203,9 +220,9 @@ class SubjectSelector(ft.Container):
     def load_subject_list(self):
 
         subject_list = ft.ListView(spacing=10,
-                                   height= 800,
-                                   width= 300,
-                                   expand = True)
+                                   expand = True,
+                                   )
+        
         self.subject_list = subject_list
 
 
@@ -214,20 +231,39 @@ class SubjectSelector(ft.Container):
         
 
         content = ft.Column( 
-            controls = [self.subject_list,
-                        self.subject_loader.content
+            controls = [
+                ft.Container(
+                    content = self.subject_list,
+                    bgcolor = ft.colors.WHITE,
+                    expand=True,
+                    border_radius= 6,
+                    padding= 5
+                ),
+                self.subject_loader
                         ],
-            expand = False           
+            expand = True ,
             )
         
+        subjects_label = ft.Container(
+            content = ft.Text("Subjects", text_align= ft.alignment.center, size = 20),
+            alignment= ft.alignment.center,
+            padding= 10
+        )
+        
         contenedor_borde = ft.Container(
-        content=content,
-        padding=10,
-        bgcolor=ft.colors.BLACK87,  # Color de fondo del contenedor interno
+            content= ft.Column(controls = [subjects_label, content],),
+            padding=10,
+            bgcolor=ft.colors.BLACK87,  # Color de fondo del contenedor interno
+            expand = True
         )
     
         
         super().__init__(
             content = contenedor_borde,
+            expand = True,
+            border_radius= 10,
+            theme=ft.Theme.banner_theme,
+            bgcolor= ft.colors.WHITE,
+            padding = 5,
             
         )

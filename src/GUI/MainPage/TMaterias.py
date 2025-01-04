@@ -46,11 +46,11 @@ def initialize_control_board():
     def button_container(i, j):
         b = ft.Container(
                 content=ft.Text(f""),
-                theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
+                theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.YELLOW)),
                 margin=ft.Margin(top=0, right=0, bottom=0, left=0),
                 padding=2,
                 alignment=ft.alignment.center,
-                bgcolor=ft.colors.WHITE24,
+                bgcolor=ft.colors.WHITE70,
                 width=WIDTH_BUTTON,
                 height=HEIGHT_BUTTON,
                 border_radius=5,
@@ -64,27 +64,27 @@ def initialize_control_board():
     def time_container(i):
         return ft.Container(
                     theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
-                    bgcolor=ft.colors.SURFACE_VARIANT,
-                    content=ft.Text(daily_hours[i], color="white", size=12),
+                    bgcolor=ft.colors.LIGHT_BLUE_100,
+                    content=ft.Text(daily_hours[i], color="black", size=15),
                     margin=1,
                     padding=0,
                     alignment=ft.alignment.center,
                     width=WIDTH_BUTTON,
                     height=HEIGHT_BUTTON,
-                    border_radius=1,
+                    border_radius=5,
                 )
         
     def day_container(i):
         return ft.Container(
                     theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
-                    bgcolor=ft.colors.SURFACE_VARIANT,
+                    bgcolor=ft.colors.BLUE,
                     content=ft.Text(weekdays[i], color="white", size=12),
                     margin=2,
                     padding=0,
                     alignment=ft.alignment.center,
                     width=WIDTH_BUTTON - 2,
                     height=HEIGHT_BUTTON,
-                    border_radius=1,
+                    border_radius=5,
                 )
     
     special_container = ft.Container(
@@ -139,7 +139,7 @@ def initialize_control_board():
             #scroll=ft.ScrollMode.AUTO,
             #width=500,
             #height=995,  
-            expand = True
+            #expand = True
             )
 
     grid = ft.Column(
@@ -164,7 +164,8 @@ def initialize_control_board():
     
     cont = ft.Container(
         content = grid,
-        expand = True
+        expand = True,
+        alignment= ft.alignment.center_left
     )
 
     return button_matrix, cont, day_columns
@@ -550,7 +551,7 @@ def get_absolute_position(vector, req_pos):
         if c == req_pos:
             return k
 
-class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
+class ControlBoardSubjectSlots(ft.Container):
 
     def __init__(self, pga = DEFAULT_PCG, update = False) -> None:
         self.update_pga(pga, update)
@@ -568,14 +569,12 @@ class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
         self.pga = pga
 
         super().__init__(
-            content=self.grid,
+            content = ft.Row([self.grid, self.subject_selector]),
             expand = True,
-            transition=ft.AnimatedSwitcherTransition.SCALE,
-            duration=500,
-            reverse_duration=100,
-            switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
-            switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         )
+        
+        self.content.controls[0].expand = 2
+        self.content.controls[1].expand = 1
         
         # Generate subject blocks for each subject in the PCG
         for subject in pga.subjects:
@@ -606,7 +605,7 @@ class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
         for row in range(30):
             for col in range(7):
                 button = self.button_matrix[row, col]
-                button.bgcolor = ft.colors.WHITE24
+                button.bgcolor = ft.colors.WHITE70
                 button.on_click = None
         self.grid.update()
 
@@ -618,7 +617,7 @@ class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
         # Reset the j-column, but before doing that, we make a copy
         previous_elements = self.day_columns[j].controls
 
-        row_rel = get_absolute_position(previous_elements, i + 1)
+        row_rel = get_absolute_position(previous_elements, i)
         news_elements = replace_element(previous_elements,
                                             row_rel,
                                             row_rel + size - 1,
@@ -635,7 +634,7 @@ class ControlBoardSubjectSlots(ft.AnimatedSwitcher):
         j = position[1]
 
         previous_elements = copy.copy(self.day_columns[j].controls)
-        row_rel = get_absolute_position(previous_elements, i + 1)
+        row_rel = get_absolute_position(previous_elements, i)
 
         # Add the buttons back into the list
         buttons_to_add = self.button_matrix[i:i + size, j]
@@ -713,6 +712,13 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
         boardsubjects = ControlBoardSubjectSlots(pcg)
         self.boardsubjects = boardsubjects
         
+        button_reset_subjects = ft.FloatingActionButton(
+            icon=ft.icons.REFRESH,
+            on_click=lambda e: to_change(),
+            text = "Gestionar datos",
+            focus_elevation= 10,
+        )
+        
         def change_professor():
             selected = self.search.get_value()
             self.set_pcg(selected)
@@ -746,6 +752,7 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
                         controls = [
                                     self.search,
                                     self.button_to_change_page,
+                                    button_reset_subjects
                         ],
                         expand = False,
                         spacing=30
@@ -753,7 +760,6 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
                     ft.Row(
                         controls = [      
                             self.boardsubjects,
-                            self.boardsubjects.subject_selector,
                         ],
                         expand = True
                     )
