@@ -110,17 +110,23 @@ class LoadSubject(ft.Container):
         
 
         self.subject_container = subject_container
-        self.content = ft.Row(
-            controls = [
-                self.block_selection,
-                self.subject_container,
-                ft.Container(
+        
+        self.button_cancel = ft.Container(
                     content = ft.Text("Cancel"),
                     bgcolor= ft.colors.RED_500,
                     expand = True,
                     width=150,
                     height=100,
+                    on_click= lambda e : board.turn_off_board(),
+                    alignment= ft.alignment.center,
+                    border_radius = 5
                 )
+        
+        self.content = ft.Row(
+            controls = [
+                self.block_selection,
+                self.subject_container,
+                self.button_cancel
             ],
             spacing = 10,
             expand = True
@@ -234,7 +240,7 @@ class SubjectSelector(ft.Container):
             controls = [
                 ft.Container(
                     content = self.subject_list,
-                    bgcolor = ft.colors.WHITE,
+                    bgcolor = ft.colors.BLACK,
                     expand=True,
                     border_radius= 6,
                     padding= 5
