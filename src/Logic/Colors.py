@@ -1,5 +1,6 @@
+import numpy as np
 import flet as ft
-from flet_contrib.color_picker import ColorPicker 
+from flet_contrib.color_picker import ColorPicker
 
 # Class representing an RGB color model
 class MyColorRGB:
@@ -31,10 +32,10 @@ def RGB_to_hex(color: MyColorRGB):
     hex_r = format(color.red, '02x')
     hex_g = format(color.green, '02x')
     hex_b = format(color.blue, '02x')
-    
+
     # Combine the hex values into a single string
     hex_color = f"#{hex_r}{hex_g}{hex_b}"
-    
+
     return hex_color
 
 # Function to convert Hexadecimal to RGB
@@ -56,7 +57,7 @@ def hex_to_RGB(hex_color: str):
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
-    
+
     return MyColorRGB(r, g, b)
 
 # Class for a custom color picker container
@@ -69,7 +70,7 @@ class MyColorPicker(ft.Container):
         super().__init__(
             content=ColorPicker(width=200)  # Create the ColorPicker widget
         )
-    
+
     def set_color(self, color: MyColorRGB):
         """
         Set the current color in the color picker to a specified RGB color.
@@ -109,7 +110,7 @@ class MyColorPicker(ft.Container):
 #    def cambiar_color():
 #        print(RGB_to_hex(color_picker.get_color()))
 #        print(color_picker.set_color(MyColorRGB(100, 10, 10)),"\n"*10)
-#          
+#
 #    boton = ft.TextButton(
 #          text = "Cambiar",
 #          on_click= lambda e : cambiar_color()

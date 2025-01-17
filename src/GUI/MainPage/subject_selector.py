@@ -85,7 +85,6 @@ class LoadSubject(ft.Container):
             expand = True
         )
 
-
         def load_subject():
             size = int(float(self.vbloques_drop.value) * 2) 
             if size == 0:
@@ -235,8 +234,7 @@ class SubjectSelector(ft.Container):
         self.add_subjects_to_list()
 
         
-
-        content = ft.Column( 
+        content = ft.Column(
             controls = [
                 ft.Container(
                     content = self.subject_list,
@@ -271,5 +269,4 @@ class SubjectSelector(ft.Container):
             theme=ft.Theme.banner_theme,
             bgcolor= ft.colors.WHITE,
             padding = 5,
-            
         )
