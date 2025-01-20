@@ -1,43 +1,48 @@
 import flet as ft
 
-def main(page: ft.Page):
-    # Definir un tema personalizado
-    custom_theme = ft.Theme(
-        color_scheme=ft.ColorScheme(
-            primary=ft.colors.BLUE_500,
-            secondary=ft.colors.GREEN_500,
-            background=ft.colors.BLACK38,
-            surface=ft.colors.WHITE,
-            error=ft.colors.RED_500,
-            on_primary=ft.colors.WHITE,
-            on_secondary=ft.colors.BLACK,
-            on_background=ft.colors.BLACK,
-            on_surface=ft.colors.BLACK,
-            on_error=ft.colors.WHITE,
-        ),
-        use_material3=True  # Activar diseño Material 3
+def main(page):
+
+    def close_anchor(e):
+        text = f"Color {e.control.data}"
+        print(f"closing view from {text}")
+        anchor.close_view(text)
+
+    def handle_change(e):
+        print(f"handle_change e.data: {e.data}")
+
+    def handle_submit(e):
+        print(f"handle_submit e.data: {e.data}")
+
+    def handle_tap(e):
+        print(f"handle_tap")
+        anchor.open_view()
+
+    anchor = ft.SearchBar(
+        view_elevation=4,
+        divider_color=ft.colors.AMBER,
+        bar_hint_text="Search colors...",
+        view_hint_text="Choose a color from the suggestions...",
+        on_change=handle_change,
+        on_submit=handle_submit,
+        on_tap=handle_tap,
+        controls=[
+            ft.ListTile(title=ft.Text(f"Color {i}"), on_click=close_anchor, data=i)
+            for i in range(10)
+        ],
     )
 
-    # Asignar el tema a la página
-    page.theme = custom_theme
-    page.title = "App con Tema Personalizado"
-
-    # Crear widgets que usen el tema
     page.add(
-        ft.Container(
-            content=ft.Text("Texto usando el color primario", color=ft.colors.ON_PRIMARY),
-            bgcolor=ft.colors.PRIMARY,
-            padding=20,
-            border_radius=10,
+        ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.OutlinedButton(
+                    "Open Search View",
+                    on_click=lambda _: anchor.open_view(),
+                ),
+            ],
         ),
-        ft.ElevatedButton("Botón secundario", bgcolor=ft.colors.SECONDARY, color=ft.colors.ON_SECONDARY),
-        ft.Container(
-            content=ft.Text("Fondo usando el color de superficie"),
-            bgcolor=ft.colors.SURFACE,
-            padding=20,
-            border_radius=10,
-        ),
+        anchor,
     )
 
-ft.app(target=main)
 
+ft.app(main)

@@ -2,6 +2,7 @@
 # You cannot run it directly
 
 deactivate () {
+
     # reset old environment variables
     if [ -n "${_OLD_VIRTUAL_PATH:-}" ] ; then
         PATH="${_OLD_VIRTUAL_PATH:-}"
@@ -39,10 +40,10 @@ deactivate nondestructive
 if [ "${OSTYPE:-}" = "cygwin" ] || [ "${OSTYPE:-}" = "msys" ] ; then
     # transform D:\path\to\venv to /d/path/to/venv on MSYS
     # and to /cygdrive/d/path/to/venv on Cygwin
-    export VIRTUAL_ENV=$(cygpath /home/juan/Escritorio/TimeTables)
+    export VIRTUAL_ENV=$(cygpath /home/juan/GitHub/TimeTables)
 else
     # use the path as-is
-    export VIRTUAL_ENV=/home/juan/Escritorio/TimeTables
+    export VIRTUAL_ENV=/home/juan/GitHub/TimeTables
 fi
 
 _OLD_VIRTUAL_PATH="$PATH"

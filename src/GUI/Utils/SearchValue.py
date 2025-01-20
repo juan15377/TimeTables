@@ -137,7 +137,7 @@ class SearchValue(ft.Container):
             content = ft.Column(
                 controls = [
                 self.search_bar,
-                self.text,                
+                #self.text,                
             ],
             spacing= 10,
             expand = True
@@ -211,3 +211,34 @@ class SearchValue(ft.Container):
         self.populate_list_view()
         self.activated = True
     
+
+#
+#def main(page : ft.Page):
+#    items = {
+#        "1" : 1,
+#        "2" : 2,
+#        "3" : 3
+#    }
+#    
+#    def get():
+#        return {
+#        "1" : 1,
+#        "2" : 2,
+#        "3" : 3,
+#        "4" : 4
+#    }
+#        
+#    sv = SearchValue(items, get)
+#    
+#    con = ft.Row(
+#        controls = [sv, sv],
+#        expand = True
+#    )
+#    
+#    h = ft.Container(
+#        content = con
+#    )
+#    
+#    page.add(h)
+#    
+#ft.app(target = main)

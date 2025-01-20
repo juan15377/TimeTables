@@ -160,7 +160,7 @@ class SubjectEditor(ft.Container):
         }
         
         professor_selector = SearchValue({
-                    professor.name:professor for professor in bd.professors.get()
+                professor.name : professor for professor in bd.professors.get()
                 },
                 get_actual_professors                                
         )
@@ -242,7 +242,7 @@ class SubjectEditor(ft.Container):
                 ft.Column(
                         controls = [
                             ft.Text("Profesor"),
-                            professor_selector,
+                            #professor_selector,
                         ],
                         expand=True,
                         #width = 100,
@@ -257,9 +257,7 @@ class SubjectEditor(ft.Container):
         
         navigator = NavigatorBarBack(reference_page_router)
         
-            
-        super().__init__(
-            content = ft.Column(
+        content = ft.Column(
                 controls = [
                     ft.Row(
                         controls = [
@@ -275,7 +273,10 @@ class SubjectEditor(ft.Container):
                     )
                 ],
                 expand = True
-            ),
+            )
+            
+        super().__init__(
+            content = self.professor_selector,
             expand = True
         )
         
