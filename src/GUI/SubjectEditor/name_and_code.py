@@ -1,6 +1,7 @@
 import flet as ft  
 
 
+
 class NameCodeSubject(ft.Container):
 
     def __init__(self, name : str = "", code : str = ""):
@@ -22,7 +23,10 @@ class NameCodeSubject(ft.Container):
             hint_text="Insertar Nombre Materia",
             on_change = change_name,
             max_length = 50,
-            expand = True
+            expand = True,
+            cursor_color="white",
+            border_color= ft.colors.AMBER,
+            focused_color= ft.colors.WHITE,
         )
 
         self.code_textfield = ft.TextField(

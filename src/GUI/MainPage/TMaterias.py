@@ -21,12 +21,16 @@ from src.GUI.Utils.SearchValue import SearchValue
 # ! operaciones permitidas deben ser bien escogidas  
 # el tiempo permitido maximo poara la generacion de un tablero deberiaser de de 0.2 segundos 
 
+
+
 import flet as ft
 import numpy as np
 
 
 HEIGHT_BUTTON = 50
 WIDTH_BUTTON = 150
+
+
 
 def initialize_control_board():
 
@@ -43,6 +47,22 @@ def initialize_control_board():
             "9:00 - 9:30 PM", "9:30 - 10:00 PM"
     ]
 
+    def animated_button(e):
+        color = 1
+        if e.control.data:
+            e.control.margin = 2.5
+            e.control.height = HEIGHT_BUTTON - 5
+            e.control.width = WIDTH_BUTTON - 5
+            e.control.data = False  
+            e.control.update()
+            return None
+        e.control.padding = 2
+        e.control.margin = ft.Margin(top=0, right=0, bottom=0, left=0)
+        e.control.data = True  
+        e.control.height = HEIGHT_BUTTON 
+        e.control.width = WIDTH_BUTTON
+        e.control.update()
+
     def button_container(i, j):
         b = ft.Container(
                 content=ft.Text(f""),
@@ -54,6 +74,10 @@ def initialize_control_board():
                 width=WIDTH_BUTTON,
                 height=HEIGHT_BUTTON,
                 border_radius=5,
+                on_hover= animated_button,
+                data = True,
+                ink_color= "blue",
+                animate=ft.animation.Animation(100, ft.AnimationCurve.EASE_IN_OUT)
             )
         return b
 
@@ -551,6 +575,15 @@ def get_absolute_position(vector, req_pos):
         if c == req_pos:
             return k
 
+
+def reset_config(button):
+    button.padding = 2
+    button.margin = ft.Margin(top=0, right=0, bottom=0, left=0)
+    button.data = True  
+    button.height = HEIGHT_BUTTON 
+    button.width = WIDTH_BUTTON
+    
+
 class ControlBoardSubjectSlots(ft.Container):
 
     def __init__(self, pga = DEFAULT_PCG, update = False) -> None:
@@ -638,6 +671,10 @@ class ControlBoardSubjectSlots(ft.Container):
 
         # Add the buttons back into the list
         buttons_to_add = self.button_matrix[i:i + size, j]
+        for button in buttons_to_add:
+            reset_config(button)
+            button.data = True  
+        
         previous_elements = insert_elements(previous_elements, row_rel, buttons_to_add)
 
         self.day_columns[j].controls = previous_elements
@@ -673,31 +710,56 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
         self.reference_to_get_dict = reference_to_get_dict
         
         self.button_to_change_page = button_to_change_page
-        
-        self.search = search
-        
+                
         def change_professor():
             selected = self.search.get_value()
             self.set_pcg(selected)
             
         def get_actual_profesors():
-            return 
+            return {
+            professor.name: professor for professor in self.db.professors.get()
+            }
 
         
-        self.search =  SearchValue({
-            professor.name: professor for professor in self.db.professors.get()
-            },
-            get_actual_profesors,
-            on_change = change_professor
-        )
+        self.search =  search
                 
         self.pcg = pcg
         
-        layout = self.get_layout_page(pcg)
+        button_reset_subjects = ft.FloatingActionButton(
+            icon=ft.icons.REFRESH,
+            on_click=lambda e: to_change(),
+            text = "Gestionar datos",
+            focus_elevation= 10,
+        )
+        
+        self.boardsubjects = ControlBoardSubjectSlots(pcg)
+        
+        
+        self.layout = ft.Column(
+            controls = [
+                    ft.Row(
+                        controls = [
+                                    self.search,
+                                    self.button_to_change_page,
+                                    button_reset_subjects
+                        ],
+                        expand = False,
+                        spacing=10
+                    ),
+                    ft.Row(
+                        controls = [      
+                            self.boardsubjects,
+                        ],
+                        expand = True
+                    )
+                    ],
+                expand=True,
+                spacing=50,
+            )
 
         super().__init__(
             content = ft.Row(
-                controls = [layout],
+                controls = [self.layout],
                 expand=True
             ),
             expand=True,
@@ -707,6 +769,9 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
             switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
             switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         )
+        
+    # debe existir un metodo que actualize ambos 
+    # 
         
     def get_layout_page(self, pcg):
         boardsubjects = ControlBoardSubjectSlots(pcg)
@@ -725,28 +790,9 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
             
         def get_actual_profesors():
             return self.reference_to_get_dict()
-
         
-        self.search =  SearchValue(
-            self.reference_to_get_dict(),
-            get_actual_profesors,
-            on_change = change_professor
-        )
         
-        name = ""
-        
-        if type(pcg) == Group:
-            name = pcg.career.name + ' ' + pcg.semester.name + ' ' + pcg.subgroup.name
-        elif type(pcg) == Professor:
-            name = pcg.name
-        elif type(pcg) == Classroom:
-            name = pcg.name
-        
-
-        self.search.text.value = name
-
-        
-        layout = ft.Column(
+        self.layout = ft.Column(
             controls = [
                     ft.Row(
                         controls = [
@@ -772,25 +818,32 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
                 
         
     def set_pcg(self, pcg):
-        new_layout = self.get_layout_page(pcg)
+        self.update_boardsubjects(pcg)
+        self.search.update()
         
         self.pcg = pcg
 
-        del super().content.controls[0]
-        super().content.controls.append(new_layout)
-        
+        #super().content.controls.append(new_layout)
         #self.boardsubjects.update()
         super().update()
         
-    def update(self, update = True):
-        new_layout = self.get_layout_page(self.pcg)
-       
-        #print("Se ejecuto")
-        del super().content.controls[0]
-        super().content.controls.append(new_layout) 
         
+    def update(self, update = True):
+        self.update_boardsubjects(self.pcg)
+       
         if update:
             super().update()  
+            self.search.update()
+            
+    def update_boardsubjects(self, new_pcg):
+        boardsubjects = ControlBoardSubjectSlots(new_pcg)
+        self.boardsubjects = boardsubjects
+        
+        self.layout.controls[1].controls = [self.boardsubjects]
+        
+        self.layout.update()
+        
+        pass
     
 # programar el caso base de no hay profesor ni ninguna materia
 

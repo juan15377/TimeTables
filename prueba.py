@@ -1,48 +1,33 @@
 import flet as ft
 
-def main(page):
+def main(page: ft.Page):
+    page.title = "Animación en Hover"
 
-    def close_anchor(e):
-        text = f"Color {e.control.data}"
-        print(f"closing view from {text}")
-        anchor.close_view(text)
-
-    def handle_change(e):
-        print(f"handle_change e.data: {e.data}")
-
-    def handle_submit(e):
-        print(f"handle_submit e.data: {e.data}")
-
-    def handle_tap(e):
-        print(f"handle_tap")
-        anchor.open_view()
-
-    anchor = ft.SearchBar(
-        view_elevation=4,
-        divider_color=ft.colors.AMBER,
-        bar_hint_text="Search colors...",
-        view_hint_text="Choose a color from the suggestions...",
-        on_change=handle_change,
-        on_submit=handle_submit,
-        on_tap=handle_tap,
-        controls=[
-            ft.ListTile(title=ft.Text(f"Color {i}"), on_click=close_anchor, data=i)
-            for i in range(10)
-        ],
+    # Crear un contenedor con color y tamaño inicial
+    container = ft.Container(
+        content=ft.Text("Pasa el mouse sobre mí", style=ft.TextStyle(size=20)),
+        width=200,
+        height=100,
+        alignment=ft.alignment.center,
+        bgcolor=ft.colors.GREEN,
+        border_radius=20,
+        animate=ft.animation.scale(1.2, duration=500),  # Animación cuando pasa el mouse
     )
 
-    page.add(
-        ft.Row(
-            alignment=ft.MainAxisAlignment.CENTER,
-            controls=[
-                ft.OutlinedButton(
-                    "Open Search View",
-                    on_click=lambda _: anchor.open_view(),
-                ),
-            ],
-        ),
-        anchor,
-    )
+    # Aplicar la animación cuando el mouse pasa por encima del contenedor
+    def on_hover(e):
+        if e.data == "enter":
+            container.animate = ft.animation.scale(1.5, duration=300)  # Aumentar tamaño
+        else:
+            container.animate = ft.animation.scale(1.2, duration=300)  # Reducir tamaño
+        page.update()
+
+    # Agregar el evento de hover al contenedor
+    container.on_hover = on_hover
+
+    # Agregar el contenedor a la página
+    page.add(container)
+
+ft.app(target=main)
 
 
-ft.app(main)

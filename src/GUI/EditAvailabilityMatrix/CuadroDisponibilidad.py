@@ -24,13 +24,15 @@ class EditAvailabilityMatrix(ft.Container):
 
         def contenedor(fila,columna):
 
-            return ft.CupertinoButton(
+            return ft.Container(
                     content=ft.Text(""),
                     bgcolor=ft.colors.RED,
                     padding=0,
                     border_radius=5,
                     on_click =  lambda e: boton_presionado(e,fila,columna),
-                    expand = True
+                    expand = True,
+                    on_hover= lambda e : print("hola")
+                    
             )
 
 
@@ -76,13 +78,12 @@ class EditAvailabilityMatrix(ft.Container):
             accion = desactivar if derecha else activar
 
             return ft.CupertinoButton(
-            content=ft.Text(horas_del_dia[fila], weight="bold", color=ft.colors.WHITE, expand=True),
+            content=ft.Text(horas_del_dia[fila],color=ft.colors.WHITE, expand = True),
             padding=1,
             border_radius=1,
             bgcolor = ft.colors.LIGHT_BLUE_400,
             alignment=ft.alignment.center,
             on_click = lambda e : accion(fila),
-            expand = True
             ) 
             
 
@@ -142,8 +143,8 @@ class EditAvailabilityMatrix(ft.Container):
 
         cont_vacio = contenedor_vacio()
 
-        fila_superior = ft.Row([cont_vacio] + contenedores_dias_superior )
-        fila_inferior = ft.Row([cont_vacio] + contenedores_dias_inferior )
+        fila_superior = ft.Row([cont_vacio] + contenedores_dias_superior)
+        fila_inferior = ft.Row([cont_vacio] + contenedores_dias_inferior, expand = True )
         
         filas_matriz_principal = [ft.Row(controls = [hour_left] + fila , expand = True) 
                                   for (hour_left, fila, hour_right) in zip(contenedores_horas_izquierda, matriz_contendores, contenedores_horas_derecha)]
@@ -152,7 +153,7 @@ class EditAvailabilityMatrix(ft.Container):
             controls = filas_matriz_principal,
             spacing=10,
             expand=True,
-            item_extent=10
+            item_extent=10,
         )
 
         #print(contenedores_horas,"\n")
@@ -172,7 +173,7 @@ class EditAvailabilityMatrix(ft.Container):
 
         fila_inferior_dias = [contenedor_vacio()] + contenedores_dias_inferior + [contenedor_vacio()]
 
-        fila_inferior_dias = ft.Row(controls = fila_inferior_dias,alignment=ft.MainAxisAlignment.START, spacing=2,)
+        fila_inferior_dias = ft.Row(controls = fila_inferior_dias,alignment=ft.MainAxisAlignment.START, spacing=2, expand = True)
 
         parte_intermedia = ft.Row(
         controls=columnas_cuadricula,

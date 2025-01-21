@@ -124,23 +124,22 @@ class SearchValue(ft.Container):
         self.items: dict = items
         self.reference_get_new_dict = reference_get_new_dict
         self.lv = ft.ListView()
-        self.search_bar: self.search_bar = SearchBar(
+        self.search_bar= SearchBar(
             bar_hint_text="Type to search...",
             on_change=self.handle_change,
             controls=[self.lv],
-            on_tap = lambda e : self.lv.update()
+            on_tap = lambda e : self.lv.update(),
         )
         
-        self.text = ft.Text("", size = 19)
+        self.text = ft.Text("")
         
         super().__init__(
             content = ft.Column(
                 controls = [
                 self.search_bar,
                 #self.text,                
-            ],
-            spacing= 10,
-            expand = True
+                ],
+                expand = True
             ),
             expand = True
         )
@@ -201,7 +200,6 @@ class SearchValue(ft.Container):
         self.lv.update()
         self.value = None
         self.text.value = ""
-        self.text.update()
         self.search_bar.close_view("")
         self.search_bar.update()
         self.activated = False

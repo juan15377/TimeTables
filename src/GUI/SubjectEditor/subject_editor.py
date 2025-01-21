@@ -242,7 +242,7 @@ class SubjectEditor(ft.Container):
                 ft.Column(
                         controls = [
                             ft.Text("Profesor"),
-                            #professor_selector,
+                            professor_selector,
                         ],
                         expand=True,
                         #width = 100,
@@ -276,7 +276,7 @@ class SubjectEditor(ft.Container):
             )
             
         super().__init__(
-            content = self.professor_selector,
+            content = content,
             expand = True
         )
         
