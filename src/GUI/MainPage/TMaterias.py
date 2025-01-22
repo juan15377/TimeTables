@@ -375,10 +375,14 @@ class SubjectBlock(ft.Container):
                 ),
             ],
             style=ft.MenuStyle(padding=0),
-            data=self.size
+            data=self.size,
         )
+        
 
-        super().__init__(content=menu_options)
+            
+        super().__init__(content=menu_options,
+                         data = True,
+                         animate=ft.animation.Animation(100, ft.AnimationCurve.EASE_IN_OUT))
 
     def change_individual_block_color(self, color: str) -> None:
         """
@@ -561,20 +565,21 @@ def insert_elements(vector, pos, new_elements):
 
 def get_absolute_position(vector, req_pos):
     c = 0
-    k = 0
+    position = 0
     for ele in vector:
+        if c == req_pos:
+            return position
         if type(ele) == ft.Container:  # it is a block on the board, if not a subject block
             c = c + 1
-            k = k + 1
+            position = position + 1
             if c == req_pos:
-                return k
+                return position
             continue
         size = ele.size
         c = c + size
-        k = k + 1
+        position = position + 1
         if c == req_pos:
-            return k
-
+            return position
 
 def reset_config(button):
     button.padding = 2
@@ -582,7 +587,6 @@ def reset_config(button):
     button.data = True  
     button.height = HEIGHT_BUTTON 
     button.width = WIDTH_BUTTON
-    
 
 class ControlBoardSubjectSlots(ft.Container):
 
