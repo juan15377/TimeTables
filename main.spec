@@ -8,7 +8,10 @@ a = Analysis(
     ['src/main.py'],  # La ruta principal de tu script
     pathex=['/home/juan/GitHub/TimeTables/src'],  # Ruta del proyecto (ajustar si es necesario)
     binaries=[],  # Aquí puedes añadir binarios si es necesario
-    datas=collect_data_files('flet'),  # Esto incluye los archivos necesarios de Flet
+    datas=[
+        *collect_data_files('flet'),  # Esto incluye los archivos necesarios de Flet
+        ('src/Logic/algorithm_search/pilot.jl', '.'),  # Incluir el archivo de Julia en la carpeta raíz del ejecutable
+    ],
     hiddenimports=[],  # Si tienes imports ocultos (necesarios para Flet u otras librerías)
     hookspath=[],  # Si tienes hooks personalizados, añádelos aquí
     runtime_hooks=[],  # Hooks en tiempo de ejecución
