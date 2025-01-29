@@ -95,7 +95,7 @@ class LoadSubject(ft.Container):
         original_color = self.pga.subject_colors.colors[subject]
 
         subject_container = ft.Container(content= ft.Text(subject.code,
-                                    size= 35, color = ft.colors.BLACK),
+                                    size= 20, color = ft.colors.BLACK),
                                     width=150,
                                     height=100,
                                     alignment=ft.alignment.center,
@@ -139,7 +139,7 @@ class LoadSubject(ft.Container):
         new_color = self.pga.subject_colors.colors[subject]
         new_name = subject.code
         self.subject_container.content = ft.Text(new_name,
-                                    size=35, color = ft.colors.BLACK)
+                                    size=20, color = ft.colors.BLACK)
         
         self.subject_container.bgcolor = RGB_to_hex(new_color)
         self.subject = subject 

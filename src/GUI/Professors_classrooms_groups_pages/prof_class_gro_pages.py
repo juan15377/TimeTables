@@ -66,13 +66,14 @@ class PCGListItem(ft.Container):
             )
         )
 
+    
         
         super().__init__(
             content=column_Title,
             width=1600,
             expand=True,
             theme_mode= ft.colors.AMBER_ACCENT,
-            data = pga.name
+            data = pga.name if type(pga) in [Professor, Classroom] else pga.career.name + " " + pga.semester.name + " " + pga.subgroup.name
             )
         
     def edit_availability_matrix(self):

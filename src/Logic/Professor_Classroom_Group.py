@@ -286,13 +286,6 @@ def decompose_vector(vector):
 
 def delete_blocks_subject_with_new_availability(pcg, old_matrix, new_matrix, bd):
 
-
-    print("New Matrix")
-    print(new_matrix)
-    
-    print("Old Matrix")
-    print(old_matrix)
-    
     
     old_not_avalailability_matrix = np.logical_and(old_matrix, np.logical_not(new_matrix))
     
@@ -320,24 +313,24 @@ class Groups:
         self.careers = Careers(BD)
         self.semesters = Semesters(BD)
         self.subgroups = Subgroups(BD)
-        self._groups = []
+        self.groups = []
 
     def new(self, career: Career, semester: Semester, subgroup: Subgroup):
         # If a group with the same career, semester, and subgroup already exists, do not create a new one.
-        for group in self._groups:
+        for group in self.groups:
             if group.career == career and group.semester == semester and group.subgroup == subgroup:
                 return None
 
         group = Group(career, semester, subgroup)
-        self._groups.insert(0, group)
+        self.groups.insert(0, group)
 
     def get(self):
-        return self._groups
+        return self.groups
 
     def remove(self, group):
         for subject in group.get_subjects():
             self.bd.subjects.remove(subject)
-        self._groups.remove(group)
+        self.groups.remove(group)
 
 
     def set_availability_matrix(self, group, new_availability_matrix):
