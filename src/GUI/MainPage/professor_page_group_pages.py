@@ -4,129 +4,69 @@ from src.GUI.Utils.SearchValue import SearchValue
 from src.Logic.Professor_Classroom_Group import DEFAULT_PCG
 
 
-class ProfesorMainPage(ControlBlocksSubject):
+class MainPagePCG(ControlBlocksSubject):
     
-    def __init__(self, bd, reference_enrouter_page):
+    def __init__(self, bd, enrouter, route_to_go, call_get_items):
         
-        def change_professor():
-            selected = self.professor_search.get_value()
+        def change_item():
+            selected = self.bar_search.get_value()
             self.set_pcg(selected)
-            
-        def get_actual_profesors():
-            return {
-            professor.name: professor for professor in bd.professors.get()
-            }
-
-
-        professor_search =  SearchValue({
-            professor.name: professor for professor in bd.professors.get()
-            },
-            get_actual_profesors,
-            on_change = change_professor
-            )
         
-        self.professor_search = professor_search
+        bar_search = SearchValue(
+            call_get_items(),
+            call_get_items,
+            on_change = change_item
+        )
         
-        def change_to_professors():
-            reference_enrouter_page('/PROFESSORS') # cambiar la pagina de profesores
+        self.bar_search = bar_search
         
-        super().__init__(bd, DEFAULT_PCG, professor_search, change_to_professors, get_actual_profesors)
+        super().__init__(bd, DEFAULT_PCG, 
+                         bar_search, enrouter, 
+                         route_to_go, call_get_items)
         
+    
     def update(self, update = True):
-        self.professor_search.update()
+        self.bar_search.update()
         if update:
             super().update()
-            #self.professor_search.on_change()  # actualizar la lista de profesores cuando cambia el valor de la búsqueda
+            #self.subject_search.on_change()  # actualizar la lista de materias cuando cambia el valor de la búsqueda
         pass
-        
 
-class ClassroomMainPage(ControlBlocksSubject):
+
+class ProfesorMainPage(MainPagePCG):
     
-    def __init__(self, bd, reference_enrouter_page):
+    def __init__(self, bd, enrouter):
         
-        def change_classroom():
-            seleccionado = self.classroom_search.get_value()
-            self.set_pcg(seleccionado)
-            
-        def get_actual_classrooms():
-            return {
-            classroom.name: classroom for classroom in bd.classrooms.get()
-            }
-
-
-        classroom_search = SearchValue({
-            classroom.name: classroom for classroom in bd.classrooms.get()
-            },
-            get_actual_classrooms,  # setear los valores de la búsqueda  
-            on_change = change_classroom
-        )
+        call_get_professors = lambda: {
+            professor.name: professor for professor in bd.professors.get()
+        }
+        
+        route_to_go = '/PROFESSORS'
+        
+        super().__init__(bd, enrouter, route_to_go, call_get_professors)
         
         
-        self.classroom_search = classroom_search
-        
-        def change_to_classrooms():
-            reference_enrouter_page('/CLASSROOMS') # cambiar la pagina de aulas 
-        
-        super().__init__(bd, DEFAULT_PCG, classroom_search, change_to_classrooms, get_actual_classrooms)
-        
-    def update(self, update = True):
-        self.classroom_search.update()
-        if update:
-            super().update()
-            #self.classroom_search.on_change()
-            
-        
-class GroupMainPage(ControlBlocksSubject):
+class ClassroomMainPage(MainPagePCG):
     
-    def __init__(self, bd, reference_enrouter_page):
+    def __init__(self, bd, enrouter):
         
-        def change_group():
-            seleccionado = self.group_search.get_value()
-            self.set_pcg(seleccionado)
+        call_get_classrooms = lambda: {
+            classroom.name: classroom for classroom in bd.classrooms.get()
+        }
+        
+        route_to_go = '/CLASSROOMS'
+        
+        super().__init__(bd, enrouter, route_to_go, call_get_classrooms)
+        
 
-        def get_actual_groups():
-            return {
+class GroupMainPage(MainPagePCG):
+    
+    def __init__(self, bd, enrouter):
+        
+        call_get_groups = lambda: {
             group.career.name + " " + group.semester.name + " " + group.subgroup.name: group for group in bd.groups.get()
-            }
+        }
         
-        self.group_search = SearchValue({
-            group.career.name + " " + group.semester.name + " " + group.subgroup.name:group for group in bd.groups.get()
-            },
-            get_actual_groups,  # setear los valores de la búsqueda
-            on_change = change_group
-        )
+        route_to_go = '/GROUPS'
         
-        
-        def change_to_groups():
-            reference_enrouter_page('/GROUPS') # cambiar la pagina a 
-
-        super().__init__(bd, DEFAULT_PCG, self.group_search, change_to_groups, get_actual_groups)
-    
-    def update(self, update = False):
-        self.group_search.update()
-        if update:
-            super().update()
-            #self.group_search.on_change()  # para que se actualice el boton en caso de que haya cambiado el grupo seleccionado en la lista
-            
-    
-
-#lista = [0]
-#
-#def main(page : ft.Page):
-#    boardsubject = ControlBlocksSubject(Bd, professor)
-#    def cambiar_professor(e):
-#        print(e.data)
-#        professor_2 = Bd.professors.get()[lista[0]%2]
-#        boardsubject.set_pcg(professor_2)
-#        lista[0] = lista[0] + 1
-#    
-#    boton_cambiar_professor = ft.TextButton(
-#        text = "cambiar",
-#        on_click= lambda e: cambiar_professor(e),
-#    )
-#
-#    page.add(boardsubject, boton_cambiar_professor)
-#
-#ft.app(main)
-
-# necesito una estructura 
+        super().__init__(bd, enrouter, route_to_go, call_get_groups)

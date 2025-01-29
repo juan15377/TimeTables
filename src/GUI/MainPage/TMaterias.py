@@ -273,7 +273,8 @@ class SubjectBlock(ft.Container):
                  control_board: 'ControlBoardSubjectSlots', 
                  subject: 'Subject', 
                  size: int, 
-                 position: Tuple[int, int]) -> None:
+                 position: Tuple[int, int],
+                 enrouter) -> None:
         """
         Initializes a SubjectBlock with the given parameters, validates the input types, and sets up the block.
 
@@ -290,6 +291,7 @@ class SubjectBlock(ft.Container):
         self.board = control_board
         self.position = position
         self.pcg = pcg
+        self.enrouter = enrouter
 
         # Set up color picker for the block
         color_picker = MyColorPicker()
@@ -310,12 +312,15 @@ class SubjectBlock(ft.Container):
         # Function to move the block (remove and re-enable availability for insertion)
         def move_block(self):
             self.board.remove_block(subject, self.position, self.size)
-            self.board.load_availability(self.size, self.subject)
+            self.board.load_availability(self.size, self.subject, self.enrouter)
 
         # Create menu items for block options
-        menuitem_INFO = ft.MenuItemButton(
+        menuitem_INFO = ft.SubmenuButton(
             content=ft.Row(controls=[ft.Icon(name=ft.icons.INFO), ft.Text("Info")]),
-            on_click=lambda e: print("Hello Everyone")
+            controls = [
+                ft.MenuItemButton(content=ft.Container(content= ft.Text("Hola Mundo"), width=200, height=170))
+            ],
+            on_close = lambda e: print("Hello World")
         )
 
         menuitem_DELETE = ft.MenuItemButton(
@@ -363,9 +368,9 @@ class SubjectBlock(ft.Container):
                 ft.SubmenuButton(
                     content=subject_container,
                     controls=[
-                        menuitem_INFO,
                         menuitem_DELETE,
                         menuitem_MOVE,
+                        menuitem_INFO,
                         menuitem_COLOR,
                     ],
                     width=WIDTH_BUTTON,
@@ -533,11 +538,11 @@ class SubjectBlocks:
 
 
         
-def schedule_button(pga, board, button, subject, position, size, subject_manager):
+def schedule_button(pga, board, button, subject, position, size, subject_manager, enrouter):
     button.bgcolor = ft.colors.GREEN_400
 
     def add_block():
-        block = SubjectBlock(pga, board, subject, size, position)
+        block = SubjectBlock(pga, board, subject, size, position, enrouter)
         board.add_block(block)
         board.turn_off_board()
         subject_manager.update()
@@ -590,7 +595,8 @@ def reset_config(button):
 
 class ControlBoardSubjectSlots(ft.Container):
 
-    def __init__(self, pga = DEFAULT_PCG, update = False) -> None:
+    def __init__(self, enrouter, pga = DEFAULT_PCG, update = False) -> None:
+        self.enrouter = enrouter
         self.update_pga(pga, update)
 
     def update_pga(self, pga, update) -> None:
@@ -631,7 +637,7 @@ class ControlBoardSubjectSlots(ft.Container):
                     continue
 
                 if availability[row: row + size, col].sum() == size:
-                    schedule_button(self.pga, self, button, subject, (row, col), size, self.subject_selector)
+                    schedule_button(self.pga, self, button, subject, (row, col), size, self.subject_selector, enrouter)
                     continue
 
                 button.bgcolor = ft.colors.YELLOW
@@ -700,13 +706,13 @@ class ControlBoardSubjectSlots(ft.Container):
 # !!! principal class 
 class ControlBlocksSubject(ft.AnimatedSwitcher):
 
-    def __init__(self, bd, pcg, search, to_change, reference_to_get_dict):
+    def __init__(self, bd, pcg, search, enrouter, route, reference_to_get_dict):
         
         self.db = bd
         
         button_to_change_page =  ft.FloatingActionButton(
             icon=ft.icons.ADD,
-            on_click=lambda e: to_change(),
+            on_click=lambda e: enrouter.change_page(route),
             text = "Gestionar datos",
             focus_elevation= 10,
         )
@@ -778,7 +784,7 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
     # 
         
     def get_layout_page(self, pcg):
-        boardsubjects = ControlBoardSubjectSlots(pcg)
+        boardsubjects = ControlBoardSubjectSlots(enrouter, pga = pcg)
         self.boardsubjects = boardsubjects
         
         button_reset_subjects = ft.FloatingActionButton(
@@ -829,6 +835,7 @@ class ControlBlocksSubject(ft.AnimatedSwitcher):
 
         #super().content.controls.append(new_layout)
         #self.boardsubjects.update()
+        print("Se cargo")
         super().update()
         
         

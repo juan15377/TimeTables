@@ -186,40 +186,46 @@ class SubjectSelector(ft.Container):
     def add_subjects_to_list(self):
 
         for subject in self.pga.get_subjects():
-            progress_bar = ft.ProgressBar(expand = True)
+            progress_bar = ft.ProgressBar(expand = True, bar_height= 6, color= ft.colors.GREEN_500)
             completed_value =  1 - subject.remaining() / subject.total() if subject.total() != 0 else 1
             progress_bar.value = completed_value
-            color = RGB_to_hex(self.pga.subject_colors.colors[subject])
-            text_name = ft.Container(
-                content = ft.Text(subject.code, size = 20, expand = True, color = ft.colors.BLACK),
-                bgcolor= color,
-                width=100,
-                height=60,
-                padding=0,
-                margin=ft.Margin(top=0, right=0, bottom=0, left=0),
+            subject_color = self.pga.subject_colors.colors[subject]
+            color = RGB_to_hex(subject_color)
+            subject_container = ft.Container(
+                content = ft.Text(subject.code, size = 20, expand = True, color = ft.colors.BLACK, text_align= ft.alignment.top_left),
+                bgcolor = color,
+                height = 60,
+                width= 120,
+                padding = 2,
+                margin = ft.Margin(top=0, right=0, bottom=0, left=0),
                 border_radius=10,
-                alignment= ft.alignment.center
+                alignment= ft.alignment.center,
                 )
             
             name_subject = ft.Container(
-                content = ft.Text(subject.name, size = 20, color = ft.colors.WHITE),
+                content = ft.Text(subject.name, size = 20, color = ft.colors.BLACK),
                 alignment= ft.alignment.center,
                 expand = True
             )
             
-            subject_container = ft.Container(
+            subject_item = ft.Container(
                 content= ft.Row(controls = [
-                    name_subject,
-                    text_name,
+                    subject_container,
                     ft.Text("    "),
                     progress_bar
-                ]),
+                    ],
+                
+                ),
                 on_click= lambda e, s = subject : self.subject_loader.update_subject(s),
                 #on_hover= lambda e : paint(e),
                 ink = True,
                 ink_color= ft.colors.GREEN_100,
+                padding= 5,
+                border_radius= 5,
+                bgcolor= ft.colors.WHITE,
                     )
-            self.subject_list.controls.append(subject_container)
+            
+            self.subject_list.controls.append(subject_item)
 
 
     def load_subject_list(self):
@@ -238,7 +244,7 @@ class SubjectSelector(ft.Container):
             controls = [
                 ft.Container(
                     content = self.subject_list,
-                    bgcolor = ft.colors.BLACK,
+                    bgcolor = ft.colors.WHITE54,
                     expand=True,
                     border_radius= 6,
                     padding= 5
