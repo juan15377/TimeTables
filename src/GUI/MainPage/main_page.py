@@ -10,9 +10,8 @@ from flet import (
 )
 
 
-from src.Logic.Bd import BD
+from src.Logic.database import DataBaseManager
 from src.GUI.EnrouterPage import EnrouterPage
-from src.Logic.Professor_Classroom_Group import *
 from src.GUI.MainPage.professor_page_group_pages import *
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import *
 
@@ -84,7 +83,7 @@ class MainPage(ft.Container):
         self.page = page
         self.db = bd
         self.save_path_default = None
-        self.enrouter_page = EnrouterPage(self, self.db, self.page, )
+        self.enrouter_page = EnrouterPage(self, self.db, self.page)
         
         
         layout = self.get_layout(self.db)
@@ -102,9 +101,9 @@ class MainPage(ft.Container):
         self.db = bd
         # contenido de la pagina principal
         
-        professor_page = ProfesorMainPage(self.db, lambda route : self.enrouter_page.change_page(route))
-        classroom_page = ClassroomMainPage(self.db, lambda route : self.enrouter_page.change_page(route))
-        group_page = GroupMainPage(self.db, lambda route : self.enrouter_page.change_page(route))
+        professor_page = ProfesorMainPage(self.db, lambda route : self.enrouter_page)
+        classroom_page = ClassroomMainPage(self.db, lambda route : self.enrouter_page)
+        group_page = GroupMainPage(self.db, lambda route : self.enrouter_page)
         
         self.professor_page = professor_page
         self.classroom_page = classroom_page
@@ -141,7 +140,6 @@ class MainPage(ft.Container):
         
 
         def on_change(e):
-            print("Hola")
             # parche que se debe arreglar para que funcione de igual manera
             selected_index = e.control.selected_index
             before_selected = e.control.data 
@@ -304,7 +302,7 @@ class MainPage(ft.Container):
     
     
     def print_db(self, path_print):
-        self.db.generate_pdf(path_print)
+        self.db.export.schedule_completed(path_print)
         
     def update_professor(self):
         self.professor_page.update(update = False)
@@ -319,7 +317,7 @@ def main(page: ft.Page):
     page.theme = ft.Theme(
         color_scheme_seed=ft.colors.BLUE
         )
-    Bd = BD()
+    Bd = DataBaseManager()
     
     page.theme_mode = "dark"
     main_page = MainPage(Bd, page)

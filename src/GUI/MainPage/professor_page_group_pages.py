@@ -1,9 +1,8 @@
 
 from src.GUI.MainPage.TMaterias import ControlBlocksSubject
 from src.GUI.Utils.SearchValue import SearchValue
-from src.Logic.Professor_Classroom_Group import DEFAULT_PCG
-
-
+from src.Logic.database import DEFAULT_PCG
+ 
 class MainPagePCG(ControlBlocksSubject):
     
     def __init__(self, bd, enrouter, route_to_go, call_get_items):

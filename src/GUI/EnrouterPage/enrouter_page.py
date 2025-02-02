@@ -4,7 +4,7 @@ from flet import View
 from src.GUI.Professors_classrooms_groups_pages.professor_classroom_group_page_editor import EditorPCG
 from src.GUI.SubjectEditor import SubjectEditor
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
-from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
+from src.Logic.database import Professor, Classroom, Group
 def load_subjects_page(bd, page_to_route, page):
     subject_editor = SubjectEditor(bd, reference_page_router = page_to_route, page = page)
     return subject_editor
@@ -15,8 +15,6 @@ def load_subjects_page(bd, page_to_route, page):
 
 # En el enrouter deben cargarse las 3 paginas principales
 # de una vez se incorporara la funcionalidad de pode editar una materia 
-
-
 
 
 ROUTE_PROFESSOR = '/PROFESSORS'
@@ -121,7 +119,6 @@ class EnrouterPage():
             page_back_callback = lambda : self.pcg.change_page(pcg)
             page_content = load_subjects_page(self.db, page_back_callback, self.page)
         
-            
         elif route == '/PROFESSORS/SUBJECT_DETAILS':
             page_to_route = lambda : self.change_page("/PROFESSORS")
             page_content = load_subjects_page(self.db, page_to_route, self.page)

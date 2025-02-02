@@ -1,3 +1,11 @@
+from .....models.Professor_Classroom_Group import *
+
+DICT_TYPES_SYMBOLOGY = {
+    Professor : 1,
+    Group : 2,
+    Classroom : 3
+}
+
 class SubjectLatex:
     def __init__(self, name, code, professor, classroom, careers, semesters, subgroups, hours, color, hours_matrix):
         self.name = name
@@ -11,7 +19,7 @@ class SubjectLatex:
         self.color = color  # Assume color is a tuple (r, g, b)
         self.hours_matrix = hours_matrix
 
-class SymbolLatex:
+class SymbologyLatex:
     def __init__(self):
         self.subjects = []
         self.type = 1  # 1: professor, 2: group, 3: classroom

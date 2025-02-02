@@ -1,19 +1,15 @@
-from .symbology import SymbolLatex
+from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
 
 class GroupLatex:
-    def __init__(self, key_career, career, key_semester, semester, key_group, group):
+    def __init__(self, key_career, career, key_semester, semester, key_subgroup, subgroup, group):
         self.key_career = key_career
         self.career = career
         self.key_semester = key_semester
         self.semester = semester
-        self.key_group = key_group
-        self.group = group
-        self.subjects = []
-
-    def add_subject(self, subject):
-        """Adds a subject to the group's list of subjects."""
-        self.subjects.append(subject)
+        self.key_group = key_subgroup
+        self.group = subgroup
+        self.subjects = group.get_subjects()
 
 def create_groups_latex(composite_groups):
     """Creates a LaTeX string for all groups."""

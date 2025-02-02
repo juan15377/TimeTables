@@ -1,21 +1,17 @@
 
-from .symbology import SymbolLatex
+from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
 
 class ClassroomLatex:
-    def __init__(self, name):
-        self.name = name
-        self.subjects = []
-
-    def add_subject(self, subject):
-        """Add a subject to the classroom's list of subjects."""
-        self.subjects.append(subject)
+    def __init__(self, classroom):
+        self.name = classroom.name
+        self.subjects = classroom.get_subjects()
 
     def create_template_string(self):
         """Create the LaTeX string for the grid and symbolic representation of the subjects."""
         grid = GridLatex()
-        symbol = SymbolLatex()
-        symbol.type = 3  # Type 3: classroom view
+        symbology = SymbologyLatex()
+        symbology.type = 3  # Type 3: classroom view
 
         for subject in self.subjects:
             grid.add_subject(subject)

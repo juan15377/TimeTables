@@ -5,11 +5,11 @@ import flet as ft
 import numpy as np
 import copy
 
-from src.Logic.Professor_Classroom_Group import DEFAULT_PCG
+from src.Logic.database import DEFAULT_PCG
 from src.GUI.MainPage.subject_selector import SubjectSelector
-from src.Logic.Colors import RGB_to_hex, MyColorPicker
-from src.Logic.Professor_Classroom_Group import Professor, Group, Classroom
-from src.Logic.Subjects import Subject
+from src.Logic.database import RGB_to_hex, MyColorPicker
+from src.Logic.database import Professor, Group, Classroom
+from src.Logic.database import Subject
 from src.GUI.Utils.SearchValue import SearchValue
 
 

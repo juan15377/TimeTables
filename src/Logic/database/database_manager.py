@@ -1,0 +1,52 @@
+
+import sys
+
+
+from .models.Subjects import Subjects
+from .models.Professor_Classroom_Group import Professors, Classrooms, Groups
+
+import sys 
+
+from .components.export_functions import *
+
+import pickle
+
+import os
+import subprocess
+
+
+class DataBaseManager():
+
+    def __init__(self) -> None:
+        self.professors = Professors(self)
+        self.classrooms = Classrooms(self)
+        self.groups = Groups(self)
+        self.subjects = Subjects(self)
+        self.export = ExportFunctionsLatex(self)
+        pass
+
+    def load_db(self, path_new_db):
+        with open(path_new_db, "rb") as file:
+            new_bd = pickle.load(file)
+            self.professors = new_bd.professors
+            self.classrooms = new_bd.classrooms
+            self.groups = new_bd.groups
+            self.subjects = new_bd.subjects
+            self.subjects.BD = self    
+    
+    def save_db(self, path_save_db):
+        save_object_to_pickle(self, path_save_db)
+
+    def update_bd(self):
+        pass
+    
+    def get_status_completed(self):
+        sum_hours_total = 0
+        sum_hours_restart = 0
+        
+        for subject in self.subjects.get():
+            sum_hours_total += subject.hours_distribution.total
+            sum_hours_remaining += subject.hours_distribution.remaining
+        
+        return 1 - sum_hours_remaining / sum_hours_total if sum_hours_total != 0 else 1 
+

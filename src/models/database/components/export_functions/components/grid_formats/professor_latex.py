@@ -1,11 +1,15 @@
 from .symbology import SymbolLatex
 from .schedulegrid import GridLatex
+from .symbology import dict_types_symbology
+
+
 
 class ProfessorLatex:
-    def __init__(self, name):
-        self.name = name
-        self.subjects = []
-
+    def __init__(self, professor):
+        self.professor = professor
+        self.name = professor.name
+        self.subjects = professor.get_subjects()
+        
     def add_subject(self, subject):
         """Add a subject to the professor's list of subjects."""
         self.subjects.append(subject)
@@ -48,3 +52,4 @@ def create_professors_latex(professors):
         template = professor.create_template_string()
         result += f"{template}\n"
     return result
+

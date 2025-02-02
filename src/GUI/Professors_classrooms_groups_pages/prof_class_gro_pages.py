@@ -2,8 +2,7 @@ import sys
 import flet as ft
 import time as tm
 
-
-from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
+from src.Logic.database import Professor, Classroom, Group
 from src.GUI.Professors_classrooms_groups_pages.new_career_semestre_subgroup import NewGroup
 from src.GUI.Professors_classrooms_groups_pages.new_professor_classroom import NewProfessor, NewClassroom
 
@@ -167,8 +166,6 @@ class ListViewPCG(ft.Column):
     def update(self):
         for item in self.items:
             item.update()
-        
-   
 
         
 class NavigatorBarBack(ft.Container):

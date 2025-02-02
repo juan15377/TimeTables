@@ -7,7 +7,7 @@ from src.GUI.SubjectEditor.groups_selector import GroupSelector
 from src.GUI.Utils.SearchValue import SearchValue
 from src.GUI.SubjectEditor.hours_distribution import SelectorDistributionHours
 from src.GUI.SubjectEditor.online_switch import OnlineSwitch
-from src.Logic.Subjects import InfoSubject
+from src.Logic.database import InfoSubject
 
 
 class NavigatorBarBack(ft.Container):
