@@ -14,6 +14,25 @@ import pickle
 import os
 import subprocess
 
+import pickle
+import os
+
+def save_in_pickle(objeto, ruta):
+    """
+    Guarda un objeto en un archivo pickle en la ruta especificada.
+
+    :param objeto: El objeto a guardar.
+    :param ruta: La ruta completa del archivo donde se guardará el objeto.
+    """
+    try:
+        # Asegurarse de que el directorio existe
+        os.makedirs(os.path.dirname(ruta), exist_ok=True)
+        
+        with open(ruta, 'wb') as archivo:
+            pickle.dump(objeto, archivo)
+        print(f"Objeto guardado en {ruta}")
+    except Exception as e:
+        print(f"Error al guardar el objeto: {e}")
 
 class DataBaseManager():
 
@@ -35,7 +54,7 @@ class DataBaseManager():
             self.subjects.BD = self    
     
     def save_db(self, path_save_db):
-        save_object_to_pickle(self, path_save_db)
+        save_in_pickle(self, path_save_db)
 
     def update_bd(self):
         pass

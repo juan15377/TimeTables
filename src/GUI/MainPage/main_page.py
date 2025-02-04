@@ -302,7 +302,7 @@ class MainPage(ft.Container):
     
     
     def print_db(self, path_print):
-        self.db.export.schedule_completed(path_print)
+        self.db.export.complete_schedule(path_print)
         
     def update_professor(self):
         self.professor_page.update(update = False)

@@ -22,7 +22,6 @@ from src.GUI.Utils.SearchValue import SearchValue
 # el tiempo permitido maximo poara la generacion de un tablero deberiaser de de 0.2 segundos 
 
 
-
 import flet as ft
 import numpy as np
 
