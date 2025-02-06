@@ -1,4 +1,0 @@
-# mejorar la eficiencia de la creacion de tableros
-# despues falta una segunda refactorizacion de todo el codigo 
-# falta una implementacion de muchos modulos 
-
