@@ -10,7 +10,7 @@ from flet import (
 )
 
 
-from src.Logic.database import DataBaseManager
+from src.models.database import DataBaseManager
 from src.GUI.EnrouterPage import EnrouterPage
 from src.GUI.MainPage.professor_page_group_pages import *
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import *

@@ -1,4 +1,4 @@
-from .symbology import SymbolLatex
+from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
 
 class GroupLatex:

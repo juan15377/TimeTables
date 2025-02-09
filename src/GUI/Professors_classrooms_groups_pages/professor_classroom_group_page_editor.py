@@ -1,6 +1,6 @@
 import flet as ft 
 from src.GUI.EditAvailabilityMatrix.CuadroDisponibilidad import EditAvailabilityMatrix
-from src.Logic.database import Professor, Classroom, Group
+from src.models.database import Professor, Classroom, Group
 class NameEditor(ft.Container):
     
     def __init__(self, name):

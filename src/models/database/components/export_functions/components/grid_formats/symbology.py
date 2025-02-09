@@ -1,4 +1,4 @@
-
+from src.models.database.models.Professor_Classroom_Group import *
 
 DICT_TYPES_SYMBOLOGY = {
     Professor : 1,

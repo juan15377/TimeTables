@@ -1,5 +1,6 @@
 # convertir la base de datos a una estrictura mas agradable para poder hacer
 # la conversion a pdf latex
+from .components import * 
 from .components.grid_formats.professor_latex import ProfessorLatex, create_professors_latex
 from .components.grid_formats.classroom_latex import ClassroomLatex, create_classrooms_latex
 from .components.grid_formats.group_latex import GroupLatex, create_groups_latex

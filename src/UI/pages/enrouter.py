@@ -5,6 +5,8 @@ from src.GUI.Professors_classrooms_groups_pages.professor_classroom_group_page_e
 from src.GUI.SubjectEditor import SubjectEditor
 from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
 from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
+
+
 def load_subjects_page(bd, page_to_route, page):
     subject_editor = SubjectEditor(bd, reference_page_router = page_to_route, page = page)
     return subject_editor

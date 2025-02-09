@@ -1,6 +1,6 @@
-from .symbology import SymbolLatex
+from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
-from .symbology import dict_types_symbology
+from .symbology import DICT_TYPES_SYMBOLOGY
 
 
 
