@@ -5,16 +5,11 @@ import copy
 
 from .constants import *
 from .components import SubjectBlock, SubjectBlocks
-
-
-
-from src.Logic.Professor_Classroom_Group import DEFAULT_PCG
-from src.GUI.MainPage.subject_selector import SubjectSelector
-from src.Logic.Colors import RGB_to_hex, MyColorPicker
-from src.Logic.Professor_Classroom_Group import Professor, Group, Classroom
-from src.Logic.Subjects import Subject
-from src.GUI.Utils.SearchValue import SearchValue
 from utils import *
+from src.models.database import *
+from src.UI.components.search_value import SearchValue
+
+
 
 # ! tablero de control debe tener un metodo de inicializar con un objecto pga 
 # ! este a partir de una inicializacion se debe mantener con operaciones que permitan 
@@ -23,17 +18,6 @@ from utils import *
 # ! la actualizacion en el nucleo y una actualizacion del tablero, lo cual es costoso de hacer por lo que las 
 # ! operaciones permitidas deben ser bien escogidas  
 # el tiempo permitido maximo poara la generacion de un tablero deberiaser de de 0.2 segundos 
-
-
-
-import flet as ft
-import numpy as np
-
-
-HEIGHT_BUTTON = 50
-WIDTH_BUTTON = 150
-
-
 
 def initialize_schedule_grid():
 

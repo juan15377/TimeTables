@@ -1,1 +1,2 @@
-from .subject_block import SubjectBlock, SubjectBlocksManager
+from .subject_selector import * 
+from subjects_block import *

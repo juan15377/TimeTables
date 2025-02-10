@@ -1,10 +1,11 @@
 import sys
 import flet as ft
 from flet import View
-from src.GUI.Professors_classrooms_groups_pages.professor_classroom_group_page_editor import EditorPCG
-from src.GUI.SubjectEditor import SubjectEditor
-from src.GUI.Professors_classrooms_groups_pages.prof_class_gro_pages import ProfessorsPage, ClassroomsPage, GroupsPage
-from src.Logic.Professor_Classroom_Group import Professor, Classroom, Group
+
+from src.models.database import *
+from .resource_pcg import EditorPCG
+from .list_professors_classrooms_groups import ProfessorsPage, ClassroomsPage, GroupsPage
+from .subject import SubjectEditor
 
 
 def load_subjects_page(bd, page_to_route, page):
@@ -16,7 +17,7 @@ def load_subjects_page(bd, page_to_route, page):
 #/main/juan_de_jesus/calculo/
 
 # En el enrouter deben cargarse las 3 paginas principales
-# de una vez se incorporara la funcionalidad de pode editar una materia 
+# de una vez se incorporara la funcionalidad de poder editar una materia 
 
 
 
@@ -52,17 +53,24 @@ ROUTE_SUBJECTS = '/GROUPS'
 # Enrouter_page("/GROUPS") -> Groups_page
 # Enrouter_page("/CLASSROOMS/SUBJECT_DETAILS") -> Subject_edit with reference to back in /CLASSROOMS 
 
+# se debe tener una base de las paginas, si pasa un simple contenedor como pagina, esta debe pasar ese,
+
+
+
+
 class Pages():
     
     def __init__(self,
                         professors_page,
                         classrooms_page,
-                        groups_page):
+                        groups_page, 
+                        main_page):
 
     
         self.professors_page = professors_page
         self.classrooms_page = classrooms_page
         self.groups_page = groups_page
+        self.main_page = main_page
 
 class EnrouterPCG():
     
@@ -70,8 +78,6 @@ class EnrouterPCG():
         
         self.db = db 
         self.enrouter_page = enrouter_page
-        
-    
         pass 
 
     def change_page(self, pcg):
@@ -86,64 +92,57 @@ class EnrouterPCG():
         self.enrouter_page.load_page_content(content_page)
         pass 
 
+class SubjectPagesManager():
+    
+    def __init__(db, page_manager):
+        pass  
+    
+    def load_editor(subject):
+        pass  
+    
+    def load_new():
+        
+        pass 
 
-class EnrouterPage():
+
+
+
+
+
+
+
+
+class PageManager():
     
-    
-    def __init__(self, main_page, bd, page) -> None:
-        self.page = page
+    def __init__(self, bd, pages, page_container : ft.Container) -> None:
+        self.pages = pages
         self.db = bd
+        self.page_container = page_container
         self.pcg = EnrouterPCG(self.db, self)
+        self.subject = SubjectPagesManager(db, self)
         
+    def change_page(self, route, subject=False, pcg=False):
+        # Diccionario de rutas y sus correspondientes páginas
+        routes = {
+            '/PROFESSORS': self.pages.professors_page,
+            '/CLASSROOMS': self.pages.classrooms_page,
+            '/GROUPS': self.pages.groups_page,
+            '/': self.pages.main_page
+        }
 
-        professors_page = ProfessorsPage(self.db, self)
+        # Verificar si la ruta está en el diccionario
+        if route in routes:
+            page_content = routes[route]
+            page_content.update(update=False)
         
-        classrooms_page = ClassroomsPage(self.db, self)
-        
-        groups_page = GroupsPage(self.db, self)
-        
-        self.pages = Pages(professors_page, classrooms_page, groups_page)
-        self.main_page = main_page
-
-    def change_page(self,route, subject = False, pcg = False):
-        
-        if route == '/PROFESSORS':
-            page_content = self.pages.professors_page
-            self.pages.professors_page.update(update = False)
-            
-        elif route == '/CLASSROOMS':
-            page_content = self.pages.classrooms_page
-            self.pages.classrooms_page.update(update = False)
-            
-        elif route == '/GROUPS':
-            page_content = self.pages.groups_page
-            self.pages.groups_page.update(update = False)
-        
-        elif route == "/PCG/SUBJECT_DETAILS":
-            page_back_callback = lambda : self.pcg.change_page(pcg)
+        # Rutas con detalles de la materia
+        elif route in ['/PCG/SUBJECT_DETAILS', '/PROFESSORS/SUBJECT_DETAILS', '/CLASSROOMS/SUBJECT_DETAILS', '/GROUPS/SUBJECT_DETAILS']:
+            page_back_callback = lambda: self.change_page(route.split('/')[1])  # Genera la ruta de retorno
             page_content = load_subjects_page(self.db, page_back_callback, self.page)
         
-        elif route == '/PROFESSORS/SUBJECT_DETAILS':
-            page_to_route = lambda : self.change_page("/PROFESSORS")
-            page_content = load_subjects_page(self.db, page_to_route, self.page)
-            
-        elif route == '/CLASSROOMS/SUBJECT_DETAILS':
-            page_to_route = lambda : self.change_page("/CLASSROOMS")
-            page_content = load_subjects_page(self.db, page_to_route, self.page)
-            
-        elif route == '/GROUPS/SUBJECT_DETAILS':
-            page_to_route = lambda : self.change_page("/GROUPS")
-            page_content = load_subjects_page(self.db, page_to_route, self.page)
-            
-        elif route == '/':
-            page_content = self.main_page
-            
-        self.load_page_content(page_content)  
+        # Cargar la página de contenido
+        self.load_page_content(page_content)
         
-        if route == "/":
-            self.main_page.update(update = True)
-    
-        self.page.update() 
 
     def update_db(self, bd):
         self.db = bd
