@@ -1,10 +1,10 @@
 import flet as ft
+from src.UI.database import database
 
 class BasePCGPage(ft.Container):
 
-    def __init__(self, db, pcg, search, enrouter, route, reference_to_get_dict):
+    def __init__(self,pcg, search, enrouter, route, reference_to_get_dict):
         
-        self.db = db
         
         button_to_change_page = ft.FloatingActionButton(
             icon=ft.icons.ADD,
@@ -23,7 +23,7 @@ class BasePCGPage(ft.Container):
             
         def get_actual_profesors():
             return {
-            professor.name: professor for professor in self.db.professors.get()
+            professor.name: professor for professor in database.professors.get()
             }
 
         
@@ -154,10 +154,8 @@ class BasePCGPage(ft.Container):
 
 class ControlBlocksSubjects(ft.AnimatedSwitcher):
 
-    def __init__(self, db, pcg, search, enrouter, route, reference_to_get_dict):
-        
-        self.db = db
-        
+    def __init__(self, pcg, search, enrouter, route, reference_to_get_dict):
+                
         button_to_change_page = ft.FloatingActionButton(
             icon=ft.icons.ADD,
             on_click=lambda e: enrouter.change_page(route),
@@ -175,7 +173,7 @@ class ControlBlocksSubjects(ft.AnimatedSwitcher):
             
         def get_actual_profesors():
             return {
-            professor.name: professor for professor in self.db.professors.get()
+            professor.name: professor for professor in database.professors.get()
             }
 
         

@@ -1,6 +1,6 @@
 import sys
 import flet as ft
-
+from src.UI.database import database
 
 
 from src.GUI.Utils.SearchValue import SearchValue
@@ -69,22 +69,21 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
 class GroupSelector(ft.Container):
     
     
-    def __init__(self, BD):
+    def __init__(self):
         tablegroups = TableGroups()
         button_add_group_to_table = ft.FloatingActionButton(
             icon = ft.icons.ADD,
             text = "Add Group"
         )
-        self.BD = BD
                 
         self.table_groups = tablegroups
         
         
         def get_actual_groups():
-            return {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in self.BD.groups.get()}
+            return {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in database.groups.get()}
         
         search_values_textfield = SearchValue(
-            {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in BD.groups.get()},
+            {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in database.groups.get()},
             get_actual_groups,  # setear los valores de la búsqueda
         )
         #search_values_textfield.height = 400

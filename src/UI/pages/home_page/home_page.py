@@ -17,6 +17,7 @@ from flet import FilePicker, FilePickerResultEvent
 
 from .components import ProfessorMainPage, ClassroomMainPage, GroupMainPage
 
+from src.UI.database import database
 
 def preload_database(page):
     pass
@@ -84,12 +85,11 @@ class MainPage(ft.Container):
                 
         #return None 
         
-    def get_layout(self, bd):
-        self.db = bd
+    def get_layout(self):
         # contenido de la pagina principal
         
-        professor_page = ProfesorMainPage(self.db, lambda route : self.enrouter_page)
-        classroom_page = ClassroomMainPage(self.db, lambda route : self.enrouter_page)
+        professor_page = ProfesorMainPage(database, lambda route : self.enrouter_page)
+        classroom_page = ClassroomMainPage(database, lambda route : self.enrouter_page)
         group_page = GroupMainPage(self.db, lambda route : self.enrouter_page)
         
         self.professor_page = professor_page
