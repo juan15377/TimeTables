@@ -1,6 +1,7 @@
 from src.UI.database import database
 from typing import Callable
 
+import flet as ft
 class SubjectList(ft.ListView):
     
     def __init__(self, page, call_refresh_subjects : Callable):

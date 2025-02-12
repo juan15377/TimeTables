@@ -1,8 +1,8 @@
 import flet as ft
 import sys
 
-from src.Logic.database import RGB_to_hex, MyColorPicker
-from src.Logic.database import DEFAULT_PCG, DEFAULT_SUBJECT
+from src.models.database import RGB_to_hex, MyColorPicker
+from src.models.database import DEFAULT_PCG, DEFAULT_SUBJECT
 
 
 class LoadSubject(ft.Container):

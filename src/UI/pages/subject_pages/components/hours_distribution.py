@@ -1,7 +1,7 @@
 import sys
 import flet as ft
 
-from src.Logic.database import HoursComposition, HoursSlotsComposition
+from src.models.database import HoursComposition, HoursSlotsComposition
 
 class CounterHours(ft.Container):
 

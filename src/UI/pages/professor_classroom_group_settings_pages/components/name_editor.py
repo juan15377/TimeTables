@@ -1,3 +1,4 @@
+import flet as ft
 class NameEditor(ft.Container):
     
     def __init__(self, name):

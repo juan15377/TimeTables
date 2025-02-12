@@ -1,7 +1,7 @@
 from typing import Callable, Any
 import flet as ft
 from enum import Enum
-from .State import global_state
+from .State import global_state, State
 
 
 class DataStrategyEnum(Enum):
@@ -25,16 +25,22 @@ class Router:
         self.routes.update(route_dictionary)
 
     "example : Route = RouteChangeEvent(route='/', name='route_change', data='/')"
-    def route_change(self, route):
+    def route_change(self, route, page):
         _page = route.route.split("?")[0]
         queries = route.route.split("?")[1:]
+        
+        previous_route = global_state.get_state_by_key('previous_route')
+        State("previous_page", previous_route)
+        State("current_page", route)
 
+        _hash = None
         for item in queries:
             key = item.split("=")[0]
             value = item.split("=")[1]
             self.data[key] = value.replace('+', ' ')
+            _hash = self.data[key]
 
-        self.body.content = self.routes[_page](self, self.data[key]) # TODO: self.data[key] acting as hash
+        self.body.content = self.routes[_page](page, _hash) 
         self.body.update()
 
     def set_data(self, key, value):

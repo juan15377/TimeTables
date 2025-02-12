@@ -8,7 +8,7 @@ from src.models.database.constants import DEFAULT_PCG
 class ProfessorHomePage(BasePCGPage):
 
     def __init__(self):
-        call_refresh_professors = {
+        call_refresh_professors = lambda :{
             professor.name : professor for professor in database.professors.get()
         }
 
@@ -20,7 +20,7 @@ class ClassroomHomePage(BasePCGPage):
     
     def __init__(self):
 
-        call_refresh_classrooms = {
+        call_refresh_classrooms = lambda :{
             classroom.name : classroom for classroom in database.classrooms.get()
         }
         
@@ -32,7 +32,7 @@ class GroupHomePage(BasePCGPage):
     
     def __init__(self):
     
-        call_refresh_groups = {
+        call_refresh_groups = lambda : {
             group.career.name + " " + group.semester.name + " " + group.subgroup.name : group for group in database.groups.get()
         }
         

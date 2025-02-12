@@ -1,8 +1,8 @@
 from src.UI.components.edit_availability_matrix import EditAvailabilityMatrix 
-from components import *
+from .components import *
 from .components import NameEditor, SubjectList
 
-
+import flet as ft
 
 class BaseSettingsPCG(ft.Container):
     

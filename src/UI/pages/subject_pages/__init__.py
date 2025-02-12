@@ -1,1 +1,2 @@
 from .new_subject_page import NewSubjectPage
+from .subject_settings_page import SubjectSettingsPage

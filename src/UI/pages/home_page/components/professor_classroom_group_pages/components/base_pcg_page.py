@@ -1,15 +1,14 @@
 import flet as ft
 from src.UI.database import database
 from src.UI.State import global_state 
-from src.UI.routes import router
 from typing import Callable, Any
-from src.models.database import PCG
+from src.models.database import PCG, DEFAULT_PCG
 from src.UI.components.subjects_schedule_grid import SubjectScheduleGrid
 from src.UI.components.search_bar_items import SearchBarItems
 
 
 class BasePCGPage(ft.Container):
-    def __init__(self,refresh_values : Callable):
+    def __init__(self,refresh_values : Callable, value = DEFAULT_PCG):
         
         def change_item():
             selected = self.search_values.get_value()
@@ -17,7 +16,7 @@ class BasePCGPage(ft.Container):
             
         search_values = SearchBarItems(
             refresh_values(),
-            refresh_professors,
+            refresh_values,
             on_change = change_item
         )
         
@@ -25,7 +24,7 @@ class BasePCGPage(ft.Container):
         self.refresh_values = refresh_values
         self.value = value
                                 
-        self.layout = self.get_layout(value)
+        self.layout = self.get_layout()
         
         super().__init__(
             content = ft.Row(
@@ -56,7 +55,7 @@ class BasePCGPage(ft.Container):
         
         self.schedule_grid = SubjectScheduleGrid(self.value)
         
-        self.layout = self.get_layout(self.value)
+        self.layout = self.get_layout()
         
         layout = ft.Column(
             controls = [

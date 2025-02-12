@@ -1,4 +1,4 @@
-from src.GUI.MainPage import main
+from src.UI import main
 import flet as ft
 
 ft.app(target=main)

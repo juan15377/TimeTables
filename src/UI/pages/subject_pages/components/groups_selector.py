@@ -3,7 +3,6 @@ import flet as ft
 from src.UI.database import database
 
 
-from src.GUI.Utils.SearchValue import SearchValue
 class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como componente personalizado
     
     def __init__(self):

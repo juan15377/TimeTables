@@ -6,9 +6,16 @@ from src.models.database import Professor, Classroom, Group, PCG
 from src.UI.database import database
 from .components import *
 
+PAGE_MAP = {
+    Professor : "/PROFESSOR",
+    Classroom : "/CLASSROOM",
+    Group : "/GROUP",
+}
+
+
 class PCGListItem(ft.Container):
 
-    def __init__(self,value : PCG , listviewpcg, page):
+    def __init__(self, value : PCG , listviewpcg, page):
         self.value = value
         self.listviewpga = listviewpga
         
@@ -50,7 +57,7 @@ class PCGListItem(ft.Container):
         )
         
         button_edit = ft.IconButton(
-            on_click=lambda e: enrouter_page.pcg.change_page(pga),
+            on_click=lambda e: page.go(F"{PAGE_MAP[type(value)]}?{value.key.key}"),
             icon = ft.icons.EDIT
         )
         

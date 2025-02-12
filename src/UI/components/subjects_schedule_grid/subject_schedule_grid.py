@@ -4,10 +4,10 @@ import numpy as np
 import copy
 
 from .constants import *
-from .components import SubjectBlock, SubjectBlocks
+from .components import SubjectBlock, SubjectBlocksManager, SubjectSelector
 from utils import *
 from src.models.database import *
-from src.UI.components.search_value import SearchValue
+from src.UI.components.search_bar_items import SearchBarItems
 
 
 def initialize_schedule_grid():
@@ -245,7 +245,7 @@ class SubjectScheduleGrid(ft.Container):
         self.update_pga(pga, update)
 
     def update_pga(self, pga, update) -> None:
-        button_matrix, grid, day_columns = initialize_control_board()
+        button_matrix, grid, day_columns = initialize_schedule_grid()
 
         subject_selector = SubjectSelector(self, pga) # !!!! Cambiar al momento de refactorizar 
         self.subject_selector = subject_selector
@@ -253,7 +253,7 @@ class SubjectScheduleGrid(ft.Container):
         self.button_matrix = button_matrix
         self.grid = grid
         self.day_columns = day_columns
-        self.subject_blocks = SubjectBlocks()
+        self.subject_blocks = SubjectBlocksManager()
         self.pga = pga
 
         super().__init__(

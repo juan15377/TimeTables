@@ -36,7 +36,7 @@ class HomePage(ft.Container):
     def get_layout(self):
         # contenido de la pagina principal
         
-        professor_page = ProfesorHomePage()
+        professor_page = ProfessorHomePage()
         classroom_page = ClassroomHomePage()
         group_page = GroupHomePage()
         
@@ -246,23 +246,3 @@ class HomePage(ft.Container):
 # al momento de agregar una materia todos los bloques que se colocaron dentro de el deben actualizarsede
         
 # al momento de eliminar una materia todos los bloques que se colocaron dentro de el deben actualizarse
-
-
-def main(page: ft.Page):
-    page.theme = ft.Theme(
-        color_scheme_seed=ft.colors.BLUE
-        )
-    Bd = DataBaseManager()
-    
-    page.theme_mode = "dark"
-    main_page = MainPage(Bd, page)
-    
-    page.add(
-        main_page
-    )
-    
-
-# ? arreglar el problema de deslizamiento hacia abajo
-# ! arreglar el caso de un tablero cuando no se tiene matterias
-# ! arreglar el problema cuando no hay profesores, aulao grupos
-
