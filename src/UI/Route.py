@@ -1,6 +1,8 @@
 from typing import Callable, Any
 import flet as ft
 from enum import Enum
+from .State import global_state
+
 
 class DataStrategyEnum(Enum):
     QUERY = 0

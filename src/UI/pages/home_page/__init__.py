@@ -1,2 +1,2 @@
-from .home_page import MainPage 
+from .home_page import HomePage 
 

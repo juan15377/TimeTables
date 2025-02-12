@@ -20,7 +20,7 @@ from src.UI.components import alerts
 class HomePage(ft.Container):
     
     
-    def __init__(self, query = None) -> None:
+    def __init__(self, page, query) -> None:
         
         self.save_path_default = None
         

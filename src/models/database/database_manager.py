@@ -2,9 +2,10 @@
 import sys
 
 
-from .models import Subjects
-from .models import Professors, Classrooms, Groups
+from .models import *
+from .models import Professors, Classrooms, Groups, InfoSubject
 from .components.export_functions import *
+
 
 import pickle
 

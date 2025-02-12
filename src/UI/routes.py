@@ -1,7 +1,7 @@
 from .pages.home_page import HomePage 
-from .pages.list_professors_classrooms_groups import ProfessorsPage, ClassroomsPage, GroupsPage
-from .pages.subject import SubjectEditor
-
+from .pages.professors_classrooms_groups_pages import ProfessorsPage, ClassroomsPage, GroupsPage
+from .pages.subject_pages import NewSubjectPage
+from .State import global_state, State
 from Route import Router 
 
 router = Router()
@@ -11,7 +11,7 @@ router.routes = {
     '/PROFESSORS': ProfessorsPage,
     '/CLASSROOMS': ClassroomsPage,
     '/GROUPS': GroupsPage,
-    '/NEW_SUBJECTS': SubjectEditor,
+    '/NEW_SUBJECTS': NewSubjectPage,
     "/PROFESSOR" : ProfessorDetailsPage,
     "/CLASSROOM" : ClassroomDetailsPage,
     "/GROUP" : GroupDetailsPage,
@@ -19,3 +19,5 @@ router.routes = {
     "/EXPORT_SCHEDULE" : ExportPage,
     "/SEARCH_SCHEDULE" : SearchSchedulePage
 }
+
+State("current_page", "/")

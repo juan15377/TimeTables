@@ -105,8 +105,6 @@ class PCG:
 # ? Profesor
 # ? Professor, Classroom, and Group classes extend from PCG
 
-DEFAULT_PCG = PCG()
-
 
 class Professor(PCG):
     def __init__(self, name) -> None:
@@ -326,6 +324,12 @@ class Groups:
 
     def get(self):
         return self.groups
+    
+    def get_by_key(self, key):
+        for group in self.groups:
+            if group.key == key:
+                return group
+        return None
 
     def remove(self, group):
         for subject in group.get_subjects():
@@ -353,6 +357,12 @@ class Professors:
 
     def get(self):
         return self.professors
+    
+    def get_by_key(self, key):
+        for professor in self.professors:
+            if professor.key == key:
+                return professor
+        return None
 
     def remove(self, professor):
         
@@ -385,6 +395,12 @@ class Classrooms:
 
     def get(self):
         return self.classrooms
+    
+    def get_by_key(self, key):
+        for classroom in self.classrooms:
+            if classroom.key == key:
+                return classroom
+        return None
 
     def remove(self, classroom):
         for subject in classroom.get_subjects():

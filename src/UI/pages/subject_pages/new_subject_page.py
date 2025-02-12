@@ -1,113 +1,12 @@
-from .components import *
 
 import sys
 import flet as ft
 from src.UI.database import database
-        
-from src.GUI.SubjectEditor.name_and_code import NameCodeSubject
-from src.GUI.SubjectEditor.groups_selector import GroupSelector
-from src.GUI.Utils.SearchValue import SearchValue
-from src.GUI.SubjectEditor.hours_distribution import SelectorDistributionHours
-from src.GUI.SubjectEditor.online_switch import OnlineSwitch
-from src.Logic.database import InfoSubject
+from .components import * 
+from src.UI.components.search_bar_items import SearchBarItems
+from src.models.database import *
+from src.UI.components.alerts import *
 
-
-class NavigatorBarBack(ft.Container):
-    
-    def __init__(self, funct_to_back):
-
-        pagelet = ft.Pagelet(
-            appbar=ft.AppBar(
-                leading=ft.IconButton(icon = ft.icons.ARROW_BACK, 
-                                    on_click = lambda e: funct_to_back()),
-                leading_width=50,
-                title=ft.Text(""),
-                center_title=False,
-                bgcolor=ft.colors.SURFACE_VARIANT,
-                actions=[
-                    ft.PopupMenuButton(
-                        items=[
-                            ft.PopupMenuItem(text="Item 1"),
-                            ft.PopupMenuItem(),  # divider
-                            ft.PopupMenuItem(
-                                text="Checked item",
-                                checked=False,
-                            ),
-                        ]
-                    ),
-                ],
-            ),
-            content=ft.Container(),
-            expand=True
-        )
-            
-        
-        super().__init__(
-            content = pagelet,
-            height=50,
-            width=100,
-            expand = True
-        )
-        
-
-class Alert():
-    
-    def __init__(self, alert : str, page):
-        self.page = page
-        self.alert = alert
-        
-        def show_alert():
-            # Configurar el contenido del diálogo
-            alert = ft.AlertDialog(
-                title=ft.Text("¡Error!"),
-                content=ft.Text(self.alert),
-                actions=[
-                    ft.TextButton("Aceptar", on_click= lambda e : self.close_alert()),
-                    ft.TextButton("Cancelar", on_click= lambda e : self.close_alert()),
-                ],
-            )
-            # Mostrar el diálogo
-            page.dialog = alert
-            alert.open = True
-            page.update()
-
-            def cerrar_alerta(e):
-                # Cerrar el diálogo
-                page.dialog.open = False
-                page.update()
-
-        self.show_alert = show_alert
-
-    def show(self):
-        self.show_alert()
-        
-    def close_alert(self):
-        self.page.dialog.open = False
-        self.page.update()
-
-class Data:
-    def __init__(self) -> None:
-        self.counter = 0
-
-class AlertNewSubject():
-    
-    def __init__(self, page):
-        d = Data()
-        page.snack_bar = ft.SnackBar(
-        content=ft.Text("New Subject Created"),
-        action="Alright!",
-        )
-    
-        
-        def on_click():
-            page.snack_bar = ft.SnackBar(ft.Text(f"New Subject Created"),
-                                         bgcolor=ft.colors.GREEN_200)
-            page.snack_bar.open = True
-            d.counter += 1
-            page.update()
-        
-        self.show = lambda : on_click()
-        
 
 # esta clase tiene dos objectivos, que carguen los datos de una materia y desde este se puedan editar estos
 # otro es que esta clase tiene es que sea capaz de crear una nueva materia 
@@ -138,9 +37,9 @@ def is_avaible_subject(professor, classroom, groups, hours_distribution, is_onli
 
 
 
-class SubjectEditor(ft.Container):
+class NewSubjectPage(ft.Container):
     
-    def __init__(self,reference_page_router, page, subject = False):
+    def __init__(self, page, key_subject):
         self.page = page
         
         self.show_to_new_subject = lambda e : AlertNewSubject(self.page).show()
@@ -149,18 +48,18 @@ class SubjectEditor(ft.Container):
         self.name_code_subject = name_code_subject
         name_code_subject.spacing = 50
         
-        groups_selector = GroupSelector(bd)
+        groups_selector = GroupSelector()
         self.groups_selector = groups_selector
         
         
         
         def get_actual_professors():
             return {
-            professor.name:professor for professor in self.bd.professors.get()
+            professor.name:professor for professor in database.professors.get()
         }
         
-        professor_selector = SearchValue({
-                professor.name : professor for professor in bd.professors.get()
+        professor_selector = SearchBarItems({
+                professor.name : professor for professor in database.get()
                 },
                 get_actual_professors                                
         )
@@ -170,13 +69,12 @@ class SubjectEditor(ft.Container):
         #professor_selector.width = 400
         
         
-        
         def get_actual_classrooms():
-            return {classroom.name: classroom for classroom in self.bd.classrooms.get()}
+            return {classroom.name: classroom for classroom in database.classrooms.get()}
         
         
         classroom_selector = SearchValue(
-            {classroom.name: classroom for classroom in bd.classrooms.get()},
+            {classroom.name: classroom for classroom in database.classrooms.get()},
             get_actual_classrooms
         )
         
@@ -255,15 +153,9 @@ class SubjectEditor(ft.Container):
         )
         
         
-        navigator = NavigatorBarBack(reference_page_router)
-        
         content = ft.Column(
                 controls = [
-                    ft.Row(
-                        controls = [
-                            navigator
-                        ],
-                    ),
+
                     ft.Row(
                         controls=[
                             left_layout,
@@ -345,7 +237,7 @@ class SubjectEditor(ft.Container):
             
             self.name_code_subject.restart()
             
-            self.bd.subjects.add(info_subject)
+            database.subjects.add(info_subject)
             print("Juan de Jesus Venegas Flores")
             
             # show to create new subject 
