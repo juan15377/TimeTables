@@ -1,68 +1,32 @@
 import flet as ft
 from src.UI.database import database
+from src.UI.State import global_state 
+from src.UI.routes import router
+from typing import Callable, Any
+from src.models.database import PCG
+from src.UI.components.subjects_schedule_grid import SubjectScheduleGrid
+from src.UI.components.search_bar_items import SearchBarItems
+
 
 class BasePCGPage(ft.Container):
-
-    def __init__(self,pcg, search, enrouter, route, reference_to_get_dict):
+    def __init__(self,refresh_values : Callable):
         
-        
-        button_to_change_page = ft.FloatingActionButton(
-            icon=ft.icons.ADD,
-            on_click=lambda e: enrouter.change_page(route),
-            text = "Gestionar datos",
-            focus_elevation= 10,
-        )
-        
-        self.reference_to_get_dict = reference_to_get_dict
-        
-        self.button_to_change_page = button_to_change_page
-                
-        def change_professor():
-            selected = self.search.get_value()
-            self.set_pcg(selected)
+        def change_item():
+            selected = self.search_values.get_value()
+            self.load_item(selected) # al momento de cambiar de elemento, esto cambia el valor en BasePCGPage
             
-        def get_actual_profesors():
-            return {
-            professor.name: professor for professor in database.professors.get()
-            }
-
-        
-        self.search =  search
-                
-        self.pcg = pcg
-        
-        button_reset_subjects = ft.FloatingActionButton(
-            icon=ft.icons.REFRESH,
-            on_click=lambda e: to_change(),
-            text = "Gestionar datos",
-            focus_elevation= 10,
+        search_values = SearchBarItems(
+            refresh_values(),
+            refresh_professors,
+            on_change = change_item
         )
         
-        self.boardsubjects = ControlBoardSubjectSlots(pcg)
+        self.search_values = search_values
+        self.refresh_values = refresh_values
+        self.value = value
+                                
+        self.layout = self.get_layout(value)
         
-        
-        self.layout = ft.Column(
-            controls = [
-                    ft.Row(
-                        controls = [
-                                    self.search,
-                                    self.button_to_change_page,
-                                    button_reset_subjects
-                        ],
-                        expand = False,
-                        spacing=10
-                    ),
-                    ft.Row(
-                        controls = [      
-                            self.boardsubjects,
-                        ],
-                        expand = True
-                    )
-                    ],
-                expand=True,
-                spacing=50,
-            )
-
         super().__init__(
             content = ft.Row(
                 controls = [self.layout],
@@ -76,127 +40,29 @@ class BasePCGPage(ft.Container):
             switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         )
         
-    # debe existir un metodo que actualize ambos 
-    # 
         
-    def get_layout_page(self, pcg):
-        boardsubjects = ControlBoardSubjectSlots(enrouter, pga = pcg)
-        self.boardsubjects = boardsubjects
-        
+    def get_layout(self):
+                        
+        def change_value():
+            selected = self.search_values.get_value()
+            self.load_item(selected)
+            
         button_reset_subjects = ft.FloatingActionButton(
             icon=ft.icons.REFRESH,
-            on_click=lambda e: to_change(),
+            on_click=lambda e: print("10"),
             text = "Gestionar datos",
             focus_elevation= 10,
         )
         
-        def change_professor():
-            selected = self.search.get_value()
-            self.set_pcg(selected)
-            
-        def get_actual_profesors():
-            return self.reference_to_get_dict()
+        self.schedule_grid = SubjectScheduleGrid(self.value)
         
+        self.layout = self.get_layout(self.value)
         
-        self.layout = ft.Column(
+        layout = ft.Column(
             controls = [
                     ft.Row(
                         controls = [
-                                    self.search,
-                                    self.button_to_change_page,
-                                    button_reset_subjects
-                        ],
-                        expand = False,
-                        spacing=30
-                    ),
-                    ft.Row(
-                        controls = [      
-                            self.boardsubjects,
-                        ],
-                        expand = True
-                    )
-                    ],
-                expand=True,
-                spacing=50,
-            )
-        
-        return layout 
-                
-        
-    def set_pcg(self, pcg):
-        self.update_boardsubjects(pcg)
-        self.search.update()
-        
-        self.pcg = pcg
-
-        #super().content.controls.append(new_layout)
-        #self.boardsubjects.update()
-        print("Se cargo")
-        super().update()
-        
-        
-    def update(self, update = True):
-        self.update_boardsubjects(self.pcg)
-       
-        if update:
-            super().update()  
-            self.search.update()
-            
-    def update_boardsubjects(self, new_pcg):
-        boardsubjects = ControlBoardSubjectSlots(new_pcg)
-        self.boardsubjects = boardsubjects
-        
-        self.layout.controls[1].controls = [self.boardsubjects]
-        
-        self.layout.update()
-        
-        pass
-
-class ControlBlocksSubjects(ft.AnimatedSwitcher):
-
-    def __init__(self, pcg, search, enrouter, route, reference_to_get_dict):
-                
-        button_to_change_page = ft.FloatingActionButton(
-            icon=ft.icons.ADD,
-            on_click=lambda e: enrouter.change_page(route),
-            text = "Gestionar datos",
-            focus_elevation= 10,
-        )
-        
-        self.reference_to_get_dict = reference_to_get_dict
-        
-        self.button_to_change_page = button_to_change_page
-                
-        def change_professor():
-            selected = self.search.get_value()
-            self.set_pcg(selected)
-            
-        def get_actual_profesors():
-            return {
-            professor.name: professor for professor in database.professors.get()
-            }
-
-        
-        self.search =  search
-                
-        self.pcg = pcg
-        
-        button_reset_subjects = ft.FloatingActionButton(
-            icon=ft.icons.REFRESH,
-            on_click=lambda e: to_change(),
-            text = "Gestionar datos",
-            focus_elevation= 10,
-        )
-        
-        self.boardsubjects = ControlBoardSubjectSlots(pcg)
-        
-        
-        self.layout = ft.Column(
-            controls = [
-                    ft.Row(
-                        controls = [
-                                    self.search,
-                                    self.button_to_change_page,
+                                    self.search_values,
                                     button_reset_subjects
                         ],
                         expand = False,
@@ -204,64 +70,7 @@ class ControlBlocksSubjects(ft.AnimatedSwitcher):
                     ),
                     ft.Row(
                         controls = [      
-                            self.boardsubjects,
-                        ],
-                        expand = True
-                    )
-                    ],
-                expand=True,
-                spacing=50,
-            )
-
-        super().__init__(
-            content = ft.Row(
-                controls = [self.layout],
-                expand=True
-            ),
-            expand=True,
-            transition=ft.AnimatedSwitcherTransition.SCALE,
-            duration=500,
-            reverse_duration=100,
-            switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
-            switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
-        )
-        
-    # debe existir un metodo que actualize ambos 
-    # 
-        
-    def get_layout_page(self, pcg):
-        boardsubjects = ControlBoardSubjectSlots(enrouter, pga = pcg)
-        self.boardsubjects = boardsubjects
-        
-        button_reset_subjects = ft.FloatingActionButton(
-            icon=ft.icons.REFRESH,
-            on_click=lambda e: to_change(),
-            text = "Gestionar datos",
-            focus_elevation= 10,
-        )
-        
-        def change_professor():
-            selected = self.search.get_value()
-            self.set_pcg(selected)
-            
-        def get_actual_profesors():
-            return self.reference_to_get_dict()
-        
-        
-        self.layout = ft.Column(
-            controls = [
-                    ft.Row(
-                        controls = [
-                                    self.search,
-                                    self.button_to_change_page,
-                                    button_reset_subjects
-                        ],
-                        expand = False,
-                        spacing=30
-                    ),
-                    ft.Row(
-                        controls = [      
-                            self.boardsubjects,
+                            self.schedule_grid,
                         ],
                         expand = True
                     )
@@ -273,31 +82,23 @@ class ControlBlocksSubjects(ft.AnimatedSwitcher):
         return layout 
                 
         
-    def set_pcg(self, pcg):
-        self.update_boardsubjects(pcg)
-        self.search.update()
-        
-        self.pcg = pcg
-
-        #super().content.controls.append(new_layout)
-        #self.boardsubjects.update()
-        print("Se cargo")
-        super().update()
+    def load_item(self, value : PCG):
+        self.value = value
+        self.update_schedule_grid(value)
+        self.search_values.update()
         
         
-    def update(self, update = True):
-        self.update_boardsubjects(self.pcg)
+    def update(self, update_search = True):
+        self.update_schedule_grid(self.value)
        
         if update:
             super().update()  
-            self.search.update()
+            self.search_value.update()
             
-    def update_boardsubjects(self, new_pcg):
-        boardsubjects = ControlBoardSubjectSlots(new_pcg)
-        self.boardsubjects = boardsubjects
+    def update_schedule_grid(self, new_value : PCG):
+        self.schedule_grid = SubjectScheduleGrid(new_value)
         
-        self.layout.controls[1].controls = [self.boardsubjects]
-        
+        self.layout.controls[1].controls = [self.schedule_grid]
         self.layout.update()
         
         pass

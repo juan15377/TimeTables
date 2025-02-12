@@ -29,7 +29,7 @@ class DataBaseManager:
             self.export = ExportFunctionsLatex(self)
             self._initialized = True  # Marcar como inicializada
 
-    def load_db(self, path_new_db):
+    def load(self, path_new_db):
         with open(path_new_db, "rb") as file:
             new_bd = pickle.load(file)
             self.professors = new_bd.professors
@@ -38,10 +38,10 @@ class DataBaseManager:
             self.subjects = new_bd.subjects
             self.subjects.BD = self    
     
-    def save_db(self, path_save_db):
+    def save(self, path_save_db):
         save_object_to_pickle(self, path_save_db)
 
-    def update_bd(self):
+    def update(self):
         pass
     
     def get_status_completed(self):

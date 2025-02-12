@@ -1,4 +1,5 @@
 import flet as ft
+from .components import ProfessorHomePage, ClassroomHomePage, GroupHomePage
 from flet import (
     ElevatedButton,
     FilePicker,
@@ -7,76 +8,23 @@ from flet import (
     Row,
     Text,
     icons,
+    FilePicker,
+    FilePickerResultEvent
 )
 
 from src.models.database import *
-#from src.GUI.EnrouterPage import EnrouterPage
-
-from flet import FilePicker, FilePickerResultEvent
-# la primera pagina sera algo inmutable
-
-from .components import ProfessorMainPage, ClassroomMainPage, GroupMainPage
-
 from src.UI.database import database
-
-def preload_database(page):
-    pass
-
-# cada vez que se reinicia la base de datos, o se carga se deben, crear 6 paginas nuevas con 
-# sus ciertas referencias
-class Pages():
-    
-    def __init__(self,
-                        professors_page,
-                        classrooms_page,
-                        groups_page):
+from src.UI.components import alerts 
 
 
-        self.professors_page = professors_page
-        self.classrooms_page = classrooms_page
-        self.groups_page = groups_page
-        
-
-class Data:
-    def __init__(self) -> None:
-        self.counter = 0
-
-        
-class AlertChangesSave():
-    
-
-    def __init__(self, page, save_path):
-        d = Data()
-        page.snack_bar = ft.SnackBar(
-        content=ft.Text("New Subject Created"),
-        action="Alright!",
-        )
-    
-        
-        def on_click():
-            page.snack_bar = ft.SnackBar(ft.Text(f"save changes in {save_path}"),
-                                         bgcolor=ft.colors.GREEN_200)
-            page.snack_bar.open = True
-            d.counter += 1
-            page.update()
-        
-        self.show = lambda : on_click()
-
-
-class MainPage(ft.Container):
+class HomePage(ft.Container):
     
     
-    def __init__(self, bd, page) -> None:
+    def __init__(self, query = None) -> None:
         
-        self.page = page
-        self.db = bd
         self.save_path_default = None
-        self.enrouter_page = EnrouterPage(self, self.db, self.page)
         
-        
-        layout = self.get_layout(self.db)
-        
-        
+        layout = self.get_layout()
         
         super().__init__(
             content = layout,
@@ -88,9 +36,9 @@ class MainPage(ft.Container):
     def get_layout(self):
         # contenido de la pagina principal
         
-        professor_page = ProfesorMainPage(database, lambda route : self.enrouter_page)
-        classroom_page = ClassroomMainPage(database, lambda route : self.enrouter_page)
-        group_page = GroupMainPage(self.db, lambda route : self.enrouter_page)
+        professor_page = ProfesorHomePage()
+        classroom_page = ClassroomHomePage()
+        group_page = GroupHomePage()
         
         self.professor_page = professor_page
         self.classroom_page = classroom_page
@@ -113,7 +61,7 @@ class MainPage(ft.Container):
         
         def auto_save_file():
             if self.save_path_default is not None:
-                self.db.save_db(self.save_path_default)
+                database.save_db(self.save_path_default)
                 alert_changes_save = AlertChangesSave(self.page, self.save_path_default)
                 alert_changes_save.show()
                 return None
@@ -159,31 +107,31 @@ class MainPage(ft.Container):
         
         
         # Pick files dialog
-        def load_db(e: FilePickerResultEvent):
+        def load_database(e: FilePickerResultEvent):
             path_load = e.files[0].path
-            self.load_db(path_load)
+            self.load_database(path_load)
     
 
-        pick_files_load_bd = FilePicker(on_result=load_db)
+        pick_files_load_bd = FilePicker(on_result=load_database)
         selected_files = Text()
 
         # Save file dialog
-        def save_db(e: FilePickerResultEvent):
+        def save_database(e: FilePickerResultEvent):
             path_save = e.path
-            self.save_db(path_save)
+            self.save_database(path_save)
             
 
-        pick_file_save_db = FilePicker(on_result = save_db)
+        pick_file_save_db = FilePicker(on_result = save_database)
         save_file_path = Text()
         
 
         # Open directory dialog
-        def printer_db(e: FilePickerResultEvent):
+        def export_database(e: FilePickerResultEvent):
             print_path = e.path
             self.print_db(print_path)
 
 
-        pick_file_printer = FilePicker(on_result=printer_db)
+        pick_file_printer = FilePicker(on_result=export_database)
         directory_path = Text()
         
         

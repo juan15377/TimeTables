@@ -6,11 +6,16 @@ from Route import Router
 
 router = Router()
 
-
 router.routes = {
     '/': HomePage,
     '/PROFESSORS': ProfessorsPage,
     '/CLASSROOMS': ClassroomsPage,
     '/GROUPS': GroupsPage,
-    '/NEW_SUBJECTS': SubjectEditor
+    '/NEW_SUBJECTS': SubjectEditor,
+    "/PROFESSOR" : ProfessorDetailsPage,
+    "/CLASSROOM" : ClassroomDetailsPage,
+    "/GROUP" : GroupDetailsPage,
+    "/SUBJECT_DETAILS" : SubjectDetailsPage,
+    "/EXPORT_SCHEDULE" : ExportPage,
+    "/SEARCH_SCHEDULE" : SearchSchedulePage
 }

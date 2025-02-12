@@ -10,15 +10,6 @@ from src.models.database import *
 from src.UI.components.search_value import SearchValue
 
 
-
-# ! tablero de control debe tener un metodo de inicializar con un objecto pga 
-# ! este a partir de una inicializacion se debe mantener con operaciones que permitan 
-# ! añadir bloques, este debe tener una forma eficiemte de actualizar ciertas partes del objecto para 
-# ! cosas de optimizacion, ciertas operaciones como reinciar pga, materia, este descencadenara 
-# ! la actualizacion en el nucleo y una actualizacion del tablero, lo cual es costoso de hacer por lo que las 
-# ! operaciones permitidas deben ser bien escogidas  
-# el tiempo permitido maximo poara la generacion de un tablero deberiaser de de 0.2 segundos 
-
 def initialize_schedule_grid():
 
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]

@@ -32,7 +32,7 @@ class Router:
             value = item.split("=")[1]
             self.data[key] = value.replace('+', ' ')
 
-        self.body.content = self.routes[_page](self)
+        self.body.content = self.routes[_page](self, self.data[key]) # TODO: self.data[key] acting as hash
         self.body.update()
 
     def set_data(self, key, value):
