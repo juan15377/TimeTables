@@ -32,11 +32,6 @@ class BasePCGPage(ft.Container):
                 expand=True
             ),
             expand=True,
-            transition=ft.AnimatedSwitcherTransition.SCALE,
-            duration=500,
-            reverse_duration=100,
-            switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
-            switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
         )
         
         
@@ -54,9 +49,7 @@ class BasePCGPage(ft.Container):
         )
         
         self.schedule_grid = SubjectScheduleGrid(self.value)
-        
-        self.layout = self.get_layout()
-        
+                
         layout = ft.Column(
             controls = [
                     ft.Row(
@@ -64,7 +57,7 @@ class BasePCGPage(ft.Container):
                                     self.search_values,
                                     button_reset_subjects
                         ],
-                        expand = False,
+                        expand = True,
                         spacing=10
                     ),
                     ft.Row(

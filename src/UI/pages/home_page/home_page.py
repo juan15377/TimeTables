@@ -23,7 +23,7 @@ class HomePage(ft.Container):
     def __init__(self, page, query) -> None:
         
         self.save_path_default = None
-        
+        self.page = page
         layout = self.get_layout()
         
         super().__init__(
@@ -57,22 +57,7 @@ class HomePage(ft.Container):
         )
         
         self.content_PCG = content_PCG
-        
-        
-        def auto_save_file():
-            if self.save_path_default is not None:
-                database.save_db(self.save_path_default)
-                alert_changes_save = AlertChangesSave(self.page, self.save_path_default)
-                alert_changes_save.show()
-                return None
-            
-
-        def on_keyboard(e: ft.KeyboardEvent):
-            if e.key == "S" and e.ctrl:
-                auto_save_file()
-        
-        self.page.on_keyboard_event = on_keyboard
-        
+    
 
         def on_change(e):
             # parche que se debe arreglar para que funcione de igual manera
@@ -184,7 +169,7 @@ class HomePage(ft.Container):
                 ),
             ],
             on_change=on_change,  # Llamar al callback
-            #expand=True
+            expand=True
         )
         
         self.rail = rail
@@ -199,7 +184,7 @@ class HomePage(ft.Container):
         )
         
         
-        return layout
+        return ft.Container(professor_page)
    
         pass
         
