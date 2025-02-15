@@ -5,7 +5,7 @@ import copy
 
 from .constants import *
 from .components import SubjectBlock, SubjectBlocksManager, SubjectSelector
-from utils import *
+from .utils import *
 from src.models.database import *
 from src.UI.components.search_bar_items import SearchBarItems
 

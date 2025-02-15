@@ -184,7 +184,7 @@ class HomePage(ft.Container):
         )
         
         
-        return ft.Container(professor_page)
+        return ft.Container(ft.Text("HOLA MUNDO"))
    
         pass
         
