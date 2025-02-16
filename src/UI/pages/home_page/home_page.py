@@ -75,17 +75,17 @@ class HomePage(ft.Container):
             if selected_index == 0:  # Profesor
                 content_PCG.content = ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             )
-                professor_page.update(update = False)
+                professor_page.update(update_search = False)
 
             elif selected_index == 1:  # Aula
                 content_PCG.content = ft.Column([classroom_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             )
-                self.classroom_page.update(update = False)
+                self.classroom_page.update(update_search = False)
 
             elif selected_index == 2:  # Grupo
                 content_PCG.content = ft.Column([group_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             )
-                self.group_page.update(update = False)
+                self.group_page.update(update_search = False)
 
             self.page.update() 
             self.update(update = True)   
@@ -132,8 +132,8 @@ class HomePage(ft.Container):
             min_extended_width=400,
             leading=ft.Column(
                     controls = [ft.FloatingActionButton(icon=ft.icons.PALETTE, 
-                                            text="Print",
-                                            on_click = lambda e: pick_file_printer.save_file(),
+                                            text="Export",
+                                            on_click = lambda e: self.page.go("ExportPage"),
                                             width=100
                                             ),
                                 ft.FloatingActionButton(icon=ft.icons.SAVE, 
@@ -169,7 +169,7 @@ class HomePage(ft.Container):
                 ),
             ],
             on_change=on_change,  # Llamar al callback
-            expand=True
+            expand=False
         )
         
         self.rail = rail
@@ -184,7 +184,7 @@ class HomePage(ft.Container):
         )
         
         
-        return ft.Container(ft.Text("HOLA MUNDO"))
+        return ft.Container(layout)
    
         pass
         

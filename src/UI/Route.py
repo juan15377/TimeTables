@@ -15,7 +15,7 @@ class Router:
         self.data_strategy = data_strategy
         self.data = dict()
         self.routes = {}
-        self.body = ft.Container()
+        self.body = ft.Container(expand = True)
 
     def set_route(self, stub: str, view: Callable):
         self.routes[stub] = view
@@ -25,14 +25,17 @@ class Router:
         self.routes.update(route_dictionary)
 
     "example : Route = RouteChangeEvent(route='/', name='route_change', data='/')"
-    def route_change(self, route, page):
+    def route_change(self, route , page):
+        
         _page = route.route.split("?")[0]
         queries = route.route.split("?")[1:]
         
-        previous_route = global_state.get_state_by_key('previous_route')
+        # se actualiza la pagina actual y la pagina anterior
+        previous_route = global_state.get_state_by_key('current_page').get_state()
+        State("current_page", _page)
         State("previous_page", previous_route)
-        State("current_page", route)
-
+        
+        
         _hash = None
         for item in queries:
             key = item.split("=")[0]

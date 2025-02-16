@@ -57,8 +57,6 @@ class BasePCGPage(ft.Container):
                                     self.search_values,
                                     button_reset_subjects
                         ],
-                        expand = True,
-                        spacing=10
                     ),
                     ft.Row(
                         controls = [      
@@ -68,7 +66,7 @@ class BasePCGPage(ft.Container):
                     )
                     ],
                 expand=True,
-                spacing=50,
+                spacing=20,
             )
         
         return layout 
@@ -83,14 +81,13 @@ class BasePCGPage(ft.Container):
     def update(self, update_search = True):
         self.update_schedule_grid(self.value)
        
-        if update:
+        if update_search:
             super().update()  
-            self.search_value.update()
+            self.search_values.update()
             
     def update_schedule_grid(self, new_value : PCG):
         self.schedule_grid = SubjectScheduleGrid(new_value)
         
         self.layout.controls[1].controls = [self.schedule_grid]
-        self.layout.update()
-        
+        #self.layout.update()
         pass

@@ -22,3 +22,4 @@ router.routes = {
 }
 
 State("current_page", "/")
+State("previous_page", "/")
