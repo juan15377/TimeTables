@@ -5,8 +5,6 @@ from dataclasses import dataclass, field
 from flet import ListView, Page, ListTile, app, SearchBar, Text
 from typing import Callable
 
-
-
 class SearchBarItems(ft.Container):
     def __init__(self, items : list, refresh_items : Callable, on_change = lambda : None):
         self.items: dict = items

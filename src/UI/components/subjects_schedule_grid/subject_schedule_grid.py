@@ -80,7 +80,7 @@ def initialize_schedule_grid():
         return ft.Container(
                     theme=ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.PINK)),
                     bgcolor=ft.colors.BLUE,
-                    content=ft.Text(weekdays[i], color="white", size=12),
+                    content=ft.Text(weekdays[i], size=13, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
                     margin=2,
                     padding=0,
                     alignment=ft.alignment.center,

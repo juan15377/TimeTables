@@ -41,3 +41,19 @@ professor = database_example.professors.get()[0]
 
 subject = database_example.subjects.get()[0]
 
+comp_horas = HoursComposition(1, 2, 5)
+
+
+
+comp_horas = HoursComposition(0.5, 2, 5)
+info3 = InfoSubject("Calculo Diferencial", "CALC1", database_example.professors.get()[0], database_example.classrooms.get()[0], [database_example.groups.get()[0]], comp_horas, False)
+database_example.subjects.add(info3)
+
+materia_1 = database_example.subjects.get()[1]
+materia_0 = database_example.subjects.get()[0]
+materia_1.assign_class_block((21,2), 3)
+materia_1.assign_class_block((1,2), 3)
+materia_1.assign_class_block((0,4), 3)
+materia_0.assign_class_block((0,6), 3)
+
+#print(professor.subject_colors.colors[materia_1].red)

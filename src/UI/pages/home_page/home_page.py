@@ -20,7 +20,7 @@ from src.UI.components import alerts
 class HomePage(ft.Container):
     
     
-    def __init__(self, page, query) -> None:
+    def __init__(self, page :ft.Page, query) -> None:
         
         self.save_path_default = None
         self.page = page
@@ -133,7 +133,7 @@ class HomePage(ft.Container):
             leading=ft.Column(
                     controls = [ft.FloatingActionButton(icon=ft.icons.PALETTE, 
                                             text="Export",
-                                            on_click = lambda e: self.page.go("ExportPage"),
+                                            on_click = lambda e: self.page.go("/EXPORT_SCHEDULE"),
                                             width=100
                                             ),
                                 ft.FloatingActionButton(icon=ft.icons.SAVE, 

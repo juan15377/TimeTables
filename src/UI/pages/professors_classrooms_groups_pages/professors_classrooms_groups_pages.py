@@ -17,7 +17,7 @@ class PCGListItem(ft.Container):
 
     def __init__(self, value : PCG , listviewpcg, page):
         self.value = value
-        self.listviewpga = listviewpga
+        self.listviewpcg = listviewpcg
         
         if type(value)== Group:
             value_name = value.career.name + " " + value.semester.name + " " + value.subgroup.name
@@ -32,11 +32,11 @@ class PCGListItem(ft.Container):
         def delete_value_in_database(value : PCG):
 
             if type(value) == Professor:
-                database.professors.remove(pga)
+                database.professors.remove(value)
             elif type(value) == Classroom:
-                database.classrooms.remove(pga)
+                database.classrooms.remove(value)
             else:
-                database.groups.remove(pga)
+                database.groups.remove(value)
             self.listviewpga.update_()
             
         column_Title = ft.DataTable(
@@ -52,7 +52,7 @@ class PCGListItem(ft.Container):
             )
         
         button_delete = ft.IconButton(
-            on_click=lambda e, pga=pga: delete_pga(pga),
+            on_click=lambda e, pcg=value: delete_pga(pcg),
             icon = ft.icons.DELETE_SHARP
         )
         
@@ -79,7 +79,7 @@ class PCGListItem(ft.Container):
             width=1600,
             expand=True,
             theme_mode= ft.colors.AMBER_ACCENT,
-            data = pga.name if type(pga) in [Professor, Classroom] else pga.career.name + " " + pga.semester.name + " " + pga.subgroup.name
+            data = value.name if type(value) in [Professor, Classroom] else value.career.name + " " + value.semester.name + " " + value.subgroup.name
             )
         
     def edit_availability_matrix(self):
@@ -91,7 +91,7 @@ class PCGListItem(ft.Container):
         pass
     
     def update(self):
-        self.pb.value = self.pga.methods.completion_rate()
+        self.pb.value = self.value.methods.completion_rate()
         self.pb.update()
         pass  
     

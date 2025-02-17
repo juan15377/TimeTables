@@ -15,7 +15,14 @@ class Router:
         self.data_strategy = data_strategy
         self.data = dict()
         self.routes = {}
-        self.body = ft.Container(expand = True)
+        self.body = ft.AnimatedSwitcher( # container animated
+            transition=ft.AnimatedSwitcherTransition.SCALE,
+            duration=300,
+            reverse_duration=80,
+            switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
+            switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
+            expand=True
+        )
 
     def set_route(self, stub: str, view: Callable):
         self.routes[stub] = view

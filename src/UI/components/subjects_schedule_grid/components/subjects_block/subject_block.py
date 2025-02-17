@@ -1,6 +1,6 @@
 import flet as ft
 from typing import Union, Tuple
-
+from ...constants import HEIGHT_BUTTON, WIDTH_BUTTON
 
         
 class SubjectBlock(ft.Container):
