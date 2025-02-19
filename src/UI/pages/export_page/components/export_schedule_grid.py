@@ -265,15 +265,3 @@ class ExportScheduleGrid(ft.Container):
             self.day_columns[col].controls = col_buttons
         pass 
     pass 
-
-
-professor = database_example.professors.get()[0]
-
-ExportScheduleGrid(professor)
-print(len(professor.subjects))
-
-def main(page : ft.Page):
-    page.add(ExportScheduleGrid(professor))
-    
-    
-ft.app(main)

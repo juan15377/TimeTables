@@ -71,8 +71,6 @@ class PCGListItem(ft.Container):
                         ]
             )
         )
-
-    
         
         super().__init__(
             content=column_Title,
@@ -112,16 +110,14 @@ class ListViewPCG(ft.Column):
             coincidence = search_textfield.value
             new_items = self.filter(coincidence)
             self.items = new_items
-            self.controls[1].content = ft.ListView(expand=1, spacing=10, item_extent=1,
+            self.controls[1].content = ft.ListView(expand=True, spacing=10, item_extent=1,
                                                    controls = new_items)
             self.controls[1].update()
         
         all_items = self.get_all()
         
-        column_items = ft.Column(
-            controls = all_items,
-            scroll=ft.ScrollMode.AUTO, 
-        )
+        column_items = ft.ListView(expand=True, spacing=10, item_extent=1,
+                                                   controls = all_items)
         
         content_column = ft.Container(
             content = column_items,
@@ -134,9 +130,10 @@ class ListViewPCG(ft.Column):
                         )
         
         super().__init__(
-            controls = [search_textfield] + [content_column],
-            expand=True
+            controls = [search_textfield] +  [content_column],
+            expand = True
         )
+        
         
         
     def filter(self, coincidence):
@@ -146,7 +143,7 @@ class ListViewPCG(ft.Column):
         all_items = self.get_all()
         for item in all_items:
             if coincidence.lower() in item.data.lower():  # Data stores the name of the PGA
-                new_items.append(expansion)
+                new_items.append(item)
         return new_items
         pass    
         
@@ -172,7 +169,8 @@ class ListViewPCG(ft.Column):
     def update(self):
         for item in self.items:
             item.update()
-
+            
+        self.update_( update = True)
 
 
          
@@ -197,7 +195,7 @@ class ProfessorsPage(ft.Container):
                     
                     listviewprofessor,
                 ],
-                #expand = True
+                expand = True
             ),
             expand = True,
             theme_mode=ft.ThemeMode.DARK,
@@ -260,7 +258,8 @@ class GroupsPage(ft.Container):
                     ),
                     listviewgroups
                 ],
-                spacing=30
+                spacing=30,
+                expand=True
             ),
             expand = True
         )
