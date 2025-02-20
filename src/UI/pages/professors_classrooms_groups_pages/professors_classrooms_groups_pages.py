@@ -25,9 +25,11 @@ class PCGListItem(ft.Container):
             value_name = value.name
         self.name = value_name
 
-        pb = ft.ProgressBar(width=400, bgcolor= ft.colors.RED, color = "green")
+        pb = ft.ProgressBar(bgcolor= ft.colors.RED, color = "green", expand = True)
         pb.value = value.methods.completion_rate()
 
+        mini_matrix_avaible = MiniAvailableMatrix(value)
+        
         self.pb = pb 
         def delete_value_in_database(value : PCG):
 
@@ -45,10 +47,10 @@ class PCGListItem(ft.Container):
                 ft.DataColumn(ft.Text("progress")),
                 ft.DataColumn(ft.Text("Delete")),
                 ft.DataColumn(ft.Text("Edit")),
+                ft.DataColumn(ft.Text("AvaibleMatrix")),
             ],
             checkbox_horizontal_margin= 30,
             animate_offset= 10,
-            
             )
         
         button_delete = ft.IconButton(
@@ -64,10 +66,11 @@ class PCGListItem(ft.Container):
         column_Title.rows.append(
             ft.DataRow(
                 cells=[
-                        ft.DataCell(ft.Text(self.name, expand=True)),
+                        ft.DataCell(ft.CupertinoTextField(self.name,min_lines=10, max_length=30, prefix_visibility_mode=True, tooltip=self.name)),
                         ft.DataCell(pb),
                         ft.DataCell(button_delete),
                         ft.DataCell(button_edit),
+                        ft.DataCell(mini_matrix_avaible),
                         ]
             )
         )
