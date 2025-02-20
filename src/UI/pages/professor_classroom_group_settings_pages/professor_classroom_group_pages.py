@@ -3,10 +3,10 @@ from .components import *
 from .components import NameEditor, SubjectList
 from ...database import database
 import flet as ft
-
+from src.models.database import PCG
 class BaseSettingsPCG(ft.Container):
     
-    def __init__(self, pcg, page):
+    def __init__(self, pcg :  PCG, page):
             
         
         self.edit_matrix_availability = EditAvailabilityMatrix()
@@ -75,7 +75,7 @@ class BaseSettingsPCG(ft.Container):
 class ProfessorSettingsPage(BaseSettingsPCG):
     
     def __init__(self, page, key):
-        
+        print("KEY====", key)
         professor = database.professors.get_by_key(key)
         
         super().__init__(professor, page)

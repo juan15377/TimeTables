@@ -27,7 +27,7 @@ class SubjectList(ft.ListView):
     def update(self, update = True):
         # tambie se tiene que actualizar el header
         
-        subjects = self.get_subjects()
+        subjects = self.call_refresh_subjects()
         subjects_list = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("name Subject")),

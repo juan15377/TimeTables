@@ -57,9 +57,9 @@ class PCGListItem(ft.Container):
             on_click=lambda e, pcg=value: delete_pga(pcg),
             icon = ft.icons.DELETE_SHARP
         )
-        
+        print("KEY del Professor = ",value.key.key)
         button_edit = ft.IconButton(
-            on_click=lambda e: page.go(F"{PAGE_MAP[type(value)]}?{value.key.key}"),
+            on_click=lambda e: page.go(F"{PAGE_MAP[type(value)]}?{PAGE_MAP[type(value)]}={value.key.key}"),
             icon = ft.icons.EDIT
         )
         

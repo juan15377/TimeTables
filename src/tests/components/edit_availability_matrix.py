@@ -1,11 +1,11 @@
 from src.tests.database_example import database_example 
 
-from src.UI.components.subjects_schedule_grid import SubjectScheduleGrid
+from src.UI.components.edit_availability_matrix import EditAvailabilityMatrix
 
 import flet as ft 
 def main(page : ft.Page):
     professor = database_example.professors.get()[0]
-    sb = SubjectScheduleGrid(professor)
+    sb = EditAvailabilityMatrix()
     page.add(sb)
     
     

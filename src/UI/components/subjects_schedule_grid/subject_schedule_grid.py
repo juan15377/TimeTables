@@ -204,7 +204,6 @@ def generate_subject_blocks(pga, control_board, subject, page):
     # Given a set of subjects, it will return a list of subject blocks that will be inserted
     # using internal methods.
     hours_placed = subject.allocated_subject_matrix
-    print(hours_placed)
     blocks = []
     for column in range(7):
         column_ = hours_placed[:, column]
@@ -266,10 +265,8 @@ class SubjectScheduleGrid(ft.Container):
         self.content.controls[1].expand = 1
         
         # Generate subject blocks for each subject in the PCG
-        print("La cantidad de materias del pcg", len(pga.subjects))
         for subject in pga.subjects:
             print(subject.name)
-            print("·····#########################")
             subject_blocks = generate_subject_blocks(pga, self, subject, self.page)
             for subject_block in subject_blocks:
                 self.add_block(subject_block, update_slots_block = False)

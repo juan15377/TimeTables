@@ -8,7 +8,8 @@ from src.UI.components.search_bar_items import SearchBarItems
 
 
 class BasePCGPage(ft.Container):
-    def __init__(self,refresh_values : Callable, value = DEFAULT_PCG):
+    def __init__(self, page, refresh_values : Callable,  value = DEFAULT_PCG):
+        self.page = page
         
         def change_item():
             selected = self.search_values.get_value()
@@ -48,7 +49,7 @@ class BasePCGPage(ft.Container):
             focus_elevation= 10,
         )
         
-        self.schedule_grid = SubjectScheduleGrid(self.value)
+        self.schedule_grid = SubjectScheduleGrid(self.page, self.value)
                 
         layout = ft.Column(
             controls = [
@@ -74,20 +75,24 @@ class BasePCGPage(ft.Container):
         
     def load_item(self, value : PCG):
         self.value = value
-        self.update_schedule_grid(value)
+        self.update_schedule_grid(value, update_in_page=True)
         self.search_values.update()
         
         
-    def update(self, update_search = True):
-        self.update_schedule_grid(self.value)
+    def update(self, update_search = False, update_in_page = False):
+        print("UPDATE IN PAGE =", update_in_page)
+        
+        self.update_schedule_grid(self.value, update_in_page = update_in_page)
        
         if update_search:
             super().update()  
             self.search_values.update()
             
-    def update_schedule_grid(self, new_value : PCG):
-        self.schedule_grid = SubjectScheduleGrid(new_value)
-        
+    def update_schedule_grid(self, new_value : PCG, update_in_page = False):
+        self.schedule_grid = SubjectScheduleGrid(self.page, new_value)
         self.layout.controls[1].controls = [self.schedule_grid]
-        self.layout.update()
-        pass
+        
+        if update_in_page:
+            self.layout.controls[1].update()
+        
+       

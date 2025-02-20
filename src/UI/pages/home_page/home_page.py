@@ -36,9 +36,9 @@ class HomePage(ft.Container):
     def get_layout(self):
         # contenido de la pagina principal
         
-        professor_page = ProfessorHomePage()
-        classroom_page = ClassroomHomePage()
-        group_page = GroupHomePage()
+        professor_page = ProfessorHomePage(self.page)
+        classroom_page = ClassroomHomePage(self.page)
+        group_page = GroupHomePage(self.page)
         
         self.professor_page = professor_page
         self.classroom_page = classroom_page
@@ -86,8 +86,8 @@ class HomePage(ft.Container):
                 content_PCG.content = ft.Column([group_page], alignment=ft.MainAxisAlignment.START, expand=True,
                                             )
                 self.group_page.update(update_search = False)
-
-            self.page.update() 
+                
+            self.content_PCG.update()
             self.update(update = True)   
         
         
@@ -194,11 +194,11 @@ class HomePage(ft.Container):
         selected_index = self.rail.selected_index
         
         if selected_index == 0:
-            self.professor_page.update(update)
+            self.professor_page.update()
         elif selected_index == 1:
-            self.classroom_page.update(update)
+            self.classroom_page.update()
         elif selected_index == 2:
-            self.group_page.update(update)
+            self.group_page.update()
         
 
     

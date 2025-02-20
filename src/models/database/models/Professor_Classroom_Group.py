@@ -360,7 +360,7 @@ class Professors:
     
     def get_by_key(self, key):
         for professor in self.professors:
-            if professor.key == key:
+            if professor.key.key == key:
                 return professor
         return None
 

@@ -34,6 +34,7 @@ class Router:
     "example : Route = RouteChangeEvent(route='/', name='route_change', data='/')"
     def route_change(self, route , page):
         
+        print(route.route)
         _page = route.route.split("?")[0]
         queries = route.route.split("?")[1:]
         
