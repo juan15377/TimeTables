@@ -56,4 +56,9 @@ materia_1.assign_class_block((1,2), 3)
 materia_1.assign_class_block((0,4), 3)
 materia_0.assign_class_block((0,6), 3)
 
+
+professor = database_example.professors.get()[0]
+
+materia_0 = professor.subjects[0]
+
 #print(professor.subject_colors.colors[materia_1].red)

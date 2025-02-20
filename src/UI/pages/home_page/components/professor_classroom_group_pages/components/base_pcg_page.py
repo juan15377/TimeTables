@@ -89,5 +89,5 @@ class BasePCGPage(ft.Container):
         self.schedule_grid = SubjectScheduleGrid(new_value)
         
         self.layout.controls[1].controls = [self.schedule_grid]
-        #self.layout.update()
+        self.layout.update()
         pass

@@ -1,8 +1,9 @@
 import flet as ft
 from typing import Union, Tuple
 from ...constants import HEIGHT_BUTTON, WIDTH_BUTTON
+from ......models.database import MyColorPicker, MyColorRGB, RGB_to_hex
 
-        
+import numpy as np
 class SubjectBlock(ft.Container):
     """
     Represents a block of a subject within the timetable. This class handles all the necessary logic
@@ -34,7 +35,7 @@ class SubjectBlock(ft.Container):
                  subject: 'Subject', 
                  size: int, 
                  position: Tuple[int, int],
-                 enrouter) -> None:
+                 page) -> None:
         """
         Initializes a SubjectBlock with the given parameters, validates the input types, and sets up the block.
 
@@ -51,7 +52,7 @@ class SubjectBlock(ft.Container):
         self.board = control_board
         self.position = position
         self.pcg = pcg
-        self.enrouter = enrouter
+        self.page = page
 
         # Set up color picker for the block
         color_picker = MyColorPicker()
@@ -72,7 +73,7 @@ class SubjectBlock(ft.Container):
         # Function to move the block (remove and re-enable availability for insertion)
         def move_block(self):
             self.board.remove_block(subject, self.position, self.size)
-            self.board.load_availability(self.size, self.subject, self.enrouter)
+            self.board.load_availability(self.size, self.subject)
 
         # Create menu items for block options
         menuitem_INFO = ft.SubmenuButton(

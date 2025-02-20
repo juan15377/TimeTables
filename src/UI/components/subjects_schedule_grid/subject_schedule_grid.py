@@ -200,10 +200,11 @@ def decompose_vector(vector):
 
 
 ### refinar 
-def generate_subject_blocks(pga, control_board, subject):
+def generate_subject_blocks(pga, control_board, subject, page):
     # Given a set of subjects, it will return a list of subject blocks that will be inserted
     # using internal methods.
     hours_placed = subject.allocated_subject_matrix
+    print(hours_placed)
     blocks = []
     for column in range(7):
         column_ = hours_placed[:, column]
@@ -213,7 +214,7 @@ def generate_subject_blocks(pga, control_board, subject):
             block_size = position[1] - position[0] 
             if position[1] == 29:
                 block_size += 1
-            block = SubjectBlock(pga, control_board, subject, block_size, (row, column))
+            block = SubjectBlock(pga, control_board, subject, block_size, (row, column), page)
             blocks.append(block)
     return blocks
 
@@ -240,8 +241,8 @@ def reset_config(button):
 
 class SubjectScheduleGrid(ft.Container):
 
-    def __init__(self, enrouter, pga = DEFAULT_PCG, update = False) -> None:
-        self.enrouter = enrouter
+    def __init__(self, page, pga = DEFAULT_PCG, update = False) -> None:
+        self.page = page
         self.update_pga(pga, update)
 
     def update_pga(self, pga, update) -> None:
@@ -265,8 +266,11 @@ class SubjectScheduleGrid(ft.Container):
         self.content.controls[1].expand = 1
         
         # Generate subject blocks for each subject in the PCG
+        print("La cantidad de materias del pcg", len(pga.subjects))
         for subject in pga.subjects:
-            subject_blocks = generate_subject_blocks(pga, self, subject)
+            print(subject.name)
+            print("·····#########################")
+            subject_blocks = generate_subject_blocks(pga, self, subject, self.page)
             for subject_block in subject_blocks:
                 self.add_block(subject_block, update_slots_block = False)
                 
@@ -282,7 +286,7 @@ class SubjectScheduleGrid(ft.Container):
                     continue
 
                 if availability[row: row + size, col].sum() == size:
-                    schedule_button(self.pga, self, button, subject, (row, col), size, self.subject_selector, enrouter)
+                    schedule_button(self.pga, self, button, subject, (row, col), size, self.subject_selector, self.page)
                     continue
 
                 button.bgcolor = ft.colors.YELLOW

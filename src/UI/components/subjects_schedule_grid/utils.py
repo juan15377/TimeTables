@@ -1,5 +1,6 @@
 # functions in use
-
+import numpy as np
+import flet as ft 
 def replace_element(vector, start, end, element):
     left_part = vector[0:start]
     right_part = vector[end+1:]
