@@ -22,9 +22,9 @@ class ItemSelectionPanel(ft.Container):
         # Función para manejar la selección de checkboxes
         def toggle_checkbox(tipo, e):
             if e.control.value:
-                selected_items[tipo].add(e.control.label)
+                selected_items[tipo].add(e.control.data)
             else:
-                selected_items[tipo].discard(e.control.label)
+                selected_items[tipo].discard(e.control.data)
             print(f"Seleccionados {tipo}: {selected_items[tipo]}")
 
         # Función para actualizar la lista de items
@@ -61,8 +61,8 @@ class ItemSelectionPanel(ft.Container):
                 groups_column.controls.clear()
 
             for item in sorted_items:
-                cb = ft.Checkbox(label=item.name, value=item in selected_items[tipo], on_change=lambda e, tipo=tipo: toggle_checkbox(tipo, e))
-                container = ft.Container(content=cb)
+                cb = ft.Checkbox(label=item.name, value=item in selected_items[tipo], on_change=lambda e, tipo=tipo: toggle_checkbox(tipo, e), data = item)
+                container = ft.Container(content=cb, on_long_press = lambda e, name=item.name : print(name), bgcolor="blue")
                 if tipo == "Professor":
                     professors_column.controls.append(container)
                 elif tipo == "Classroom":
@@ -127,18 +127,18 @@ class ItemSelectionPanel(ft.Container):
 
         # Crear los botones
         professors_buttons = ft.Row([
-            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Professor", e)),
-            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Professor", e)),
+            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Professor", e), expand = True),
+            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Professor", e), expand = True),
         ],)
 
         rooms_buttons = ft.Row([
-            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Classroom", e)),
-            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Classroom", e)),
+            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Classroom", e), expand = True),
+            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Classroom", e), expand = True),
         ])
 
         groups_buttons = ft.Row([
-            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Group", e)),
-            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Group", e)),
+            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Group", e), expand = True),
+            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Group", e), expand = True),
         ])
 
         # Agregar los componentes a la página
@@ -154,14 +154,4 @@ class ItemSelectionPanel(ft.Container):
     
     def get_selected_items(self):
         return self.selected_items
-    
-    
-def main(page : ft.Page):
-    page.theme_mode = "dark"
-    database = database_example
-    item_selection_panel = ItemSelectionPanel(database.professors.get(), database.classrooms.get(), database.groups.get())
-    page.add(item_selection_panel)
-    
-    
 
-ft.app(target=main)

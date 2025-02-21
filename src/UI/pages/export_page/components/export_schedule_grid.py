@@ -233,8 +233,8 @@ class ExportScheduleGrid(ft.Container):
         
         cont = ft.Container(
             content = grid,
-            expand = True,
-            alignment= ft.alignment.center_left
+            alignment= ft.alignment.center_left,
+            expand = True
         )
 
         self.button_matrix = button_matrix
