@@ -3,35 +3,7 @@ import numpy as np
 import numpy as np
 from typing import List
 
-class SubjectLatex:
-    def __init__(self, name: str, code: str, professor: str, classroom: str, 
-                 careers: List[str], semesters: List[str], subgroups: List[str], 
-                 hours: float, color, hours_matrix: np.ndarray):
-        """
-        Initializes a Materiatex instance.
-
-        Parameters:
-        - name: Name of the subject.
-        - code: Abbreviation for the subject.
-        - professor: Name of the professor.
-        - classroom: Classroom location.
-        - careers: List of careers.
-        - semesters: List of semesters.
-        - groups: List of groups.
-        - hours: Total number of hours.
-        - color: Color in RGBA format.
-        - hours_matrix: Boolean matrix for the schedule.
-        """
-        self.name = name
-        self.code = code
-        self.professor = professor
-        self.classroom = classroom
-        self.careers = careers
-        self.semesters = semesters
-        self.subgroups = subgroups
-        self.hours = hours
-        self.color = color
-        self.hours_matrix = hours_matrix
+        
 class GridLatex:
     def __init__(self):
         self.hours =  ["7:00AM", "7:30AM", "8:00AM", "8:30AM", "9:00AM", "9:30AM", "10:00AM", 

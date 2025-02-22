@@ -1,7 +1,7 @@
 from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
 from .symbology import DICT_TYPES_SYMBOLOGY
-
+from .subject_latex import SubjectLatex
 
 
 class ProfessorLatex:
@@ -17,12 +17,13 @@ class ProfessorLatex:
     def create_template_string(self):
         """Create the LaTeX string for the grid and the symbolic representation of the subjects."""
         grid = GridLatex()
-        symbol = SymbolLatex()
+        symbol = SymbologyLatex()
         symbol.type = 1  # Type 1: professor view
 
         for subject in self.subjects:
-            grid.add_subject(subject)
-            symbol.add_subject(subject)
+            subject_latex = SubjectLatex(subject, self.professor)
+            grid.add_subject(subject_latex)
+            symbol.add_subject(subject_latex)
 
         grid_string = grid.compile_to_latexstring()
         symbol_string = symbol.to_latex_string()
@@ -46,10 +47,11 @@ class ProfessorLatex:
 
 
 def create_professors_latex(professors):
+    professors_latex = [ProfessorLatex(professor) for professor in professors]
     """Create the LaTeX string for all professors."""
     result = "\\section{Professors} \n"
-    for professor in professors:
-        template = professor.create_template_string()
+    for professor_tex in professors_latex:
+        template = professor_tex.create_template_string()
         result += f"{template}\n"
     return result
 
