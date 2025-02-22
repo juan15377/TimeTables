@@ -6,19 +6,6 @@ DICT_TYPES_SYMBOLOGY = {
     Classroom : 3
 }
 
-class SubjectLatex:
-    def __init__(self, name, code, professor, classroom, careers, semesters, subgroups, hours, color, hours_matrix):
-        self.name = name
-        self.code = code
-        self.professor = professor
-        self.classroom = classroom
-        self.careers = careers
-        self.semesters = semesters
-        self.subgroups = subgroups
-        self.hours = hours
-        self.color = color  # Assume color is a tuple (r, g, b)
-        self.hours_matrix = hours_matrix
-
 class SymbologyLatex:
     def __init__(self):
         self.subjects = []
@@ -42,38 +29,42 @@ class SymbologyLatex:
         table += "\\end{itemize}"
         return table
 
-    def _convert_subject(self, subject, type_):
+    def _convert_subject_row(self, subject, type_):
         """Convert a SubjectLatex instance to a LaTeX string based on the type."""
         r, g, b = subject.color.red / 255, subject.color.green / 255, subject.color.blue / 255
         symbol = f"\\cellcolor[rgb]{{{r},{g},{b}}} \\textbf{{{subject.code}}}"
-
+        
+        careers_names = [career.name for career in subject.careers]
+        semesters_names = [semester.name for semester in subject.semesters]
+        subgroups_names = [subgroup.name for subgroup in subject.subgroups]
+        
         if type_ == 1:
             vector = [
                 symbol,
                 subject.name,
-                subject.classroom,
+                subject.classroom.name,
                 str(subject.hours),
-                self._table_elements(subject.careers),
-                self._table_elements(subject.semesters),
-                self._table_elements(subject.subgroups),
+                self._table_elements(careers_names),
+                self._table_elements(semesters_names),
+                self._table_elements(subgroups_names),
             ]
         elif type_ == 2:
             vector = [
                 symbol,
                 subject.name,
-                subject.professor,
-                subject.classroom,
+                subject.professor.name,
+                subject.classroom.name,
                 str(subject.hours),
             ]
         elif type_ == 3:
             vector = [
                 symbol,
                 subject.name,
-                subject.professor,
+                subject.professor.name,
                 str(subject.hours),
-                self._table_elements(subject.careers),
-                self._table_elements(subject.semesters),
-                self._table_elements(subject.subgroups),
+                self._table_elements(careers_names),
+                self._table_elements(semesters_names),
+                self._table_elements(subgroups_names),
             ]
         else:
             return ""
@@ -104,7 +95,7 @@ class SymbologyLatex:
         for subject in self.subjects:
             body += f"""
             \\hline
-            {self._convert_subject(subject, self.type)} \\\\
+            {self._convert_subject_row(subject, self.type)} \\\\
             \\hline
             """
 

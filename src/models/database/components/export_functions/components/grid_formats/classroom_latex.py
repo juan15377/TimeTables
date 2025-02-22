@@ -1,9 +1,10 @@
 
 from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
-
+from .subject_latex import SubjectLatex
 class ClassroomLatex:
     def __init__(self, classroom):
+        self.classroom = classroom
         self.name = classroom.name
         self.subjects = classroom.get_subjects()
 
@@ -14,11 +15,12 @@ class ClassroomLatex:
         symbology.type = 3  # Type 3: classroom view
 
         for subject in self.subjects:
-            grid.add_subject(subject)
-            symbol.add_subject(subject)
+            subject_latex = SubjectLatex(subject, self.classroom)
+            grid.add_subject(subject_latex)
+            symbology.add_subject(subject_latex)
 
         grid_string = grid.compile_to_latexstring()
-        symbol_string = symbol.to_latex_string()
+        symbol_string = symbology.to_latex_string()
 
         template = f"""
         \\subsection{{{self.name}}}
@@ -39,9 +41,10 @@ class ClassroomLatex:
 
 
 def create_classrooms_latex(classrooms):
+    classrooms_latex = [ClassroomLatex(classroom) for classroom in classrooms]
     """Create the LaTeX string for all classrooms."""
     result = "\\section{Classrooms} \n"
-    for classroom in classrooms:
+    for classroom in classrooms_latex:
         template = classroom.create_template_string()
         result += f"{template}\n"
     return result
