@@ -80,7 +80,6 @@ class BasePCGPage(ft.Container):
         
         
     def update(self, update_search = False, update_in_page = False):
-        print("UPDATE IN PAGE =", update_in_page)
         
         self.update_schedule_grid(self.value, update_in_page = update_in_page)
        

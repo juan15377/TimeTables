@@ -2,9 +2,10 @@ import flet as ft
 import numpy as np
 from src.models.database import PCG, DEFAULT_PCG, RGB_to_hex
 from src.tests.database_example import database_example
+
 # Definición de medidas
-WIDTH_BUTTON = 100
-HEIGHT_BUTTON = 60
+EXPORT_WIDTH_BUTTON = 100
+EXPORT_HEIGHT_BUTTON = 30
 
 def replace_element(vector, start, end, element):
     left_part = vector[0:start]
@@ -21,7 +22,6 @@ def get_absolute_position_export(vector, req_pos):
     c = 0
     position = 0
     for ele in vector:
-        print(ele.data)
         if c == req_pos:
             return position
         if ele.data == None:  # it is a block on the board, if not a subject block
@@ -81,8 +81,8 @@ def generate_subject_containers(pcg : PCG):
                     content=ft.Text(f"{subject.code}", size=17, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, color = ft.colors.BLACK),
                     padding=0,
                     alignment=ft.alignment.center,
-                    width=WIDTH_BUTTON,
-                    height=HEIGHT_BUTTON * block_size + (block_size-1),
+                    width=EXPORT_WIDTH_BUTTON,
+                    height=EXPORT_HEIGHT_BUTTON * block_size + (block_size-1),
                     border_radius=3,
                     data = (row, column, block_size)
                 )
@@ -119,8 +119,8 @@ class ExportScheduleGrid(ft.Container):
                     padding=5,
                     alignment=ft.alignment.center,
                     bgcolor=ft.colors.WHITE70,
-                    width=WIDTH_BUTTON,
-                    height=HEIGHT_BUTTON,
+                    width=EXPORT_WIDTH_BUTTON,
+                    height=EXPORT_HEIGHT_BUTTON,
                     border_radius=1,
                     on_hover= animated_button,
                     ink_color= "blue",
@@ -138,8 +138,8 @@ class ExportScheduleGrid(ft.Container):
                         margin=1,
                         padding=0,
                         alignment=ft.alignment.center,
-                        width=WIDTH_BUTTON,
-                        height=HEIGHT_BUTTON-1,
+                        width=EXPORT_WIDTH_BUTTON,
+                        height=EXPORT_HEIGHT_BUTTON-1,
                         border_radius=5,
                     )
             
@@ -151,8 +151,8 @@ class ExportScheduleGrid(ft.Container):
                         margin=2,
                         padding=0,
                         alignment=ft.alignment.center,
-                        width=WIDTH_BUTTON - 3,
-                        height=HEIGHT_BUTTON -30,
+                        width=EXPORT_WIDTH_BUTTON - 3,
+                        height=EXPORT_HEIGHT_BUTTON -10,
                         border_radius=5,
                     )
 
@@ -163,8 +163,8 @@ class ExportScheduleGrid(ft.Container):
                                 margin=1,
                                 padding=0,
                                 alignment=ft.alignment.center,
-                                width=WIDTH_BUTTON - 1,
-                                height=HEIGHT_BUTTON - 30,
+                                width=EXPORT_WIDTH_BUTTON - 1,
+                                height=EXPORT_HEIGHT_BUTTON - 30,
                                 border_radius=1,
                                 #expand = True
                             )

@@ -3,7 +3,7 @@ from src.tests.database_example import database_example
 
 class ItemSelectionPanel(ft.Container):
     
-    def __init__(self, professors, classrooms, groups):
+    def __init__(self,page, professors, classrooms, groups, on_selected = None):
         
         selected_items = { "Professor": set(), "Classroom": set(), "Group": set() }
         
@@ -25,7 +25,6 @@ class ItemSelectionPanel(ft.Container):
                 selected_items[tipo].add(e.control.data)
             else:
                 selected_items[tipo].discard(e.control.data)
-            print(f"Seleccionados {tipo}: {selected_items[tipo]}")
 
         # Función para actualizar la lista de items
         def update_list(tipo, search_text="", init = False):
@@ -62,7 +61,7 @@ class ItemSelectionPanel(ft.Container):
 
             for item in sorted_items:
                 cb = ft.Checkbox(label=item.name, value=item in selected_items[tipo], on_change=lambda e, tipo=tipo: toggle_checkbox(tipo, e), data = item)
-                container = ft.Container(content=cb, on_long_press = lambda e, name=item.name : print(name), bgcolor="blue")
+                container = ft.Container(content=cb, on_long_press = lambda e, pcg = item: on_selected(pcg) , bgcolor="blue")
                 if tipo == "Professor":
                     professors_column.controls.append(container)
                 elif tipo == "Classroom":
@@ -125,21 +124,60 @@ class ItemSelectionPanel(ft.Container):
         update_list("Classroom", init=True)
         update_list("Group", init = True)
 
+        def export_professors(e : ft.FilePickerResultEvent):
+            export_path = e.path
+            database_example.export.individual_professors(list(selected_items["Professor"]), export_path) 
+            
+        def export_classrooms(e : ft.FilePickerResultEvent):
+            export_path = e.path
+            database_example.export.individual_classrooms(list(selected_items["Classroom"]), export_path)
+            
+        def export_groups(e : ft.FilePickerResultEvent):
+            export_path = e.path
+            database_example.export.individual_groups(list(selected_items["Group"]), export_path)
+            
+        pick_file_export_professors = ft.FilePicker(on_result=export_professors)
+        pick_file_export_classrooms = ft.FilePicker(on_result=export_classrooms)
+        pick_file_export_groups = ft.FilePicker(on_result=export_groups)
+        
+        
+        page.overlay.extend([pick_file_export_professors, pick_file_export_classrooms, pick_file_export_groups])
+        
+        page.update()
+        
         # Crear los botones
         professors_buttons = ft.Row([
-            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Professor", e), expand = True),
-            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Professor", e), expand = True),
+            ft.IconButton(on_click=lambda e: select_all("Professor", e), expand = True, icon = ft.icons.SELECT_ALL),
+            ft.IconButton(on_click=lambda e: deselect_all("Professor", e), expand = True, icon = ft.icons.DESELECT),
+            ft.IconButton(on_click=lambda e: pick_file_export_professors.save_file(), 
+                          expand = True, icon = ft.icons.DESELECT),
         ],)
-
+        
+        professors_buttons.controls[0].expand = 1
+        professors_buttons.controls[1].expand = 1
+        professors_buttons.controls[2].expand = 3
+        
         rooms_buttons = ft.Row([
-            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Classroom", e), expand = True),
-            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Classroom", e), expand = True),
+            ft.IconButton(on_click=lambda e: select_all("Classroom", e), expand = True, icon=ft.icons.SELECT_ALL),
+            ft.IconButton(on_click=lambda e: deselect_all("Classroom", e), expand = True, icon = ft.icons.DESELECT),
+            ft.IconButton(on_click=lambda e: pick_file_export_classrooms.save_file(), 
+                          expand = True, icon = ft.icons.DESELECT),
         ])
-
+        
+        rooms_buttons.controls[0].expand = 1
+        rooms_buttons.controls[1].expand = 1
+        rooms_buttons.controls[2].expand = 3
+        
         groups_buttons = ft.Row([
-            ft.ElevatedButton("Seleccionar todos", on_click=lambda e: select_all("Group", e), expand = True),
-            ft.ElevatedButton("Deseleccionar todos", on_click=lambda e: deselect_all("Group", e), expand = True),
+            ft.IconButton(on_click=lambda e: select_all("Group", e), expand = True, icon=ft.icons.SELECT_ALL),
+            ft.IconButton(on_click=lambda e: deselect_all("Group", e), expand = True, icon = ft.icons.DESELECT),
+            ft.IconButton(on_click=lambda e: pick_file_export_groups.save_file(), 
+                          expand = True, icon = ft.icons.DESELECT),
         ])
+        
+        groups_buttons.controls[0].expand = 1
+        groups_buttons.controls[1].expand = 1
+        groups_buttons.controls[2].expand = 3
 
         # Agregar los componentes a la página
         super().__init__(

@@ -75,7 +75,6 @@ class BaseSettingsPCG(ft.Container):
 class ProfessorSettingsPage(BaseSettingsPCG):
     
     def __init__(self, page, key):
-        print("KEY====", key)
         professor = database.professors.get_by_key(key)
         
         super().__init__(professor, page)

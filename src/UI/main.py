@@ -12,6 +12,7 @@ def main(page: ft.Page):
     page.add(
         router.body
     )
-    
     page.go("/") # se inicializa en HomePage
+
+    
 
