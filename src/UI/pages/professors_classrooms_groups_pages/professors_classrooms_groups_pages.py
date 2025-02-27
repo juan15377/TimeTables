@@ -27,8 +27,6 @@ class PCGListItem(ft.Container):
 
         pb = ft.ProgressBar(bgcolor= ft.colors.RED, color = "green", expand = True)
         pb.value = value.methods.completion_rate()
-
-        mini_matrix_avaible = MiniAvailableMatrix(value)
         
         self.pb = pb 
         def delete_value_in_database(value : PCG):
@@ -47,7 +45,6 @@ class PCGListItem(ft.Container):
                 ft.DataColumn(ft.Text("progress")),
                 ft.DataColumn(ft.Text("Delete")),
                 ft.DataColumn(ft.Text("Edit")),
-                ft.DataColumn(ft.Text("AvaibleMatrix")),
             ],
             checkbox_horizontal_margin= 30,
             animate_offset= 10,
@@ -57,7 +54,7 @@ class PCGListItem(ft.Container):
             on_click=lambda e, pcg=value: delete_pga(pcg),
             icon = ft.icons.DELETE_SHARP
         )
-        print("KEY del Professor = ",value.key.key)
+        
         button_edit = ft.IconButton(
             on_click=lambda e: page.go(F"{PAGE_MAP[type(value)]}?{PAGE_MAP[type(value)]}={value.key.key}"),
             icon = ft.icons.EDIT
@@ -70,7 +67,6 @@ class PCGListItem(ft.Container):
                         ft.DataCell(pb),
                         ft.DataCell(button_delete),
                         ft.DataCell(button_edit),
-                        ft.DataCell(mini_matrix_avaible),
                         ]
             )
         )

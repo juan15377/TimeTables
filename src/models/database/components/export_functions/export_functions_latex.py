@@ -113,6 +113,7 @@ class ExportFunctionsLatex:
             professor_latex = ProfessorLatex(professor)
             latex_content = LATEX_TEMPLATE(professor_latex.create_template_string(), table_of_contents=False)
             latex_content_filter = replace_exceptions(latex_content)
+            os.makedirs(save_path, exist_ok=True) # crea el directorio en caso de que no exista
             save_latex_to_file_and_compile(latex_content_filter, save_path, professor.name)
             
 
@@ -122,6 +123,7 @@ class ExportFunctionsLatex:
             classroom_latex = ClassroomLatex(classroom)
             latex_content = classroom_latex.create_template_string()
             latex_content_filter = LATEX_TEMPLATE(replace_exceptions(latex_content), table_of_contents=False)
+            os.makedirs(save_path, exist_ok=True) # crea el directorio en caso de que no exista
             save_latex_to_file_and_compile(latex_content_filter, save_path, classroom.name)
         pass
 
@@ -131,6 +133,7 @@ class ExportFunctionsLatex:
             group_latex = GroupLatex(group)
             latex_content = group_latex.create_template_string()
             latex_content_filter = LATEX_TEMPLATE(replace_exceptions(latex_content), table_of_contents=False)
+            os.makedirs(save_path, exist_ok=True) # crea el directorio en caso de que no exista
             save_latex_to_file_and_compile(latex_content_filter, save_path, group.career.name + " " +  group.semester.name + " " + group.subgroup.name)
         pass
 

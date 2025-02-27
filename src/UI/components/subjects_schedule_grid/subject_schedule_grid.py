@@ -266,7 +266,6 @@ class SubjectScheduleGrid(ft.Container):
         
         # Generate subject blocks for each subject in the PCG
         for subject in pga.subjects:
-            print(subject.name)
             subject_blocks = generate_subject_blocks(pga, self, subject, self.page)
             for subject_block in subject_blocks:
                 self.add_block(subject_block, update_slots_block = False)
