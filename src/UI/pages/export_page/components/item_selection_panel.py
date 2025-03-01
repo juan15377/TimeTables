@@ -15,9 +15,9 @@ class ItemSelectionPanel(ft.Container):
         self.selected_items = selected_items
 
         # Contenedores para los componentes de la interfaz
-        professors_column = ft.ListView(expand = True)
-        rooms_column = ft.ListView(expand = True)
-        groups_column = ft.ListView(expand = True)
+        professors_column = ft.ListView(expand = True, spacing=3)
+        rooms_column = ft.ListView(expand = True, spacing=3)
+        groups_column = ft.ListView(expand = True, spacing=3)
 
         # Función para manejar la selección de checkboxes
         def toggle_checkbox(tipo, e):
@@ -60,8 +60,19 @@ class ItemSelectionPanel(ft.Container):
                 groups_column.controls.clear()
 
             for item in sorted_items:
-                cb = ft.Checkbox(label=item.name, value=item in selected_items[tipo], on_change=lambda e, tipo=tipo: toggle_checkbox(tipo, e), data = item)
-                container = ft.Container(content=cb, on_long_press = lambda e, pcg = item: on_selected(pcg) , bgcolor="blue")
+                cb = ft.Checkbox(label=item.name, value=item in selected_items[tipo], on_change=lambda e, tipo=tipo: toggle_checkbox(tipo, e), data = item, expand=True)
+                check_button = ft.Row(
+                        controls = [ft.Checkbox(value=item in selected_items[tipo], on_change=lambda e, tipo=tipo: toggle_checkbox(tipo, e), data = item),
+                        ft.Text(
+                            item.name,
+                            max_lines=None,  # Permite líneas ilimitadas
+                            width=200,  # Define un ancho máximo para que el texto se ajuste
+                            #overflow=ft.TextOverflow.CLIP,  # Asegura que el texto se muestre completo
+                            expand = True
+                        )])
+                
+                container = ft.Container(content=check_button, on_long_press = lambda e, pcg = item: on_selected(pcg) , bgcolor="blue", expand = True, padding=5)
+                
                 if tipo == "Professor":
                     professors_column.controls.append(container)
                 elif tipo == "Classroom":
@@ -78,30 +89,30 @@ class ItemSelectionPanel(ft.Container):
                 for item in all_professors:
                     selected_items[tipo].add(item)
                 for cb in professors_column.controls:
-                    cb.content.value = True
+                    cb.content.controls[0].value = True
             elif tipo == "Classroom":
                 for item in all_rooms:
                     selected_items[tipo].add(item)
                 for cb in rooms_column.controls:
-                    cb.content.value = True
+                    cb.content.controls[0].value = True
             elif tipo == "Group":
                 for item in all_groups:
                     selected_items[tipo].add(item)
                 for cb in groups_column.controls:
-                    cb.content.value = True
+                    cb.content.controls[0].value = True
             self.update()
 
         def deselect_all(tipo, e):
             selected_items[tipo].clear()
             if tipo == "Professor":
                 for cb in professors_column.controls:
-                    cb.content.value = False
+                    cb.content.controls[0].value = False
             elif tipo == "Classroom":
                 for cb in rooms_column.controls:
-                    cb.content.value = False
+                    cb.content.controls[0].value = False
             elif tipo == "Group":
                 for cb in groups_column.controls:
-                    cb.content.value = False
+                    cb.content.controls[0].value = False
             self.update()
 
         # Funciones de búsqueda
@@ -149,9 +160,10 @@ class ItemSelectionPanel(ft.Container):
         professors_buttons = ft.Row([
             ft.IconButton(on_click=lambda e: select_all("Professor", e), expand = True, icon = ft.icons.SELECT_ALL),
             ft.IconButton(on_click=lambda e: deselect_all("Professor", e), expand = True, icon = ft.icons.DESELECT),
-            ft.IconButton(on_click=lambda e: pick_file_export_professors.save_file(), 
-                          expand = True, icon = ft.icons.DESELECT),
-        ],)
+            ft.TextButton("export professors", on_click=lambda e: pick_file_export_professors.save_file(), 
+                          expand = True),
+        ],
+        )
         
         professors_buttons.controls[0].expand = 1
         professors_buttons.controls[1].expand = 1
@@ -160,8 +172,8 @@ class ItemSelectionPanel(ft.Container):
         rooms_buttons = ft.Row([
             ft.IconButton(on_click=lambda e: select_all("Classroom", e), expand = True, icon=ft.icons.SELECT_ALL),
             ft.IconButton(on_click=lambda e: deselect_all("Classroom", e), expand = True, icon = ft.icons.DESELECT),
-            ft.IconButton(on_click=lambda e: pick_file_export_classrooms.save_file(), 
-                          expand = True, icon = ft.icons.DESELECT),
+            ft.TextButton(text = "export classrooms", on_click=lambda e: pick_file_export_classrooms.save_file(), 
+                          expand = True),
         ])
         
         rooms_buttons.controls[0].expand = 1
@@ -171,7 +183,7 @@ class ItemSelectionPanel(ft.Container):
         groups_buttons = ft.Row([
             ft.IconButton(on_click=lambda e: select_all("Group", e), expand = True, icon=ft.icons.SELECT_ALL),
             ft.IconButton(on_click=lambda e: deselect_all("Group", e), expand = True, icon = ft.icons.DESELECT),
-            ft.IconButton(on_click=lambda e: pick_file_export_groups.save_file(), 
+            ft.TextButton(text = "export groups", on_click=lambda e: pick_file_export_groups.save_file(), 
                           expand = True, icon = ft.icons.DESELECT),
         ])
         
