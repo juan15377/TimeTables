@@ -61,7 +61,9 @@ class NewSubjectPage(ft.Container):
         professor_selector = SearchBarItems({
                 professor.name : professor for professor in database.professors.get()
                 },
-                get_actual_professors                                
+                get_actual_professors,
+                bar_hint_text= "selecciona un Profesor"
+                               
         )
         self.professor_selector = professor_selector
         
@@ -74,8 +76,9 @@ class NewSubjectPage(ft.Container):
         
         
         classroom_selector = SearchBarItems(
-            {classroom.name: classroom for classroom in database.classrooms.get()},
-            get_actual_classrooms
+            items={classroom.name: classroom for classroom in database.classrooms.get()},
+            refresh_items=  get_actual_classrooms,
+            bar_hint_text= "selecciona una Aula"
         )
         
         online_switch = OnlineSwitch(classroom_selector)
@@ -100,18 +103,47 @@ class NewSubjectPage(ft.Container):
             expand = True
         )
         
+        select_room = ft.Row(
+            controls = [
+                classroom_selector,
+                online_switch,
+            ],
+        )
+        
+        column_room_and_professor = ft.Column(
+            controls = [
+                ft.Row(
+                    [ft.Column(
+                        controls = [
+                            select_room,
+                        ],
+                        expand = True
+                    )
+                    ],
+                    expand = False
+                ),
+                
+                ft.Column(
+                    controls = [
+                        ft.Row([professor_selector], expand = False)
+                    ],
+                expand = True
+                )
+            ],
+            expand = False
+        )
+    
+        
         left_layout = ft.Column(
                         controls=[
                             ft.Row(
                                 controls = [name_code_subject],
                                 expand = False,
                                 #width=800,
-                                height=100
                                 
                             ),
                             groups_selector,
-                            #button_new_subject  
-                            
+
                         ],
                         alignment= ft.alignment.top_right,
                         spacing=10,
@@ -121,38 +153,13 @@ class NewSubjectPage(ft.Container):
         
         right_layout = ft.Column(
             controls = [
-                ft.Row(
-                    controls = [
-                        button_new_subject,
-                        online_switch
-                    ],
-                    height=100
-                ),
-
-                ft.Column(
-                        controls = [ft.Text("Aula"),
-                                    classroom_selector,
-                                    ],
-                        expand = True,
-                        #width = 100,
-                        height= 50
-                        ),
-                ft.Column(
-                        controls = [
-                            ft.Text("Profesor"),
-                            professor_selector,
-                        ],
-                        expand=True,
-                        #width = 100,
-                        height= 50
-                ),
-                selector_hours_distribution,
-                #ft.Row(
+                ft.Column([column_room_and_professor], expand = True),
+                ft.Row([selector_hours_distribution], expand = False)
             ],
-            expand = True
+            expand = True,
         )
-        
-        
+
+
         content = ft.Column(
                 controls = [
 
@@ -166,7 +173,7 @@ class NewSubjectPage(ft.Container):
                 ],
                 expand = True
             )
-            
+        
         super().__init__(
             content = content,
             expand = True

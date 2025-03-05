@@ -71,11 +71,17 @@ class PCGListItem(ft.Container):
             )
         )
         
-        column_Title = ft.Row()
+        column_Title = ft.Row(
+            controls = [
+                ft.CupertinoTextField(self.name,min_lines=10, max_length=30, prefix_visibility_mode=True, tooltip=self.name),
+                pb, 
+                button_delete,
+                button_edit
+            ]
+        )
         
         super().__init__(
             content=column_Title,
-            width=1600,
             expand=True,
             theme_mode= ft.colors.AMBER_ACCENT,
             data = value.name if type(value) in [Professor, Classroom] else value.career.name + " " + value.semester.name + " " + value.subgroup.name
@@ -117,10 +123,12 @@ class ListViewPCG(ft.Column):
         
         all_items = self.get_all()
         
+        print(len(all_items))
+        
         column_items = ft.ListView(expand=True, spacing=10, item_extent=1,
                                                    controls = all_items)
-        
-        content_column = ft.Container(
+
+        container_column_items = ft.Container(
             content = column_items,
             expand = True
         )
@@ -131,11 +139,9 @@ class ListViewPCG(ft.Column):
                         )
         
         super().__init__(
-            controls = [search_textfield] +  [content_column],
+            controls = [search_textfield] +  [container_column_items],
             expand = True
         )
-        
-        
         
     def filter(self, coincidence):
         if coincidence == "":
@@ -172,6 +178,8 @@ class ListViewPCG(ft.Column):
             item.update()
             
         self.update_( update = True)
+        
+
 class ProfessorsPage(ft.Container):
     
     def __init__(self, page, query):

@@ -6,12 +6,12 @@ from flet import ListView, Page, ListTile, app, SearchBar, Text
 from typing import Callable
 
 class SearchBarItems(ft.Container):
-    def __init__(self, items : list, refresh_items : Callable, on_change = lambda : None):
+    def __init__(self, items : list, refresh_items : Callable, on_change = lambda : None,bar_hint_text = "", **kwargs):
         self.items: dict = items
         self.refresh_items = refresh_items
         self.lv = ft.ListView()
         self.search_bar= SearchBar(
-            bar_hint_text="Type to search...",
+            bar_hint_text=bar_hint_text,
             on_change=self.handle_change,
             controls=[self.lv],
             on_tap = lambda e : self.lv.update(),
@@ -20,7 +20,8 @@ class SearchBarItems(ft.Container):
         
         super().__init__(
             content = self.search_bar,
-            expand = True
+            expand = True,
+            **kwargs,
         )
         self.activated = True
         self.value = None

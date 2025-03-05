@@ -72,7 +72,7 @@ class GroupSelector(ft.Container):
         tablegroups = TableGroups()
         button_add_group_to_table = ft.FloatingActionButton(
             icon = ft.icons.ADD,
-            text = "Add Group"
+            text = ""
         )
                 
         self.table_groups = tablegroups
@@ -98,12 +98,12 @@ class GroupSelector(ft.Container):
                 controls=[
                     ft.Row(
                         controls = [
-                            search_values_textfield
+                            search_values_textfield,
+                            button_add_group_to_table
                         ],
                         expand = False
                     ),
                     tablegroups,
-                    button_add_group_to_table,  # Botón para agregar un grupo a la tabla
                 ],
                 spacing=50,
                 expand = True
