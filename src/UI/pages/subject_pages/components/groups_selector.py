@@ -1,7 +1,7 @@
 import sys
 import flet as ft
 from src.UI.database import database
-
+from src.UI.components.search_bar_items import SearchBarItems
 
 class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como componente personalizado
     
@@ -81,7 +81,7 @@ class GroupSelector(ft.Container):
         def get_actual_groups():
             return {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in database.groups.get()}
         
-        search_values_textfield = SearchValue(
+        search_values_textfield = SearchBarItems(
             {group.career.name + " " + group.semester.name + " " +  group.subgroup.name : group for group in database.groups.get()},
             get_actual_groups,  # setear los valores de la búsqueda
         )

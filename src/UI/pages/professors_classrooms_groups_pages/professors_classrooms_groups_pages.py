@@ -51,7 +51,7 @@ class PCGListItem(ft.Container):
             )
         
         button_delete = ft.IconButton(
-            on_click=lambda e, pcg=value: delete_pga(pcg),
+            on_click=lambda e, pcg=value: delete_value_in_database(pcg),
             icon = ft.icons.DELETE_SHARP
         )
         
@@ -70,6 +70,8 @@ class PCGListItem(ft.Container):
                         ]
             )
         )
+        
+        column_Title = ft.Row()
         
         super().__init__(
             content=column_Title,
@@ -170,9 +172,6 @@ class ListViewPCG(ft.Column):
             item.update()
             
         self.update_( update = True)
-
-
-         
 class ProfessorsPage(ft.Container):
     
     def __init__(self, page, query):

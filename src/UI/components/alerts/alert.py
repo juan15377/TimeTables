@@ -1,3 +1,5 @@
+import flet as ft
+
 class Alert():
     
     def __init__(self, alert : str, page):

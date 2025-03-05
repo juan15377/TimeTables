@@ -32,7 +32,6 @@ class EditAvailabilityMatrix(ft.Container):
                     padding=0,
                     border_radius=5,
                     on_click =  lambda e: boton_presionado(e,fila,columna),
-                    on_hover= lambda e : print("hola"),
                     expand=True
                     
             )
