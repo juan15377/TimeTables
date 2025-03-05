@@ -59,7 +59,7 @@ class NewSubjectPage(ft.Container):
         }
         
         professor_selector = SearchBarItems({
-                professor.name : professor for professor in database.get()
+                professor.name : professor for professor in database.professors.get()
                 },
                 get_actual_professors                                
         )
@@ -73,7 +73,7 @@ class NewSubjectPage(ft.Container):
             return {classroom.name: classroom for classroom in database.classrooms.get()}
         
         
-        classroom_selector = SearchValue(
+        classroom_selector = SearchBarItems(
             {classroom.name: classroom for classroom in database.classrooms.get()},
             get_actual_classrooms
         )

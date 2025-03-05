@@ -37,12 +37,11 @@ class Router:
         _page = route.route.split("?")[0]
         queries = route.route.split("?")[1:]
         
-        # se actualiza la pagina actual y la pagina anterior
-        previous_route = global_state.get_state_by_key('current_page').get_state()
-        State("current_page", _page)
-        State("previous_page", previous_route)
-        
-        
+        # se inserta una nueva ruta
+        manager_route = global_state.get_state_by_key('manager_routes').get_state()
+        manager_route.new_route(route.route)
+
+    
         _hash = None
         for item in queries:
             key = item.split("=")[0]
@@ -62,3 +61,34 @@ class Router:
     def get_query(self, key):
         return self.data.get(key)
 
+
+class RoutesManagerNavigation():
+    
+    index_page = -1
+    
+    def __init__(self):
+        self.routes = ["/"]
+        
+    def new_route(self, route):
+        if route == self.routes[-1]:
+            return None
+        if route == "/" :
+            self.routes = []
+            self.index_page = -1
+        self.routes.append(route)
+        self.index_page += 1
+        print(self.routes)
+        pass  
+    
+    def get_prevoius(self):
+        if self.index_page == 0:
+            return self.routes[0]
+        self.index_page = self.index_page - 1
+        del self.routes[-1]
+        return self.routes[self.index_page]
+        print(self.routes)
+        pass
+
+    def get_actual_route(self):
+        return self.routes[self.index_page]
+        pass

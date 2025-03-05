@@ -60,7 +60,6 @@ class ClassroomOnline():
     availability_matrix = np.ones((30,7), dtype =  bool)
     
 
-
 class Subject():
 
     def __init__(self, name, code, professor, classroom, groups, hours_distribution, is_online = False) -> None:
@@ -70,6 +69,7 @@ class Subject():
         
         self.name = name 
         self.code = code 
+        self.key = Key()
         self.professor = professor
         self.classroom = classroom
         self.online = is_online
@@ -202,6 +202,13 @@ class Subjects:
 
     def get(self):
         return self.subjects
+    
+    def get_by_key(self, key):
+        for subject in self.subjects:
+            if subject.key.key == key:
+                return subject
+        return None
+    
 
 
 

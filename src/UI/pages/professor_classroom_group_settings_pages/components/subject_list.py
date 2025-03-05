@@ -16,8 +16,9 @@ class SubjectList(ft.ListView):
         self.update(update = False)
         
             
-    def edit_subject(self, s):
-        # This should open a new window to edit subject information
+    def edit_subject(self, subject):
+        subject_key = subject.key.key
+        self.page.go(F"/SUBJECT_DETAILS?SUBJECT={subject_key}",)
         pass 
 
     def add_subject(self):
@@ -43,7 +44,7 @@ class SubjectList(ft.ListView):
         for subject in subjects:
             
             def delete_subject_from_bd(subject):
-                self.db.subjects.remove(subject)
+                database.subjects.remove(subject)
                 self.update()
                 
             def edit_subject_from_bd(subject):
