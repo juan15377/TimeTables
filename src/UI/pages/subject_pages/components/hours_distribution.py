@@ -240,12 +240,14 @@ class SelectorDistributionHours(ft.Container):
             width= 600,
             height=600
         )
+        
+        
 
         super().__init__(
             content=tabs,
             width=650,
             height=230,
-            expand = True
+            expand = False
         )
 
     def get_hours_distribution(self):

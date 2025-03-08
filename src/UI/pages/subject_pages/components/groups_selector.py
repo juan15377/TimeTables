@@ -7,6 +7,7 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
     
     def __init__(self):
         self.groups = []  # Almacena los grupos localmente
+        
         self.table = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("Carrera")),
@@ -14,17 +15,40 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
                 ft.DataColumn(ft.Text("SubGrupo")),
                 ft.DataColumn(ft.Text("Eliminar")),
             ],
-            rows=[],  # Inicialmente vacío
-            expand = True,
-            #height=300,
-            width = 1000
+            rows=[],
+            border=ft.border.all(1, ft.colors.GREY_400),
+            border_radius=10,
+            vertical_lines=ft.border.BorderSide(1, ft.colors.GREY_400),
+            horizontal_lines=ft.border.BorderSide(1, ft.colors.GREY_400),
+            heading_row_color=ft.colors.BLUE_200,
+            heading_row_height=40,
+            data_row_color={"hovered": ft.colors.GREY_200},
+            show_checkbox_column=False,
+            divider_thickness=0,
+        )
+        
+        self.table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("Carrera")),
+                ft.DataColumn(ft.Text("Semestre")),
+                ft.DataColumn(ft.Text("SubGrupo")),
+                ft.DataColumn(ft.Text("Eliminar")),
+            ],
+            rows=[],
+            border=ft.border.all(1, ft.colors.GREY_700),
+            border_radius=10,
+            vertical_lines=ft.border.BorderSide(1, ft.colors.GREY_700),
+            horizontal_lines=ft.border.BorderSide(1, ft.colors.GREY_700),
+            heading_row_color=ft.colors.BLUE_800,
+            heading_row_height=40,
+            data_row_color={"hovered": ft.colors.GREY_800},
+            show_checkbox_column=False,
+            divider_thickness=0,
         )
         
         super().__init__(
             content = ft.ListView(controls = [self.table]),
-            height= 370,
             #
-            width = 700,
             expand = True
             )  # Inicialización de UserControl
 
@@ -106,9 +130,9 @@ class GroupSelector(ft.Container):
                     tablegroups,
                 ],
                 spacing=50,
-                expand = True
+                expand = False
             ),
-            expand = True
+            expand = False
         )
         
         
