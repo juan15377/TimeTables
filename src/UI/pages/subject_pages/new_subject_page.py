@@ -25,7 +25,7 @@ def is_avaible_subject(professor, classroom, groups, hours_distribution, is_onli
         alert = Alert("No se ah seleccionado ningun Grupo", page)
         alert.show()
         return False
-    if sum(hours_distribution. get_avaible_hours()) == 0:
+    if sum(hours_distribution.get_avaible_hours()) == 0:
         alert = Alert("La seleccion de distribuccion de horas es incorrecta", page)
         alert.show()
         return False
@@ -46,7 +46,6 @@ class NewSubjectPage(ft.Container):
         
         name_code_subject = NameCodeSubject("", "")
         self.name_code_subject = name_code_subject
-        name_code_subject.spacing = 50
         
         groups_selector = GroupSelector()
         self.groups_selector = groups_selector
@@ -115,6 +114,7 @@ class NewSubjectPage(ft.Container):
                 ft.Row(
                     [ft.Column(
                         controls = [
+                            ft.Text("Aula"),
                             select_room,
                         ],
                         expand = True
@@ -125,9 +125,10 @@ class NewSubjectPage(ft.Container):
                 
                 ft.Column(
                     controls = [
+                        ft.Text("Profesor"),
                         ft.Row([professor_selector], expand = False)
                     ],
-                expand = True
+                expand = False
                 )
             ],
             expand = False
@@ -139,13 +140,19 @@ class NewSubjectPage(ft.Container):
                             ft.Row(
                                 controls = [name_code_subject],
                                 expand = False,
-                                #width=800,
+                                #width=500,
+                                #height=600
                                 
                             ),
-                            groups_selector,
+                            ft.Column(
+                                controls = [
+                                    ft.Text("Grupos en la que se impartira la nateria"),
+                                    groups_selector
+                                ],
+                            ),
 
                         ],
-                        alignment= ft.alignment.top_right,
+                        alignment= ft.alignment.center,
                         spacing=10,
                         expand=True
                     )
@@ -153,7 +160,7 @@ class NewSubjectPage(ft.Container):
         
         right_layout = ft.Column(
             controls = [
-                ft.Column([column_room_and_professor], expand = True),
+                column_room_and_professor,
                 ft.Row([selector_hours_distribution], expand = False)
             ],
             expand = True,
@@ -184,16 +191,12 @@ class NewSubjectPage(ft.Container):
     def save_changes(self):
         pass
     
-    
     def cancel(self):
         #enruting for another page
         pass
-    
-    
-        
+
     def load_subject(self, subject):
         pass  
-    
     
     # encargado de regresar un
     def new_subject_in_bd(self):

@@ -17,42 +17,50 @@ class NameCodeSubject(ft.Container):
 
         self.name_textfield = ft.TextField(
             value = self.name,
-            label="Nombre",
-            border=ft.InputBorder.UNDERLINE,
-            filled=True,
-            hint_text="Insertar Nombre Materia",
-            on_change = change_name,
-            max_length = 50,
-            expand = True,
-            cursor_color="white",
-            border_color= ft.colors.AMBER,
-            focused_color= ft.colors.WHITE,
+            label="Nombre de la materia",
+            border_radius=10,
+            border_color=ft.colors.BLUE_200,
+            focused_border_color=ft.colors.BLUE_400,
+            color=ft.colors.WHITE,
+            bgcolor=ft.colors.BLACK12,
         )
 
+        
         self.code_textfield = ft.TextField(
-            value = self.code,
-            label="Codigo",
-            border=ft.InputBorder.UNDERLINE,
-            filled=True,
-            hint_text = "Insertar Codigo Materia",
-            on_change = change_code,
-            max_length = 7,
-            expand = True,
-            width = 500,
-            
+        value = self.code,
+        label="Codigo de la Materia",
+        border_radius=10,
+        border_color=ft.colors.BLUE_200,
+        focused_border_color=ft.colors.BLUE_400,
+        color=ft.colors.WHITE,
+        bgcolor=ft.colors.BLACK12,
         )
 
-        layout = ft.Row(
+        layout = ft.Column(
             controls = [
                 self.name_textfield,
                 self.code_textfield,
             ],
-            expand = True
+            expand = False,
         )
 
+        layout = ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text("Registro de Materia", size=24, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200),
+                    self.name_textfield,
+                    self.code_textfield,
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=20,
+            ),
+            padding=30,
+            border_radius=15,
+            bgcolor=ft.colors.BLACK26,
+            border=ft.border.all(2, ft.colors.BLUE_200),
+        )
         super().__init__(
             content = layout,
-            height = 80,
             expand = True
         )
 
