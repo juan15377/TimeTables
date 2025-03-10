@@ -23,6 +23,7 @@ class NameCodeSubject(ft.Container):
             focused_border_color=ft.colors.BLUE_400,
             color=ft.colors.WHITE,
             bgcolor=ft.colors.BLACK12,
+            on_change= change_name
         )
 
         
@@ -34,6 +35,7 @@ class NameCodeSubject(ft.Container):
         focused_border_color=ft.colors.BLUE_400,
         color=ft.colors.WHITE,
         bgcolor=ft.colors.BLACK12,
+        on_change= change_code
         )
 
         layout = ft.Column(
@@ -47,17 +49,13 @@ class NameCodeSubject(ft.Container):
         layout = ft.Container(
             content=ft.Column(
                 [
-                    ft.Text("Registro de Materia", size=24, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200),
                     self.name_textfield,
                     self.code_textfield,
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 spacing=20,
             ),
-            padding=30,
-            border_radius=15,
             bgcolor=ft.colors.BLACK26,
-            border=ft.border.all(2, ft.colors.BLUE_200),
         )
         super().__init__(
             content = layout,
