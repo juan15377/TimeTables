@@ -19,9 +19,13 @@ class CounterHours(ft.Container):
 
         c = ft.Row(
                 [
-                    ft.IconButton(ft.icons.REMOVE, on_click=minus_click),
                     txt_number,
-                    ft.IconButton(ft.icons.ADD, on_click=plus_click),
+                    ft.Column(
+                        controls = [
+                            ft.IconButton(ft.icons.ADD, on_click=plus_click),
+                            ft.IconButton(ft.icons.REMOVE, on_click=minus_click),
+                        ]
+                    )
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
             )
@@ -52,7 +56,7 @@ class EditorHours(ft.Container):
                         total_hours,
                         check
                     ],
-                    expand = True
+                    expand = False
                 ),
                 
                 ft.Row(
@@ -62,13 +66,11 @@ class EditorHours(ft.Container):
                         ft.Text("Maximum Hours"),
                         maximum_hours
                     ],
-                    spacing=20,
-                    expand = True
+                    expand = False
                     
                 )
             ],
-            spacing= 30,
-            expand = True
+            expand = False
         )
         
         self.total_hours = total_hours
@@ -137,7 +139,7 @@ class EditorBlocks(ft.Container):
                         self.counter_hours,
                         self.drop_blocks,
                     ],
-                    expand = True
+                    expand = False
                 ),
                 ft.Row(
                     controls = [
@@ -146,16 +148,16 @@ class EditorBlocks(ft.Container):
                         button_reset,
                         self.check,
                     ],
-                    expand = True
+                    expand = False
                 )
             ],
             spacing= 10,
-            expand = True
+            expand = False
         )
         
         super().__init__(
             content = layout,
-            expand = True
+            expand = False
         )
         
     def add_block(self):
@@ -226,28 +228,29 @@ class SelectorDistributionHours(ft.Container):
                     text="Hours Composition",
                     content=ft.Container(
                         content=self.selector_hours, 
-                        alignment=ft.alignment.center
-                        )
+                        alignment=ft.alignment.center,
+                        expand = False
+                        ),
                 ),
                 ft.Tab(
                     text="Blocks Composition",
                     content=ft.Container(
                         content = self.selector_blocks, 
-                        alignment=ft.alignment.center
+                        alignment=ft.alignment.center,
+                        expand = False
                         )
                 ),
             ],
-            width= 600,
-            height=600
+            expand = False
         )
         
         
 
         super().__init__(
             content=tabs,
-            width=650,
-            height=230,
-            expand = False
+            expand = True,
+            border= ft.border.all(2, ft.colors.BLUE_200),
+            
         )
 
     def get_hours_distribution(self):

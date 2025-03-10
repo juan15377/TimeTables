@@ -3,36 +3,23 @@ import flet as ft
 from src.UI.database import database
 from src.UI.components.search_bar_items import SearchBarItems
 
-class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como componente personalizado
-    
+import flet as ft
+
+import flet as ft
+
+import flet as ft
+
+class TableGroups(ft.UserControl):  # Heredamos de UserControl para usarlo como componente personalizado
     def __init__(self):
+        super().__init__()
         self.groups = []  # Almacena los grupos localmente
-        
+
         self.table = ft.DataTable(
             columns=[
-                ft.DataColumn(ft.Text("Carrera")),
-                ft.DataColumn(ft.Text("Semestre")),
-                ft.DataColumn(ft.Text("SubGrupo")),
-                ft.DataColumn(ft.Text("Eliminar")),
-            ],
-            rows=[],
-            border=ft.border.all(1, ft.colors.GREY_400),
-            border_radius=10,
-            vertical_lines=ft.border.BorderSide(1, ft.colors.GREY_400),
-            horizontal_lines=ft.border.BorderSide(1, ft.colors.GREY_400),
-            heading_row_color=ft.colors.BLUE_200,
-            heading_row_height=40,
-            data_row_color={"hovered": ft.colors.GREY_200},
-            show_checkbox_column=False,
-            divider_thickness=0,
-        )
-        
-        self.table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("Carrera")),
-                ft.DataColumn(ft.Text("Semestre")),
-                ft.DataColumn(ft.Text("SubGrupo")),
-                ft.DataColumn(ft.Text("Eliminar")),
+                ft.DataColumn(ft.Text("Carrera", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Semestre", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("SubGrupo", weight=ft.FontWeight.BOLD)),
+                ft.DataColumn(ft.Text("Eliminar", weight=ft.FontWeight.BOLD)),
             ],
             rows=[],
             border=ft.border.all(1, ft.colors.GREY_700),
@@ -45,13 +32,13 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
             show_checkbox_column=False,
             divider_thickness=0,
         )
-        
-        super().__init__(
-            content = ft.ListView(controls = [self.table]),
-            #
-            expand = True
-            )  # Inicialización de UserControl
 
+    def build(self):
+        return ft.Container(
+            content=ft.ListView(controls=[self.table], expand=True),
+            expand=True,
+            border=ft.border.all(2, ft.colors.BLUE_200)
+        )
 
     def add_group(self, group):
         # Agrega un grupo a la tabla y actualiza la lista local
@@ -59,15 +46,16 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
             return None
         self.groups.append(group)
         button_delete = ft.IconButton(
-            icon = ft.icons.DELETE,
-            on_click=lambda e,group = group: self.remove_group(group)
+            icon=ft.icons.DELETE,
+            on_click=lambda e, group=group: self.remove_group(group)
         )
         self.table.rows.append(
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(group.career.name)),
+                    # Ajustar el ancho del texto dentro de la celda
+                    ft.DataCell(ft.Text(group.career.name, width=200)),  # Ancho máximo para el texto
                     ft.DataCell(ft.Text(group.semester.name)),
-                    ft.DataCell(ft.Text(str(group.subgroup.name))),
+                    ft.DataCell(ft.Text(str(group.subgroup.name), )),
                     ft.DataCell(button_delete),
                 ]
             )
@@ -76,18 +64,19 @@ class TableGroups(ft.Container):  # Heredamos de UserControl para usarlo como co
 
     def remove_group(self, group):
         # Elimina un grupo de la lista local y actualiza las filas
-        self.table.rows.clear()
-        self.groups.remove(group)
-        for g in self.groups:
-            self.groups.remove(g)
-            self.add_group(g)
-            
-        self.table.update()
+        if group in self.groups:
+            self.groups.remove(group)
+            self.table.rows = [
+                row for row in self.table.rows
+                if row.cells[0].content.value != group.career.name or
+                row.cells[1].content.value != group.semester.name or
+                row.cells[2].content.value != str(group.subgroup.name)
+            ]
+            self.table.update()
 
     def get_groups(self):
         # Devuelve la lista de grupos
         return self.groups
-
 
 class GroupSelector(ft.Container):
     
@@ -132,7 +121,9 @@ class GroupSelector(ft.Container):
                 spacing=50,
                 expand = False
             ),
-            expand = False
+            expand = False,
+                        border = ft.border.all(2, ft.colors.BLUE_200)
+
         )
         
         

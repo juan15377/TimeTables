@@ -1,85 +1,39 @@
 import flet as ft
 
 def main(page: ft.Page):
-    # Configurar el tema oscuro
-    page.theme_mode = ft.ThemeMode.DARK
-    page.title = "Insertar Materia y Código"
+    page.title = "Tabla con Nombres en Varias Líneas"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.padding = 20
 
-    # Función para manejar el envío del formulario
-    def submit_form(e):
-        if nombre_materia.value and codigo_materia.value:
-            print(f"Materia: {nombre_materia.value}, Código: {codigo_materia.value}")
-            page.snack_bar = ft.SnackBar(
-                ft.Text("Datos enviados correctamente!", color=ft.colors.GREEN_200),
-                bgcolor=ft.colors.GREEN_900,
+    # Datos de la tabla
+    nombres_largos = [
+        {"nombre": "Juan Pérez González", "edad": 25},
+        {"nombre": "María de los Ángeles López Martínez", "edad": 30},
+        {"nombre": "Carlos Alberto Sánchez Ramírez", "edad": 22},
+        {"nombre": "Ana Sofía García Rodríguez de la Cruz", "edad": 28},
+    ]
+
+    # Crear la tabla con ajuste de texto en varias líneas
+    tabla = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("Nombre", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Edad", weight=ft.FontWeight.BOLD)),
+        ],
+        rows=[
+            ft.DataRow(
+                cells=[
+                    # Ajustar el texto en varias líneas
+                    ft.DataCell(ft.Text(nombre["nombre"], width=200)),  # Ancho máximo para el texto
+                    ft.DataCell(ft.Text(str(nombre["edad"]))),
+                ]
             )
-            page.snack_bar.open = True
-            nombre_materia.value = ""
-            codigo_materia.value = ""
-            page.update()
-        else:
-            page.snack_bar = ft.SnackBar(
-                ft.Text("Por favor, completa todos los campos.", color=ft.colors.RED_200),
-                bgcolor=ft.colors.RED_900,
-            )
-            page.snack_bar.open = True
-            page.update()
-
-    # Campos de entrada con estilo personalizado
-    nombre_materia = ft.TextField(
-        label="Nombre de la Materia",
-        width=300,
-        border_radius=10,
-        border_color=ft.colors.BLUE_200,
-        focused_border_color=ft.colors.BLUE_400,
-        color=ft.colors.WHITE,
-        bgcolor=ft.colors.BLACK12,
+            for nombre in nombres_largos
+        ],
+        column_spacing=20,  # Espacio entre columnas
+        width=600,  # Ancho total de la tabla
     )
 
-    codigo_materia = ft.TextField(
-        label="Código de la Materia",
-        width=300,
-        border_radius=10,
-        border_color=ft.colors.BLUE_200,
-        focused_border_color=ft.colors.BLUE_400,
-        color=ft.colors.WHITE,
-        bgcolor=ft.colors.BLACK12,
-    )
-
-    # Botón de envío con estilo personalizado
-    submit_button = ft.ElevatedButton(
-        "Enviar",
-        on_click=submit_form,
-        style=ft.ButtonStyle(
-            bgcolor=ft.colors.BLUE_800,
-            color=ft.colors.WHITE,
-            padding=20,
-            shape=ft.RoundedRectangleBorder(radius=10),
-        ),
-    )
-
-    # Diseño del componente
-    form = ft.Container(
-        content=ft.Column(
-            [
-                ft.Text("Registro de Materia", size=24, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_200),
-                nombre_materia,
-                codigo_materia,
-                submit_button,
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=20,
-        ),
-        padding=30,
-        border_radius=15,
-        bgcolor=ft.colors.BLACK26,
-        border=ft.border.all(2, ft.colors.BLUE_200),
-    )
-
-    # Añadir el componente a la página
-    page.add(form)
+    # Añadir la tabla a la página
+    page.add(tabla)
 
 ft.app(target=main)
