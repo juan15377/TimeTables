@@ -84,7 +84,7 @@ class BasePCGPage(ft.Container):
         self.update_schedule_grid(self.value, update_in_page = update_in_page)
        
         if update_search:
-            super().update()  
+            #super().update()  
             self.search_values.update()
             
     def update_schedule_grid(self, new_value : PCG, update_in_page = False):

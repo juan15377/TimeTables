@@ -11,7 +11,7 @@ class BaseSettingsPCG(ft.Container):
         
         self.edit_matrix_availability = EditAvailabilityMatrix()
         
-        self.edit_matrix_availability.set_matrix(pcg.availability_matrix, update = False)
+        self.edit_matrix_availability.set_states(pcg, update = False)
         
         self.pcg_name_editor = NameEditor(pcg.name)
         

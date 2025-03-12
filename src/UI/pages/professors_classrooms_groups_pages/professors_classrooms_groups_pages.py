@@ -37,7 +37,8 @@ class PCGListItem(ft.Container):
                 database.classrooms.remove(value)
             else:
                 database.groups.remove(value)
-            self.listviewpga.update_()
+            self.listviewpcg.update_()
+            
             
         column_Title = ft.DataTable(
             columns=[
@@ -123,7 +124,6 @@ class ListViewPCG(ft.Column):
         
         all_items = self.get_all()
         
-        print(len(all_items))
         
         column_items = ft.ListView(expand=True, spacing=10, item_extent=1,
                                                    controls = all_items)
