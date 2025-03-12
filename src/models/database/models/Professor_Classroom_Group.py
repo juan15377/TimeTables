@@ -375,10 +375,9 @@ class Professors:
     def set_availability_matrix(self, professor, new_availability_matrix):
         old_availability_matrix = professor.initial_availability_matrix()
         
-        professor.availability_matrix = new_availability_matrix
+        professor.methods.change_availability_matrix(new_availability_matrix)
         
         delete_blocks_subject_with_new_availability(professor, old_availability_matrix, new_availability_matrix, self.bd)
-        
         
         
         # eliminar todas las materias de la matriz que 
