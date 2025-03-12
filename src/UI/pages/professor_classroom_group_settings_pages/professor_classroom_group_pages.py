@@ -3,12 +3,12 @@ from .components import *
 from .components import NameEditor, SubjectList
 from ...database import database
 import flet as ft
-from src.models.database import PCG
+from src.models.database import PCG, Professor, Group, Classroom
 class BaseSettingsPCG(ft.Container):
     
     def __init__(self, pcg :  PCG, page):
             
-        
+        self.pcg = pcg 
         self.edit_matrix_availability = EditAvailabilityMatrix()
         
         self.edit_matrix_availability.set_states(pcg, update = False)
@@ -20,21 +20,20 @@ class BaseSettingsPCG(ft.Container):
         
         def save_changes_matrix_availability(e):
             new_availability_matrix = self.edit_matrix_availability.get_matrix()
-            professor.set_availability_matrix(new_availability_matrix)# ? este metodo es delicadop
+            professor.set_availability_matrix(new_availability_matrix)# ? este metodo es delicado
         
         self.subject_list = SubjectList(page, get_subjects)
         
         button_add_subject = ft.IconButton(icon = ft.icons.ADD,
                                             on_click=lambda e: page.go("/NEW_SUBJECT") )
         
-        button_save_changes_matrix_availability = ft.IconButton(icon = ft.icons.DELETE,
-                                                    on_click = save_changes_matrix_availability)
+        button_save_changes = ft.IconButton(icon = ft.icons.SAVE,
+                                            on_click = lambda e : self.save_changes())
         
         
         left_layout = ft.Column(
             controls = [
-                self.edit_matrix_availability,
-                button_save_changes_matrix_availability,
+                ft.Container(self.edit_matrix_availability, expand = True),
             ],
             expand = True
         )
@@ -50,6 +49,7 @@ class BaseSettingsPCG(ft.Container):
                 ),
                 button_add_subject,
                 self.subject_list,
+                button_save_changes
             ],
             expand = True
         )
@@ -70,6 +70,19 @@ class BaseSettingsPCG(ft.Container):
             ),
             expand = True
         )
+        
+        
+    def save_changes(self):
+        new_availability_matrix = self.edit_matrix_availability.get_availability_matrix()
+        new_name = self.pcg_name_editor.get_name()
+                
+        if type(self.pcg) == Professor:
+            self.pcg.name = new_name
+            database.professors.set_availability_matrix(self.pcg, new_availability_matrix)
+        elif type(self.pcg) == Classroom:
+            self.pcg.name = new_name
+            database.classrooms.set_availability_matrix(self.pcg, new_availability_matrix)
+        pass 
         
 
 class ProfessorSettingsPage(BaseSettingsPCG):

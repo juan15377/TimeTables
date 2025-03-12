@@ -159,7 +159,7 @@ class EditAvailabilityMatrix(ft.Container):
         
         principal = ft.ListView(
             controls = filas_matriz_principal,
-            spacing=10,
+            spacing=5,
             item_extent=10,
             expand = True
         )
@@ -174,10 +174,23 @@ class EditAvailabilityMatrix(ft.Container):
             expand = True
         )
         
-    def get_states(self, pcg):
-        # propaga los cambios en pcg
-        return self.__states
+    def get_availability_matrix(self):
+
+        def boolean_state(state):
+            if state in [1, 3]:
+                return True 
+            else: 
+                return False
+            
+        new_availability_matrix = np.vectorize(boolean_state)(self.__states)
+
+        print("new_availability_matrix")
+        
+        print(new_availability_matrix)
+        return new_availability_matrix
     
+    
+
     def set_states(self, pcg, update = True):
         # los de color verde seran los de las disponibilidad inicial
         # los de color rojo aquellos es que no

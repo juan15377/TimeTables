@@ -31,3 +31,6 @@ class NameEditor(ft.Container):
             height = 80,
             expand = True
         )
+        
+    def get_name(self):
+        return self.name
