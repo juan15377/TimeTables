@@ -274,6 +274,7 @@ class SubjectScheduleGrid(ft.Container):
     def load_availability(self, size, subject):  # This method activates the cells to add a block
         # Paints the grid cells based on the subject's availability in the board
         availability = subject.availability_matrix
+        
         for row in range(30):
             for col in range(7):
                 button = self.button_matrix[row, col]

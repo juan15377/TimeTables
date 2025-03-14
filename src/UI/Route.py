@@ -17,8 +17,8 @@ class Router:
         self.routes = {}
         self.body = ft.AnimatedSwitcher( # container animated
             transition=ft.AnimatedSwitcherTransition.SCALE,
-            duration=300,
-            reverse_duration=80,
+            duration=400,
+            reverse_duration=150,
             switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,
             switch_out_curve=ft.AnimationCurve.BOUNCE_IN,
             expand=True
