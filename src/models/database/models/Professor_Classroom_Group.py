@@ -15,8 +15,11 @@ class PCGMethods:
     def change_availability_matrix(self, new_availability_matrix):
         """Changes the availability of the PGA and updates associated subjects."""
         self.pcg.availability_matrix = new_availability_matrix
+  
         for subject in self.pcg.subjects:
             subject.update_availability_matrix()
+            #print(subject.name, "\n")
+            #print(subject.availability_matrix)
 
     def update_subjects_availability_matrices(self):
         """Updates availability for all associated subjects."""
@@ -286,24 +289,19 @@ def delete_blocks_subject_with_new_availability(pcg, old_matrix, new_matrix, bd)
 
     
     old_not_avalailability_matrix = np.logical_and(old_matrix, np.logical_not(new_matrix))
-    
-    print("esta es las posiciones que cualquier que intersecte con los bloques de materias deberian quitarse")
+
+    print("Posiciones que intersectan con los bloques de materias y deben quitarse:")
     print(old_not_avalailability_matrix)
-    
+
     for subject in pcg.get_subjects():
         hours_placed = subject.allocated_subject_matrix
         for column in range(7):
-            column_ = hours_placed[:, column]
-            positions = decompose_vector(column_)
-            for position in positions:
-                row = position[0]
-                block_size = position[1] - position[0] 
-                if position[1] == 29:
-                    block_size += 1
-                if sum(old_not_avalailability_matrix[row: row + block_size, column]) != 0:
-                    subject.remove_class_block((row, column), block_size)
-    pass 
-
+            column_data = hours_placed[:, column]
+            positions = decompose_vector(column_data)
+            for start, end in positions:
+                block_size = end - start + (1 if end == 29 else 0)
+                if np.any(old_not_avalailability_matrix[start: start + block_size, column]):
+                    subject.remove_class_block((start, column), block_size)
 
 class Groups:
     def __init__(self, BD) -> None:
@@ -375,9 +373,10 @@ class Professors:
     def set_availability_matrix(self, professor, new_availability_matrix):
         old_availability_matrix = professor.initial_availability_matrix()
         
+        delete_blocks_subject_with_new_availability(professor, old_availability_matrix, new_availability_matrix, self.bd)
+        
         professor.methods.change_availability_matrix(new_availability_matrix)
         
-        delete_blocks_subject_with_new_availability(professor, old_availability_matrix, new_availability_matrix, self.bd)
         
         
         # eliminar todas las materias de la matriz que 
@@ -413,4 +412,3 @@ class Classrooms:
         
         delete_blocks_subject_with_new_availability(classroom, old_availability_matrix, new_availability_matrix, self.bd)
         
-      

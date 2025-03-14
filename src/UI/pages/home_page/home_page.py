@@ -54,7 +54,7 @@ class HomePage(ft.Container):
             content=ft.Column([professor_page], alignment=ft.MainAxisAlignment.START, expand=True),
             expand=True,
             transition=ft.AnimatedSwitcherTransition.SCALE,
-            duration=200,
+            duration=300,
             reverse_duration=100,
             switch_in_curve=ft.AnimationCurve.EASE_IN,
             switch_out_curve=ft.AnimationCurve.EASE_IN_EXPO,

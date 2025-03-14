@@ -74,6 +74,7 @@ class BaseSettingsPCG(ft.Container):
         
     def save_changes(self):
         new_availability_matrix = self.edit_matrix_availability.get_availability_matrix()
+        
         new_name = self.pcg_name_editor.get_name()
                 
         if type(self.pcg) == Professor:
