@@ -40,7 +40,7 @@ class DataBaseManager:
             self.subjects.BD = self    
     
     def save(self, path_save_db):
-        save_object_to_pickle(self, path_save_db)
+        pass
 
     def update(self):
         pass

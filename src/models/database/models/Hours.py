@@ -29,6 +29,7 @@ def get_avaible_hours_slots(min_val: float, max_val: float, sum_: float):
     return possible_hours
 
 
+
 class WeeklyHoursDistribution():
 
     def __init__(self, avaible_hours) -> None:

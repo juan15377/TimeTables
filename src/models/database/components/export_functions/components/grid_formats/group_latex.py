@@ -2,15 +2,31 @@ from .symbology import SymbologyLatex
 from .schedulegrid import GridLatex
 from .subject_latex import SubjectLatex
 class GroupLatex:
-    def __init__(self, group):
-        self.group_ = group
-        self.key_career = group.career.key.key
-        self.career = group.career.name
-        self.key_semester = group.semester.key.key
-        self.semester = group.semester.name
-        self.key_group = group.subgroup.key.key
-        self.group = group.subgroup.name
-        self.subjects = group.get_subjects()
+    def __init__(self, db, id_group):
+        # para la plantilla solo necesito 
+        # necesitamos extraer el nombre de la carrera, del semestre y del subgrupo 
+        self.db = db  
+        self.id_group = id_group
+        cursor = self.db.db_connection.cursor()
+
+        cursor.execute(f"""
+        SELECT A.ID AS ID_GROUP, B.ID AS ID_CAREER, B.NAME AS NAME_CAREER, C.ID AS ID_SEMESTER, C.NAME AS NAME_SEMESTER, D.ID AS ID_SUBGROUP, D.NAME AS NAME_SUBGROUP
+        FROM GROUPS A
+        INNER JOIN CAREER B ON A.CAREER = B.ID
+        INNER JOIN SEMESTER C ON A.SEMESTER = C.ID
+        INNER JOIN SUBGROUP D ON A.SUBGROUP = D.ID
+        WHERE A.ID = {id_group}
+        """
+        )
+
+        info_group = cursor.fetchall()[0]
+
+        self.name_career = info_group[2]
+        self.name_semester = info_group[4]
+        self.name_subgroup = info_group[6]
+
+
+        self.subjects_ids = self.bd.groups.get_subjects(id_group)
 
     def create_template_string(self):
         """Create the LaTeX string for the grid and the symbolic representation of the subjects."""
@@ -18,8 +34,9 @@ class GroupLatex:
         symbol = SymbologyLatex()
         symbol.type = 2  # Type 1: professor view
 
-        for subject in self.subjects:
-            subject_latex = SubjectLatex(subject, self.group_)
+        for id_subject in self.subjects_ids:
+            color = self.bd.groups.get_subject_color(id_subject)
+            subject_latex = SubjectLatex(self.db, id_subject, color)
             grid.add_subject(subject_latex)
             symbol.add_subject(subject_latex)
 
@@ -27,7 +44,7 @@ class GroupLatex:
         symbol_string = symbol.to_latex_string()
 
         template = f"""
-        \\subsection{{{self.career + self.semester +  self.group}}}
+        \\subsection{{{self.name_career + self.name_semester +  self.name_subgroup}}}
         \\vspace*{{.1cm}}
         
         \\begin{{flushright}}
@@ -42,6 +59,8 @@ class GroupLatex:
         \\newpage
         """
         return template
+
+
 
 
 def create_groups_latex(groups):

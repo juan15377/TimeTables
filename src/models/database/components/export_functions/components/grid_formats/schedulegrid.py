@@ -3,6 +3,7 @@ import numpy as np
 import numpy as np
 from typing import List
 
+
         
 class GridLatex:
     def __init__(self):

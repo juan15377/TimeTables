@@ -1,0 +1,160 @@
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor, colortbl}
+\usepackage{lscape}
+\usepackage{array, multirow, multicol}
+\usepackage[margin=0.47in]{geometry} % Adjust margins to 0.5 inches
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{adjustbox}
+\usepackage[table,xcdraw]{xcolor} % Para colores en las tablas
+\usepackage{enumitem} % Para personalizar las listas
+\usepackage{stackengine}
+\usepackage{graphicx}
+\usepackage[nottoc,notlof,notlot]{tocbibind}
+\usepackage{tocloft}
+
+% Define a new command for subsubsubsections
+\newcommand{\subsubsubsection}[1]{ \paragraph{#1}\mbox{}\\ }
+
+% Adjust the depth of numbered sections
+\setcounter{secnumdepth}{4}
+
+% Adjust the depth of sections in the table of contents
+\setcounter{tocdepth}{4} 
+
+\renewcommand{\cfttoctitlefont}{\Large\bfseries}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{10pt}
+\setlength{\cftbeforesecskip}{0pt}
+\setlength{\cftparskip}{0pt}
+
+\begin{document}
+
+% Configuración de la numeración de página para el índice
+\pagenumbering{roman}
+%\setcounter{page}{1}
+
+
+\tableofcontents
+\clearpage  % Asegura un salto de página limpio
+
+% Reiniciar numeración de página para el contenido principal
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+
+\subsection{Aula 1}
+\vspace*{.1cm}
+
+\begin{flushright}
+{\LARGE \textbf{Classroom}: Aula 1}
+\end{flushright}
+\vspace{1cm}
+
+\begin{table}[ht]\centering\small\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}\hline\cellcolor{black}\textcolor{white}{Horas} & \cellcolor{black}\textcolor{white}{Lunes} & \cellcolor{black}\textcolor{white}{Martes} & \cellcolor{black}\textcolor{white}{Miércoles} & \cellcolor{black}\textcolor{white}{Jueves} & \cellcolor{black}\textcolor{white}{Viernes} & \cellcolor{black}\textcolor{white}{Sábado} & \cellcolor{black}\textcolor{white}{Domingo} \\
+\cline{1-8} 
+\textbf{7:00-7:30} & \cellcolor[RGB]{221,212,227} & \cellcolor[RGB]{221,212,227} & \multirow{-1}{*}{\cellcolor[RGB]{252,226,245}\textbf{\small{MATA}}} & \cellcolor[RGB]{232,243,195} &   &   &   \\
+\cline{1-1} \cline{4-4} \cline{6-8} 
+\textbf{7:30-8:00} & \cellcolor[RGB]{221,212,227} & \multirow{-2}{*}{\cellcolor[RGB]{221,212,227} \stackunder{\stackon{\textbf{MATA}}{\scalebox{0.9}{\tiny 7:00AM}}}{\scalebox{0.9}{\tiny 8:00AM}}} &   & \cellcolor[RGB]{232,243,195} &   &   &   \\
+\cline{1-1} \cline{3-4} \cline{6-8} 
+\textbf{8:00-8:30} & \multirow{-3}{*}{\cellcolor[RGB]{221,212,227} \stackunder{\stackon{\textbf{MATA}}{\scalebox{0.9}{\tiny 7:00AM}}}{\scalebox{0.9}{\tiny 8:30AM}}} &   &   & \cellcolor[RGB]{232,243,195} &   &   &   \\
+\cline{1-4} \cline{6-8} 
+\textbf{8:30-9:00} &   &   &   & \multirow{-4}{*}{\cellcolor[RGB]{232,243,195} \stackunder{\stackon{\textbf{MATA}}{\scalebox{0.9}{\tiny 7:00AM}}}{\scalebox{0.9}{\tiny 9:00AM}}} &   &   &   \\
+\cline{1-8} 
+\textbf{9:00-9:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{9:30-10:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{10:00-10:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{10:30-11:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{11:00-11:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{11:30-12:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{12:00-12:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{12:30-1:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{1:00-1:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{1:30-2:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{2:00-2:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{2:30-3:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{3:00-3:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{3:30-4:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{4:00-4:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{4:30-5:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{5:00-5:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{5:30-6:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{6:00-6:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{6:30-7:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{7:00-7:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{7:30-8:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{8:00-8:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{8:30-9:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{9:00-9:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\textbf{9:30-10:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\end{tabular}\end{table}
+
+
+\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{4cm}|>{\centering\arraybackslash}m{2.15cm}|>{\centering\arraybackslash}m{1.8cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|}
+\hline
+\textbf{Symbol} & \textbf{Subject} & \textbf{Professor} & \textbf{Hours} & \textbf{Career} & \textbf{Semester} & \textbf{Group} \\
+\hline
+
+\hline
+\cellcolor[rgb]{0.8666666666666667,0.8313725490196079,0.8901960784313725} \textbf{MATA} & Matematicas & Juan & 5 & \begin{itemize}[left=0pt,align=left]\item Actuaria 
+\end{itemize} & \begin{itemize}[left=0pt,align=left]\item Semestre 1 
+\end{itemize} & \begin{itemize}[left=0pt,align=left]\item Grupo A 
+\end{itemize}  \\
+\hline
+
+\hline
+\cellcolor[rgb]{0.9882352941176471,0.8862745098039215,0.9607843137254902} \textbf{MATA} & Matematicas & Juan & 5 & \begin{itemize}[left=0pt,align=left]\item Actuaria 
+\end{itemize} & \begin{itemize}[left=0pt,align=left]\item Semestre 1 
+\end{itemize} & \begin{itemize}[left=0pt,align=left]\item Grupo A 
+\end{itemize}  \\
+\hline
+
+\hline
+\cellcolor[rgb]{0.9098039215686274,0.9529411764705882,0.7647058823529411} \textbf{MATA} & Matematicas & Juan & 5 & \begin{itemize}[left=0pt,align=left]\item Actuaria 
+\end{itemize} & \begin{itemize}[left=0pt,align=left]\item Semestre 1 
+\end{itemize} & \begin{itemize}[left=0pt,align=left]\item Grupo A 
+\end{itemize}  \\
+\hline
+\end{tabular}
+        
+
+\newpage
+
+
+\end{document}

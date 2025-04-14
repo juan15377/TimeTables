@@ -5,11 +5,18 @@ from .subject_latex import SubjectLatex
 
 
 class ProfessorLatex:
-    def __init__(self, professor):
-        self.professor = professor
-        self.name = professor.name
-        self.subjects = professor.get_subjects()
+    def __init__(self, db, id_professor):
+        self.id_professor = id_professor 
+        self.db = db
+        # obtener la informacion del professor
+
         
+
+        self.name = db.professors.get_name(id_professor)
+        self.subjects_ids = db.professors.get_subjects(id_professor)
+        
+
+
     def add_subject(self, subject):
         """Add a subject to the professor's list of subjects."""
         self.subjects.append(subject)
@@ -20,10 +27,12 @@ class ProfessorLatex:
         symbol = SymbologyLatex()
         symbol.type = 1  # Type 1: professor view
 
-        for subject in self.subjects:
-            subject_latex = SubjectLatex(subject, self.professor)
-            grid.add_subject(subject_latex)
-            symbol.add_subject(subject_latex)
+        for id_subject in self.subjects_ids:
+            color = self.db.professors.get_subject_color(self.id_professor)
+            subject_latex = SubjectLatex(self.db, id_subject, color) # ! cambiar
+            
+            grid.add_subject(subject_latex) # ! cambiar 
+            symbol.add_subject(subject_latex) # !cambiar 
 
         grid_string = grid.compile_to_latexstring()
         symbol_string = symbol.to_latex_string()
@@ -47,6 +56,7 @@ class ProfessorLatex:
 
 
 def create_professors_latex(professors):
+
     professors_latex = [ProfessorLatex(professor) for professor in professors]
     """Create the LaTeX string for all professors."""
     result = "\\section{Professors} \n"

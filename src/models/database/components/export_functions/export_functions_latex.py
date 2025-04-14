@@ -57,23 +57,23 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
 
 class ExportFunctionsLatex:
     
-    def __init__(self, database):
-        self.database = database
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
         
     def complete_schedule_in_one_file(self, save_path, file_name):
         
         input_text = f"""
-        {create_professors_latex(self.database.professors.get())}
+        {create_professors_latex(self.db_connection)}
 
-        {create_groups_latex(self.database.groups.get())}
+        {create_groups_latex(self.db_connection)}
         
-        {create_classrooms_latex(self.database.classrooms.get())}
+        {create_classrooms_latex(self.db_connection)}
         
         """
         latex_content = LATEX_TEMPLATE(input_text)
         latex_content_filter = replace_exceptions(latex_content)
         
-        save_latex_to_file_and_compile(latex_content, save_path, file_name)
+        save_latex_to_file_and_compile(latex_content_filter, save_path, file_name)
         
         pass
         
