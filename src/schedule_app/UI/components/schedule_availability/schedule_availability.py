@@ -21,8 +21,8 @@ class HorarioDisponibilidadApp:
         
         self.matrix_button_tags = np.array(
             [[
-              f"button_availability_{i}_{j}" for i in range(7)  
-            ] for j in range(30)]
+              f"button_availability_{hora}_{dia}" for dia in self.DIAS_SEMANA  
+            ] for hora in self.DIAS_SEMANA]
         )
         
         self.crear_temas()
@@ -57,7 +57,7 @@ class HorarioDisponibilidadApp:
                 dpg.add_theme_color(dpg.mvThemeCol_Text, [255, 255, 255, 255])
 
     def toggle_disponibilidad(self, sender, app_data, user_data):
-        dia, hora, val = user_data
+        hora, dia, val = user_data
         self.disponibilidad[dia][hora] = not self.disponibilidad[dia][hora]
         self.actualizar_apariencia_celda(sender, dia, hora)
 
@@ -71,7 +71,7 @@ class HorarioDisponibilidadApp:
         nuevo_estado = not all(self.disponibilidad[dia].values())
         for hora in self.HORAS_DIA:
             self.disponibilidad[dia][hora] = nuevo_estado
-            tag = f"{dia}_{hora}"
+            tag = f"button_availability_{hora}_{dia}"
             if dpg.does_item_exist(tag):
                 self.actualizar_apariencia_celda(tag, dia, hora)
 
@@ -80,19 +80,12 @@ class HorarioDisponibilidadApp:
         nuevo_estado = not all(self.disponibilidad[dia][hora] for dia in self.DIAS_SEMANA)
         for dia in self.DIAS_SEMANA:
             self.disponibilidad[dia][hora] = nuevo_estado
-            tag = f"{dia}_{hora}"
+            tag = f"button_availability_{hora}_{dia}"
             if dpg.does_item_exist(tag):
                 self.actualizar_apariencia_celda(tag, dia, hora)
 
     def guardar_disponibilidad(self):
-        datos = {"profesor_id": self.profesor_id, "disponibilidad": self.disponibilidad}
-        try:
-            with open(f"disponibilidad_profesor_{self.profesor_id}.json", "w") as f:
-                json.dump(datos, f, indent=4)
-            dpg.set_value("estado_guardado", "✓ Guardado correctamente")
-        except Exception as e:
-            dpg.set_value("estado_guardado", f"✗ Error al guardar: {str(e)}")
-
+        "Guardar "
     def cargar_disponibilidad(self):
         cursor = self.db.db_connection.cursor()
         
@@ -109,19 +102,18 @@ class HorarioDisponibilidadApp:
         matrix_availability = np.array(cursor.fetchall())
         matrix_availability = matrix_availability.reshape(30, 7)# 30 hours and 7 days 
         
-        for i in range(self.matrix_button_tags.shape[0]):
-            for j in range(self.matrix_button_tags.shape[1]):
+        for (idx_hour, hour) in enumerate(self.HORAS_DIA):
+            for (idx_day, day) in enumerate(self.DIAS_SEMANA):
                 # cargamos el valor
-                button_tag = self.matrix_button_tags[i, j]
-                availability = matrix_availability[i, j]
+                availability = matrix_availability[idx_hour, idx_day]
+                self.disponibilidad[day][hour] = availability
                 
-                day = self.HORAS_DIA[j]
-                hour = self.DIAS_SEMANA[j]
+                button_tag = f"button_availability_{hour}_{day}"
                 if availability:
                     dpg.configure_item(button_tag, user_data = (hour, day, True))
                     dpg.set_item_theme(button_tag, self.tema_disponible)
                 else:
-                    dpg.configure_item(button_tag, user_data = (hour, day,False))
+                    dpg.configure_item(button_tag, user_data = (hour, day, False))
                     dpg.set_item_theme(button_tag, self.tema_no_disponible)
         pass
         
@@ -154,8 +146,8 @@ class HorarioDisponibilidadApp:
                                 dpg.bind_item_theme(btn, self.tema_dia_seleccionado)
 
                             for (idx_day,dia) in enumerate(self.DIAS_SEMANA):
-                                button_tag = self.matrix_button_tags[idx_hour, idx_day]
-                                btn = dpg.add_button(label=" ", tag=button_tag, callback=self.toggle_disponibilidad,
+                                button_tag = f"button_availability_{hora}_{dia}"
+                                btn = dpg.add_button(label=" ", tag = button_tag, callback=self.toggle_disponibilidad,
                                                     user_data=(dia, hora, True), width=col_width - 10, height=25)
                                 dpg.bind_item_theme(btn, self.tema_no_disponible)
                                 
