@@ -1,7 +1,7 @@
-from src_2.schedule_app.UI.components.color_picker import SubjectColorEditor
+from src.schedule_app.UI.components.color_picker import SubjectColorEditor
 import dearpygui.dearpygui as dpg
-from src_2.schedule_app.database import database_manager
-from src_2.schedule_app.UI.components.slider_slots.slider_slots import DiscreteValueSelector
+from src.schedule_app.database import database_manager
+from src.schedule_app.UI.components.slider_slots.slider_slots import DiscreteValueSelector
 
 dpg.create_context()
 

@@ -244,7 +244,8 @@ def delete_subjects_before_delete(type_, db_connection, id_type):
     if type_ not in valid_types:
         raise ValueError("Tipo no válido")
 
-    query = f"DELETE FROM SUBJECT WHERE ID IN (SELECT ID_SUBJECT FROM {type_}_SUBJECT WHERE ID_CLASSROOM = ?)"
+    query = f"DELETE FROM SUBJECT WHERE ID IN (SELECT ID_SUBJECT FROM {type_}_SUBJECT WHERE ID_{type_} = ?)"
+    print(query)
     cursor.execute(query, (id_type,))
 
 

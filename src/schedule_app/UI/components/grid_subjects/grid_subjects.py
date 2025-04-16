@@ -1,13 +1,13 @@
 import dearpygui.dearpygui as dpg
 import json
 from typing import Dict, List, Tuple, Optional, Any
-from src_2.schedule_app.UI.components.slider_slots.slider_slots import DiscreteValueSelector
+from src.schedule_app.UI.components.slider_slots.slider_slots import DiscreteValueSelector
 
 from .themes import create_blue_theme  # Importa la función, no el tema directo
 from ..color_picker.color_picker import SubjectColorEditor
 from ..list_subjects.subject_selector import SubjectSelector
 #blue_theme = create_blue_theme() 
-from src_2.schedule_app.database import database_manager
+from src.schedule_app.database import database_manager
 
 
 
