@@ -19,11 +19,7 @@ class HorarioDisponibilidadApp:
         self.tema_principal = None
         self.tema_dia_seleccionado = None
         
-        self.matrix_button_tags = np.array(
-            [[
-              f"button_availability_{hora}_{dia}" for dia in self.DIAS_SEMANA  
-            ] for hora in self.DIAS_SEMANA]
-        )
+
         
         self.crear_temas()
         #self.cargar_disponibilidad()
@@ -85,8 +81,20 @@ class HorarioDisponibilidadApp:
                 self.actualizar_apariencia_celda(tag, dia, hora)
 
     def guardar_disponibilidad(self):
-        "Guardar "
-    def cargar_disponibilidad(self):
+        "Guardar la nueva seleccion de disponibilidad"
+        
+        for (idx_hour,hora) in enumerate(self.HORAS_DIA):
+            for (idx_day,dia) in enumerate(self.DIAS_SEMANA):
+                availability = self.disponibilidad[dia][hora]
+                if self.mode == "PROFESSOR":
+                    self.db.professors.update_availability(self.mode_id, idx_hour+1, idx_day+1, availability)
+                elif self.mode == "CLASSROOM":
+                    self.db.classrooms.update_availability(self.mode_id, idx_hour+1, idx_day+1, availability)
+                else:
+                    self.db.groups.update_availability(self.mode_id, idx_hour+1, idx_day+1, availability)
+        
+        
+    def cargar_disponibilidad(self, sender = None, app_data = None, user_data = None):
         cursor = self.db.db_connection.cursor()
         
         query = f"""
@@ -96,7 +104,6 @@ class HorarioDisponibilidadApp:
             ORDER BY ROW_POSITION, COLUMN_POSITION
         """
         
-        print(query)
         cursor.execute(query)
         
         matrix_availability = np.array(cursor.fetchall())
@@ -111,15 +118,14 @@ class HorarioDisponibilidadApp:
                 button_tag = f"button_availability_{hour}_{day}"
                 if availability:
                     dpg.configure_item(button_tag, user_data = (hour, day, True))
-                    dpg.set_item_theme(button_tag, self.tema_disponible)
+                    dpg.bind_item_theme(button_tag, self.tema_disponible)
                 else:
                     dpg.configure_item(button_tag, user_data = (hour, day, False))
-                    dpg.set_item_theme(button_tag, self.tema_no_disponible)
+                    dpg.bind_item_theme(button_tag, self.tema_no_disponible)
         pass
-        
+
     def crear_interfaz(self):
         with dpg.group(horizontal=False):  # <-- Agrupa todo en orden vertical
-            dpg.add_text("Disponibilidad del profesor")
 
             with dpg.child_window(width=-1, height=500, autosize_x=True, horizontal_scrollbar=True):
                 with dpg.table(header_row=True, resizable=False, policy=dpg.mvTable_SizingFixedFit,
@@ -148,30 +154,41 @@ class HorarioDisponibilidadApp:
                             for (idx_day,dia) in enumerate(self.DIAS_SEMANA):
                                 button_tag = f"button_availability_{hora}_{dia}"
                                 btn = dpg.add_button(label=" ", tag = button_tag, callback=self.toggle_disponibilidad,
-                                                    user_data=(dia, hora, True), width=col_width - 10, height=25)
+                                                    user_data=(hora, dia, False), width=col_width - 10, height=25)
                                 dpg.bind_item_theme(btn, self.tema_no_disponible)
                                 
             # Contenido siempre visible debajo
-            dpg.add_spacer(height=10)
-            with dpg.group(horizontal=True):
-                dpg.add_button(label="Guardar", callback=self.guardar_disponibilidad, height=50, width=100)
-                dpg.add_button(label="Guardar", callback=self.guardar_disponibilidad)
-            dpg.add_text("", tag="estado_guardado")
-            
+            with dpg.child_window(width=340, height=80, border=True):
+                with dpg.theme() as button_theme:
+                    with dpg.theme_component(dpg.mvButton):
+                        dpg.add_theme_color(dpg.mvThemeCol_Button, (30, 144, 255, 255))         # Azul bonito
+                        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (65, 150, 255, 255))   # Al pasar el cursor
+                        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (20, 120, 220, 255))    # Al hacer clic
+                        dpg.add_theme_color(dpg.mvThemeCol_Text, (255, 255, 255, 255))           # Texto blanco
+                        dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10)                   # Bordes redondeados
+
+                with dpg.group(horizontal=True):
+                    dpg.add_spacer(width=10)
+                    dpg.add_button(
+                        label="💾 Guardar cambios",
+                        callback=self.guardar_disponibilidad,
+                        height=45,
+                        width=150,
+                        tag="guardar_btn"
+                    )
+                    dpg.bind_item_theme("guardar_btn", button_theme)
+
+                    dpg.add_spacer(width=20)
+
+                    dpg.add_button(
+                        label="🔄 Cargar original",
+                        callback=self.cargar_disponibilidad,
+                        height=45,
+                        width=150,
+                        tag="cargar_btn"
+                    )
+                    dpg.bind_item_theme("cargar_btn", button_theme)
+
+
         self.cargar_disponibilidad()
 
-
-
-if __name__ == "__main__":
-    dpg.create_context()
-    app = HorarioDisponibilidadApp("PROFESSOR", 1, database_manager)
-
-    with dpg.window(label="Disponibilidad de Horarios", tag="main_window"):
-        app.crear_interfaz()
-
-    dpg.create_viewport(title="Disponibilidad", width=700, height=620)
-    dpg.setup_dearpygui()
-    dpg.show_viewport()
-    dpg.set_primary_window("main_window", True)
-    dpg.start_dearpygui()
-    dpg.destroy_context()

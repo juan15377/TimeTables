@@ -44,6 +44,8 @@ def check_availability_subjects_by_new_slot(db_connection, row_position, column_
     AND A.ID_SUBJECT IN ({placeholders})  
     """
     
+    print(query)
+    
     cursor.execute(query, (row_position, len_slot, column_position, *ids_subjects))
     if not cursor.fetchone() is None:
         raise Exception("Alguna materia no permite la inserccion del slot")
@@ -313,14 +315,18 @@ class BaseManager:
     def update_availability(self, id_type, row_position, column_position, new_val):
 
         cursor = self.db_connection.cursor()
-
-        cursor.execute(f""""
-            UPDATE FROM {self.type_}_AVAILABILITY SET VAL = {"TRUE" if new_val else "FALSE"} 
+        query = f"""
+            UPDATE {self.type_}_AVAILABILITY
+            SET VAL = {"TRUE" if new_val else "FALSE"}
             WHERE ID_{self.type_} = {id_type} AND 
-            ROW_POSITION = {row_position} AND  COLUMN_POSITION = {column_position}
-        """)
+                ROW_POSITION = {row_position} AND 
+                COLUMN_POSITION = {column_position}
+        """
+
+        cursor.execute(query)
 
         self.db_connection.commit()
+
 
         delete_subject_slots_after_update_availability(self.db_connection, self.type_, id_type, row_position, column_position, new_val)
 
@@ -641,8 +647,21 @@ class SubjectsManager:
                 INSERT INTO SUBJECT_SLOTS(ID_SUBJECT, ROW_POSITION, COLUMN_POSITION, LEN) VALUES (?, ?, ?, ?);
                        """, (id_subject, row_position, column_position, len_slot))
         
+        id_new_slot = cursor.lastrowid
+
         self.db_connection.commit()
         print("Nueva slot insertado")
+        return id_new_slot
+    
+    def remove_slot(self, id_slot):
+        cursor = self.db_connection.cursor()
+        print("PUTO !)", id_slot)
+        cursor.execute(f"""
+            DELETE FROM SUBJECT_SLOTS
+            WHERE ID_SLOT = {id_slot}   
+        """)
+
+        self.db_connection.commit()
 
     def get_matrix_of_allocated_slots(self, id_subject):
         initial_matrix = np.full((30,7), False)

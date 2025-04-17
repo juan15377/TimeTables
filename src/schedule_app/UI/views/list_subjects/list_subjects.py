@@ -742,10 +742,6 @@ def crear_interfaz_principal():
             # Definir columnas
             dpg.add_table_column(label="Código", width_fixed=True, width=100)
             dpg.add_table_column(label="Nombre", width_stretch=True, init_width_or_weight=300)
-            dpg.add_table_column(label="Slots", width_fixed=True, width=180)
-            dpg.add_table_column(label="Profesor", width_fixed=True, width=180)
-            dpg.add_table_column(label="Aula", width_fixed=True, width=100)
-            dpg.add_table_column(label="Grupos", width_stretch=True, init_width_or_weight=150)
             dpg.add_table_column(label="Acciones", width_fixed=True, width=120)
 
 # Código para iniciar la aplicación

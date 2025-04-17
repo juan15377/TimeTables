@@ -2,6 +2,26 @@ import dearpygui.dearpygui as dpg
 from src.schedule_app.UI.components.grid_subjects.grid_subjects import ScheduleGrid
 from src.schedule_app.database import database_manager
 
+with dpg.theme() as tema_optimizado:
+    with dpg.theme_component(dpg.mvAll):
+        dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 8, 6)
+        dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 10, 6)
+        dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 8, 5)
+        dpg.add_theme_style(dpg.mvStyleVar_WindowPadding, 12, 12)
+        dpg.add_theme_style(dpg.mvStyleVar_ScrollbarSize, 14)
+        dpg.add_theme_color(dpg.mvThemeCol_FrameBg, (50, 50, 50))
+        dpg.add_theme_color(dpg.mvThemeCol_Button, (70, 70, 140))
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (90, 90, 170))
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (110, 110, 200))
+    
+    with dpg.theme_component(dpg.mvTable):
+        dpg.add_theme_color(dpg.mvThemeCol_Header, (70, 70, 140))
+        dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, (90, 90, 160))
+        dpg.add_theme_color(dpg.mvThemeCol_HeaderActive, (110, 110, 180))
+        dpg.add_theme_color(dpg.mvThemeCol_TableRowBg, (40, 40, 50))
+        dpg.add_theme_color(dpg.mvThemeCol_TableRowBgAlt, (50, 50, 60))
+
+
 class SelectorBase:
     """Base class for selectors with common functionality"""
     def __init__(self, db, entity_type, callback=None):
@@ -52,6 +72,8 @@ class SelectorBase:
                 user_data=self.items[0] if self.items else "",
                 callback=self._on_selection_change
             )
+            
+            dpg.bind_item_theme(self.selector_tag, tema_optimizado)
 
     def _load_items(self):
         """Load items from database"""

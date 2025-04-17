@@ -82,7 +82,7 @@ class ScheduleGrid:
             green = slot[7]
             blue = slot[8]
             
-            self.add_subject_block(column_position-1, row_position-1, 1, len_slot, code, (red, green, blue), add_in_database = False)
+            self.add_subject_block(column_position-1, row_position-1, 1, len_slot, id_slot, code, (red, green, blue), add_in_database = False)
         pass
         
     
@@ -211,7 +211,7 @@ class ScheduleGrid:
                             height=self.cell_height,
                             tag=cell_id,
                             callback=self.cell_clicked,
-                            user_data=(day_idx, hour_idx)
+                            user_data=(day_idx, hour_idx, None)
                         )
                         dpg.bind_item_theme(cell_id, self.themes["default"])
     
@@ -219,7 +219,9 @@ class ScheduleGrid:
         """
         Manejar el clic en una celda según el modo de edición actual
         """
-        day_idx, hour_idx = user_data
+        day_idx, hour_idx, id_block = user_data
+        
+        print("PUTO", id_block)
         
         if self.edit_mode == "add":
             # Ancho fijo siempre a 1
@@ -231,14 +233,15 @@ class ScheduleGrid:
             # Verificar si el espacio está disponible
             if self.check_space_available(day_idx, hour_idx, width, height):
                 # Obtener información de la materia
+                subject_id = self.subject_selector.get_id()
                 subject_name = self.subject_selector.get_code()
                 color_values = self.subject_selector.get_subject_color()
                 color = tuple(int(c) for c in color_values[:3])
+                new_id_block = self.db.subjects.new_slot(subject_id, hour_idx + 1, day_idx + 1, height)
                 #color = (100, 100, 100)
-                print("COLOR = ", color)
                 
                 # Añadir el bloque
-                self.add_subject_block(day_idx, hour_idx, width, height, subject_name, color)
+                self.add_subject_block(day_idx, hour_idx, width, height, new_id_block, subject_name, color)
             else:
                 #self.update_status("Error: El espacio seleccionado no está disponible")
                 pass
@@ -246,10 +249,15 @@ class ScheduleGrid:
         elif self.edit_mode == "delete":
             # Buscar y eliminar bloques en esta posición
             self.delete_blocks_at(day_idx, hour_idx)
+            # borrar en la base de datos
+            print("PUTO #", id_block)
+            self.db.subjects.remove_slot(id_block)
+            self.subject_selector.update_bar_progress()
+            self.subject_selector.update_subject_slots()
         
         elif self.edit_mode == "move":
             # Seleccionar bloque para mover
-            block = self.find_block_at(day_idx, hour_idx)
+            block = self.find_block_at(day_idx, hour_idx, height)
             if block:
                 self.select_block(block)
             elif self.selected_block:
@@ -274,7 +282,7 @@ class ScheduleGrid:
                 else:
                     self.update_status("Error: No se puede mover a esa posición")
     
-    def add_subject_block(self, day: int, hour: int, width: int, height: int, 
+    def add_subject_block(self, day: int, hour: int, width: int, height: int, id : int,
                         subject: str, color: Tuple[int, int, int], details: Dict = None, add_in_database = True):
         """
         Añadir un bloque de materia en la posición, tamaño y color especificados
@@ -304,6 +312,7 @@ class ScheduleGrid:
         
         # Crear el bloque
         block = {
+            "id" : id,
             "day": day,
             "hour": hour,
             "width": width,
@@ -314,6 +323,10 @@ class ScheduleGrid:
             "details": details
         }
         
+        if add_in_database:
+            id_subject_selected = self.subject_selector.get_id()
+            self.db.subjects.new_slot(id_subject_selected, hour+1, day + 1, height)
+
         # Guardar el bloque en la lista
         self.blocks.append(block)
         
@@ -325,9 +338,6 @@ class ScheduleGrid:
         self.subject_selector.update_bar_progress()
         
         
-        if add_in_database:
-            id_subject_selected = self.subject_selector.get_id()
-            self.db.subjects.new_slot(id_subject_selected, hour+1, day + 1, height)
 
     def render_block(self, block: Dict):
         """Renderizar un bloque de materia en la UI"""
@@ -335,6 +345,7 @@ class ScheduleGrid:
         width, height = block["width"], block["height"]
         subject = block["subject"]
         theme_key = block["theme"]
+        id = block["id"]
         
         # Si el bloque abarca múltiples celdas, ocultar las celdas individuales
         # excepto la primera, que se redimensionará
@@ -348,7 +359,9 @@ class ScheduleGrid:
         dpg.configure_item(main_cell_id, 
                           width=total_width,
                           height=total_height,
-                          label=subject,)
+                          label=subject,
+                          user_data = (day, hour, id),
+                          callback = self.cell_clicked)
         
         # Aplicar tema
         dpg.bind_item_theme(main_cell_id, self.themes[theme_key])
@@ -520,10 +533,18 @@ class ScheduleGrid:
     
     def update_status(self, message: str):
         """Actualizar el mensaje de la barra de estado"""
-        dpg.set_value("status_text", message) 
+        #dpg.set_value("status_text", message) 
         
 
     def set_id_mode(self, id_mode):
+        self.mode_id = id_mode
+        self.clear_all_blocks()
         self.subject_selector.set_id_mode(id_mode)
+        self.display_all_blocks()
         print("cambio de id")
+        pass
+    
+    def set_mode(self, new_mode, mode_id):
+        self.mode = new_mode
+        self.set_id_mode(mode_id)
         pass

@@ -3,7 +3,7 @@ import random
 import time
 from typing import List, Dict, Callable, Optional, Any
 from src.schedule_app.database import database_manager
-
+from src.schedule_app.UI.components.schedule_availability.schedule_availability import HorarioDisponibilidadApp
 class GestorEntidad:
     """Clase base para gestionar entidades (profesores, aulas, etc.)"""
     
@@ -621,27 +621,14 @@ class ClassroomsManager(GestorEntidad):
         if dpg.does_item_exist(ventana_tag):
             dpg.delete_item(ventana_tag)
         
+        hor_clas = HorarioDisponibilidadApp("CLASSROOM", clas_id, self.db)
+        
         with dpg.window(modal=True, show=True, tag=ventana_tag, 
                        label=f"Disponibilidad de {classroom['name']}", 
-                       width=500, height=400, pos=[200, 200]):
-            dpg.add_text("Esta ventana permitirá definir la disponibilidad horaria del profesor.")
-            dpg.add_spacer(height=10)
+                       width=670, height=650, pos=[200, 200]):
             
-            dpg.add_text("Aquí se implementará un calendario o una grilla de horarios.")
-            dpg.add_spacer(height=20)
-            
-            # Solo como demostración - Aquí irían los controles reales
-            with dpg.child_window(height=200, border=True):
-                dpg.add_text(f"Profesor: {classroom['name']} (ID: {classroom['id']})")
-                dpg.add_text("Funcionalidad de disponibilidad a implementar.")
-            
-            dpg.add_spacer(height=20)
-            with dpg.group(horizontal=True):
-                dpg.add_button(
-                    label="Cerrar",
-                    callback=lambda: dpg.delete_item("ventana_disponibilidad"),
-                    width=150
-                )
+            hor_clas.crear_interfaz()
+ 
 
 dpg.create_context()
 
