@@ -1,8 +1,45 @@
-.qodo
-.lib64
-.lib 
-.build
-.dist
-.etc 
-.share
-.bin 
+# Entorno virtual
+venv/
+env/
+.env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+.Python
+pyvenv.cfg
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Archivos de distribución y build
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+
+# Archivos de VS Code (si usas este editor)
+.vscode/
+*.code-workspace
+
+# Archivos de PyCharm (si usas este editor)
+.idea/
+*.iml
+
+# Archivos de Jupyter Notebook
+.ipynb_checkpoints
+
+# Archivos de log y bases de datos
+*.log
+*.sqlite3
+*.db
+
+# Archivos temporales del sistema
+.DS_Store
+Thumbs.db
