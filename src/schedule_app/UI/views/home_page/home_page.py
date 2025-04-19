@@ -47,7 +47,7 @@ clas_man = ClassroomsManager(database_manager)
 
 # Ventana secundaria
 with dpg.window(label="Ventana Secundaria", tag="ventana_secundaria", show=False, width=800, height=600):
-    clas_man.crear_interfaz("main_window")
+    #clas_man.crear_interfaz("main_window")
     dpg.add_text("¡Hola desde la ventana secundaria!")
     dpg.add_button(label="Cerrar", callback=close_secondary_window)
     
@@ -102,17 +102,28 @@ with dpg.window(label="Window", tag="main_window"):
         with dpg.tab_bar(tag="test_tab_bar"):
             # Tab Professor
             with dpg.tab(label="Professor", tag="test_tab_1"):
-                    # Selector de profesores
-                prof.setup_ui("test_tab_1")
-                    
-                    # Espacio entre componentes
-                dpg.add_spacer(height=10)
+                
+                # Tab bar con sus contenidos
+                with dpg.tab_bar(tag="test_tab_professor_grid"):
+                    # Tab Professor
+                    with dpg.tab(label="Professor", tag="bar_grid"):
+                        prof.setup_ui("bar_grid")
+                        
+                    with dpg.tab(label="lista professores", tag="bar_list_professor"):
+                        clas_man.crear_interfaz("bar_list_professor")
+                        
                     
                     # Administrador de aulas dentro del tab de profesores
             # Tab Grupo
             with dpg.tab(label="Grupo", tag="test_tab_2"):
-                group.setup_ui("test_tab_2")
-                
+                with dpg.tab_bar(tag="test_tab_groups_grid"):
+                    # Tab Professor
+                    with dpg.tab(label="Professor", tag="bar_grid_grupos"):
+                        group.setup_ui("bar_grid_grupos")
+                        
+                    with dpg.tab(label="lista professores", tag="bar_list_grupos"):
+                        #clas_man.crear_interfaz("bar_list_professor")
+                        dpg.add_button(label = "HOLA")
             # Tab Aula
             with dpg.tab(label="Aula", tag="test_tab_3"):
                 clas.setup_ui("main_window")
@@ -127,3 +138,4 @@ dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.start_dearpygui()
 dpg.destroy_context()
+

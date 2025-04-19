@@ -1,16 +1,9 @@
 import dearpygui.dearpygui as dpg
 import json
 from typing import Dict, List, Tuple, Optional, Any
-from src.schedule_app.UI.components.slider_slots.slider_slots import DiscreteValueSelector
-
 from .themes import create_blue_theme  # Importa la función, no el tema directo
-from ..color_picker.color_picker import SubjectColorEditor
 from ..list_subjects.subject_selector import SubjectSelector
-#blue_theme = create_blue_theme() 
 from src.schedule_app.database import database_manager
-
-
-
 class ScheduleGrid:
     """
     Clase principal para gestionar una cuadrícula de horarios con materias personalizables.
@@ -133,7 +126,8 @@ class ScheduleGrid:
                 
             with dpg.child_window(tag="grid_container", height=-30, parent="main_content"):
                 self.build_grid()
-            self.display_all_blocks()
+                self.display_all_blocks()
+                
                     
 
         
@@ -230,7 +224,7 @@ class ScheduleGrid:
                             height=self.cell_height,
                             tag=cell_id,
                             callback=self.cell_clicked,
-                            user_data=(day_idx, hour_idx, None, None)
+                            user_data=(day_idx, hour_idx)
                         )
                         dpg.bind_item_theme(cell_id, self.themes["default"])
     
@@ -254,6 +248,7 @@ class ScheduleGrid:
                 subject_id = self.subject_selector.get_id()
                 subject_name = self.subject_selector.get_code()
                 color_values = self.subject_selector.get_subject_color()
+                
                 color = tuple(int(c) for c in color_values[:3])
                 new_id_block = self.db.subjects.new_slot(subject_id, hour_idx + 1, day_idx + 1, height)
                 if new_id_block == None:
@@ -273,6 +268,11 @@ class ScheduleGrid:
             self.db.subjects.remove_slot(id_block)
             self.subject_selector.update_bar_progress()
             self.subject_selector.update_subject_slots()
+            
+            print(self.categories.keys())
+            print(self.categories[id_subject])
+            self.categories[id_subject].remove(f"cell_{day_idx}_{hour_idx}")
+            print(id_subject)
                     # Primero verificar si la clave existe en el diccionario
             #if id_subject in self.categories:
             #    # Si existe, añadir el elemento al conjunto
@@ -358,9 +358,11 @@ class ScheduleGrid:
         self.render_block(block)
         
         # Primero verificar si la clave existe en el diccionario
+        print("EL ID_SUBJECT INSERCCION ", id_subject)
         if id_subject in self.categories.keys():
             # Si existe, añadir el elemento al conjunto
             self.categories[id_subject].add(f"cell_{day}_{hour}")
+            f"Se anadio el bloque {id_block} en la materia {id_subject}"
         else:
             # Si no existe, crear un nuevo conjunto con ese elemento
             self.categories[id_subject] = {f"cell_{day}_{hour}"}        
@@ -398,7 +400,6 @@ class ScheduleGrid:
         
         # Aplicar tema
         dpg.bind_item_theme(main_cell_id, self.themes[theme_key])
-        
         
         # Ocultar las demás celdas que están dentro del bloque (solo verticalmente)
         for h in range(hour, hour + height):
@@ -583,7 +584,7 @@ class ScheduleGrid:
         print(new_color)
         theme = self.create_subject_theme((red*255, green*255, blue*255)) # ! Format In range (0,255)
         
-        print(self.categories.keys())
+        print("ID SUBJECT A CAMBIAR", id_subject)
         for cell_tag in self.categories[id_subject]:
             dpg.bind_item_theme(cell_tag, theme)
 
