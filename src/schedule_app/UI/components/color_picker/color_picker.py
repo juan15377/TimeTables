@@ -2,15 +2,31 @@ import dearpygui.dearpygui as dpg
 from typing import Tuple, Optional
 
 class SubjectColorEditor:
-    def __init__(self,id_mode, id_subject, db, change_color_callback, mode = "PROFESSOR",  default_color: Tuple[int, int, int] = (255, 255, 255)):
-        """
-        Editor de color simple y robusto
+
+    """
+    Component responsible for managing the color of subjects.
+
+    This component allows the registration of callback, both following the standard Dear PyGui signature:
+        callback(sender, app_data, user_data)
+
+    Callbacks:
+    - change_color_callback: Triggered when the selected color changes.
+      - Sender = "color_picker_subject" 
+      - app_data = color_selected of Sender (example : [.1, .1, .1, 1])
+      - user_data = id of subject Selected (Example : 1)
+
+
+    Parameters:
+    - mode (str): One of ["PROFESSOR", "CLASSROOM", "GROUP"], indicating the context in which the component is used.
+    - id_mode (int): The identifier corresponding to the selected mode.
+    - db: Instance of the database manager used to handle subject-related data.
+    """
+    
+    def __init__(self, id_mode, id_subject, db, change_color_callback, mode = "PROFESSOR",  default_color: Tuple[int, int, int] = (255, 255, 255)):
+
         
-        Args:
-            default_color: Color inicial en formato RGB (ej: (255, 0, 0))
-        """
         self._current_color = default_color
-        self._color_picker_tag = f"color_picker_{id(self)}"
+        self._color_picker_tag = f"color_picker_subject"
         self._preview_tag = f"color_preview_{id(self)}"
         self._group_tag = f"color_group_{id(self)}"
         self._parent = None
@@ -28,14 +44,14 @@ class SubjectColorEditor:
         if dpg.does_item_exist(self._group_tag):
             dpg.delete_item(self._group_tag)
         
-
-            # Color Picker
+        # Color Picker
         dpg.add_color_edit(
                 default_value=self._current_color + (255,),
                 tag=self._color_picker_tag,
                 no_alpha=True,
                 callback=self._on_color_changed,
-                width=300
+                width=300,
+                user_data=self.id_subject
         )
 
     def _draw_preview(self):
@@ -49,14 +65,14 @@ class SubjectColorEditor:
                 color=self._current_color
             )
 
-    def _on_color_changed(self, sender, app_data):
+    def _on_color_changed(self, sender, app_data, user_data):
         """Maneja cambios de color"""
         
         self._current_color = app_data[:3]
         self._draw_preview()
         
-        self.change_color_callback(sender, app_data, 1)
-    
+        self.change_color_callback(sender, app_data, user_data)
+
     def get_color(self) -> Tuple[int, int, int]:
         """Obtiene el color actual de forma confiable"""
         if dpg.does_item_exist(self._color_picker_tag):
@@ -73,3 +89,9 @@ class SubjectColorEditor:
             self._draw_preview()
             
             
+    def set_id_subject(self, id_subject):
+        print("CAMBIO de ID a ", id_subject)
+        dpg.set_item_user_data(self._color_picker_tag, id_subject)
+        self.id_subject = id_subject
+        pass
+    

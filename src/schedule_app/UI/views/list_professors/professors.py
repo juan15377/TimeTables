@@ -629,23 +629,23 @@ class ClassroomsManager(GestorEntidad):
             
             hor_clas.crear_interfaz()
  
-
-dpg.create_context()
-
-professors_manager = GestorProfesores(database_manager)
-classrooms_manager = ClassroomsManager(database_manager)
-
-with dpg.window(label="Window", tag="main_window"):
-    # Tab bar (asegúrate de que los tags de los tabs sean strings únicos)
-    
-    #professors_manager.crear_interfaz(parent_tag= "main_window")
-    classrooms_manager.crear_interfaz(parent_tag= "main_window")
-    
-        
-
-dpg.create_viewport(title="Switch entre Tabs", width=1000, height=800)
-dpg.set_primary_window("main_window", True)
-dpg.setup_dearpygui()
-dpg.show_viewport()
-dpg.start_dearpygui()
-dpg.destroy_context()
+#
+#dpg.create_context()
+#
+#professors_manager = GestorProfesores(database_manager)
+#classrooms_manager = ClassroomsManager(database_manager)
+#
+#with dpg.window(label="Window", tag="main_window"):
+#    # Tab bar (asegúrate de que los tags de los tabs sean strings únicos)
+#    
+#    #professors_manager.crear_interfaz(parent_tag= "main_window")
+#    classrooms_manager.crear_interfaz(parent_tag= "main_window")
+#    
+#        
+#
+#dpg.create_viewport(title="Switch entre Tabs", width=1000, height=800)
+#dpg.set_primary_window("main_window", True)
+#dpg.setup_dearpygui()
+#dpg.show_viewport()
+#dpg.start_dearpygui()
+#dpg.destroy_context()

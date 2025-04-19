@@ -32,26 +32,36 @@ def intersect_slot(row_position_1: int, len_slot_1: int, row_position_2: int, le
 
 
 def check_availability_subjects_by_new_slot(db_connection, row_position, column_position, len_slot, ids_subjects):
-    cursor = db_connection.cursor()
-    
-    # Crear placeholders para evitar SQL injection
+    # Asegurar que sea lista de enteros
+    if isinstance(ids_subjects, str):
+        ids_subjects = [int(x.strip()) for x in ids_subjects.split(',')]
+
+    if not ids_subjects:
+        return False
+
     placeholders = ','.join(['?'] * len(ids_subjects))
-    
+
     query = f"""
     SELECT 1 FROM SUBJECT_SLOTS A
-    WHERE is_intersect(A.ROW_POSITION, A.LEN, ?, ?)  -- Llamada correcta a la función en SQL
+    WHERE (
+        A.ROW_POSITION = ?
+        OR (A.ROW_POSITION > ? AND (? + ?) > A.ROW_POSITION)
+        OR (A.ROW_POSITION < ? AND (A.ROW_POSITION + A.LEN) > ?)
+    )
     AND A.COLUMN_POSITION = ?
-    AND A.ID_SUBJECT IN ({placeholders})  
+    AND A.ID_SUBJECT IN ({placeholders})
     """
-    
-    print(query)
-    
-    cursor.execute(query, (row_position, len_slot, column_position, *ids_subjects))
-    if not cursor.fetchone() is None:
-        raise Exception("Alguna materia no permite la inserccion del slot")
 
-    return cursor.fetchone() is None  # Si no hay conflicto, está disponible
+    params = [
+        row_position, row_position, row_position, len_slot,
+        row_position, row_position, column_position
+    ] + ids_subjects
 
+    cursor = db_connection.cursor()
+    cursor.execute(query, params)
+    dato = cursor.fetchone()
+    print("DATO =", dato)
+    return cursor.fetchone() is None
 
 import sqlite3
 from typing import List
@@ -334,6 +344,9 @@ class BaseManager:
         pass
 
     def get_subject_color(self, id_subject):
+        
+        if id_subject == None:
+            return None
         cursor = self.db_connection.cursor()
 
         cursor.execute(f"""
@@ -587,6 +600,8 @@ class SubjectsManager:
 
         if not len_slot in get_available_slots_subject(self.db_connection, id_subject):
             print("El tamaño del slot no cumple con los requerimientos")
+            print(len_slot)
+            print(get_available_slots_subject(self.db_connection, id_subject))
             return None
 
         cursor.execute(F"""
@@ -655,7 +670,6 @@ class SubjectsManager:
     
     def remove_slot(self, id_slot):
         cursor = self.db_connection.cursor()
-        print("PUTO !)", id_slot)
         cursor.execute(f"""
             DELETE FROM SUBJECT_SLOTS
             WHERE ID_SLOT = {id_slot}   
@@ -676,11 +690,13 @@ class SubjectsManager:
         """)
 
         slots_subject = cursor.fetchall()
+        print(slots_subject)
 
         for slot in slots_subject:
-            row_position = slot[1]
-            column_position = slot[2]
-            len_slot = slot[3]
+            row_position = slot[2]
+            column_position = slot[3]
+            len_slot = slot[4]
+            
             initial_matrix[row_position-1:row_position+len_slot-1, column_position-1] = True
         
         return initial_matrix
@@ -765,6 +781,16 @@ class DataBaseManager:
 
         # Cerrar conexiones
         destino.close()
+        
+    def execute_query(self, query, parameters = None):
+        cursor = self.db_connection.cursor()
+        
+        if parameters == None:
+            cursor.execute(query)
+        else:
+            cursor.execute(query, parameters)
+
+        return cursor
 
     def import_database(self, database_path):
         try:

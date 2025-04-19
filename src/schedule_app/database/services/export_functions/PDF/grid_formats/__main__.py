@@ -52,7 +52,7 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
         # Verificar si la compilación fue exitosa
     finally:
         # Eliminar archivos temporales generados por pdflatex
-        latex_files = [f'{file_name}.tex', f'{file_name}.aux', f'{file_name}.log', f'{file_name}.out', 
+        latex_files = [f'{file_name}.aux', f'{file_name}.log', f'{file_name}.out', 
                        f'{file_name}.toc', f'{file_name}.fls', f'{file_name}.synctex.gz']
         
         for file in latex_files:

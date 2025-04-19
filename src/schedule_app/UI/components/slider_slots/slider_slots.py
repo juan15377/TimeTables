@@ -1,9 +1,9 @@
 import dearpygui.dearpygui as dpg
 
 class DiscreteValueSelector:
-    def __init__(self, allowed_values, window_tag, slider_tag):
+    def __init__(self, allowed_values, slider_tag):
         self.allowed_values = allowed_values
-        self.window_tag = window_tag
+        self.window_tag = "main_window"
         self.slider_tag = slider_tag 
         self.display_tag = "value_display"
 
@@ -34,7 +34,7 @@ class DiscreteValueSelector:
     def set_allowed_values(self, new_allowed_values):
         """Actualiza los valores permitidos y reinicia el selector"""
         if not new_allowed_values:
-            raise ValueError("La lista de valores no puede estar vacía")
+            new_allowed_values = [0]
             
         self.allowed_values = new_allowed_values
         

@@ -10,6 +10,8 @@ dpg.create_context()
 #    pass
 
 
+
+
 SUBJECT_SELECTOR_TAGS = {
     "progress_bar_subject" : "progress_bar_subject",
     "subject_selector" : "subject_selector",
@@ -24,7 +26,13 @@ class SubjectSelector:
 
     Callbacks:
     - on_subject_change: Triggered when the selected subject changes.
+      - Sender = "subject_selector" 
+      - app_data = value selected of Sender (example  : "Matematicas Actuariales MATACT ID = 1)
+      - user_data = id of subject Selected (Example : 1)
     - on_color_change: Triggered when the color of a specific subject is modified.
+      -  Sender = "subject_color_editor" 
+      -  app_data = color selected (example [0.1, 0.1, 0.1, 1])
+      -  user_data = id of subject selected (example 1)
 
     Parameters:
     - mode (str): One of ["PROFESSOR", "CLASSROOM", "GROUP"], indicating the context in which the component is used.
@@ -67,7 +75,10 @@ class SubjectSelector:
         subjects_display = [f"{name} {code} ID = {id_}" for id_, name, code in self.subjects_data]
         
         dpg.configure_item("subject_selector", items=subjects_display)
-        dpg.configure_item("subject_selector", default_value=subjects_display[0] if subjects_display else "")
+        dpg.set_value("subject_selector", subjects_display[0] if subjects_display else "")
+        # llamamos al callback manualmente
+        self.subject_changed_callback("subject_selector", subjects_display[0] if subjects_display else "", self.get_id() )
+        self.color_editor.set_id_subject(self.get_id())
 
         pass
         
@@ -75,8 +86,7 @@ class SubjectSelector:
         "change the id_mode preserving mode"
         self.id_mode = new_id_mode
         
-        #actualizamos las materias
-        
+        #actualizamos las materias dependiendo del modo 
         if self.mode == "PROFESSOR":
             self.ids_subjects = self.db.professors.get_subjects(self.id_mode)
         elif self.mode == "CLASSROOM":
@@ -110,19 +120,21 @@ class SubjectSelector:
                 items=[""],
                 default_value="",
                 tag="subject_selector",
-                width=400,
+                width=530,
                 callback=self.on_change_subject_selected,
                 user_data=1,
             )
             # despues de crear el objecto lo actualizamos
-            self.update_subjects_display()
-                        
-            self.slots_selector = DiscreteValueSelector([0], parent, "slots_subject")
+            
+            self.slots_selector = DiscreteValueSelector([0], "slots_subject")
             
             color = self.get_subject_color()
             dpg.add_text("  Color:")
             self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, default_color=color)
             self.color_editor.setup_ui(parent=parent)
+            
+            self.update_subjects_display()
+
 
         with dpg.group(parent=parent, horizontal=True):
             dpg.add_spacer(width=10)
@@ -148,7 +160,6 @@ class SubjectSelector:
         self.slots_selector.set_allowed_values(allowed_slots)
         pass
 
-    # 🔽 Nuevos métodos
     def get_selected_subject_index(self):
         selected = dpg.get_value("subject_selector")
         for i, (id_, name, code) in enumerate(self.subjects_data):
@@ -183,18 +194,23 @@ class SubjectSelector:
         else:
             color = self.db.groups.get_subject_color(id_subject)
         print("EL COLOR QUE ARROJA", color)
+        if color == None:
+            color = (0, 0, 0)
         return color
         pass
 
-    def on_change_subject_selected(self, sender, app_data, user_data):
+    def on_change_subject_selected(self, sender, app_data, user_data, force = True):
         self.subject_changed_callback(sender, app_data, user_data)
         
         
         self.update_subject_slots()
+        self.update_bar_progress()
         
         if self.mode == "PROFESSOR":
             color = self.db.professors.get_subject_color(self.get_id())
+        self.color_editor.set_id_subject(self.get_id())
         self.color_editor.set_color(color)
+        
         pass
 
     def on_change_color_subject(self, sender, app_data, user_data):
@@ -211,6 +227,7 @@ class SubjectSelector:
         red = color[0]
         green = color[1]
         blue = color[2]
+
                 
         if self.mode == "PROFESSOR":
             self.db.professors.set_subject_color(id_mode, id_subject, red, green, blue)
@@ -222,6 +239,10 @@ class SubjectSelector:
     def get_progress_subject(self):
         
         cursor = self.db.db_connection.cursor()
+        
+        if self.get_id() == None:
+            # ! el valor por defecto cuando un professor no tiene ninguna materia
+            return 1
         
         cursor.execute(f"""
             SELECT TOTAL_SLOTS
