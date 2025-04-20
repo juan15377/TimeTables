@@ -1,4 +1,4 @@
-from src.schedule_app.database import database_manager 
+from src.app.database import database_manager 
 
 #for i in range(1000):
 #    database_manager.professors.new(str(i))
