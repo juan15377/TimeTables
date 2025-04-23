@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple, Optional, Any
 from .themes import create_blue_theme  # Importa la función, no el tema directo
 from ..list_subjects.subject_selector import SubjectSelector
 from src.app.database import database_manager
+
 class ScheduleGrid:
     """
     Clase principal para gestionar una cuadrícula de horarios con materias personalizables.
@@ -39,6 +40,7 @@ class ScheduleGrid:
         self.blocks = []
         
         # Temas
+        #? themes get by id_subject
         self.themes = {}
         
         self.categories = {}
@@ -51,10 +53,8 @@ class ScheduleGrid:
         
     def display_all_blocks(self):
         
-        #extraigo todos los bloques asignados a esta grilla 
-        cursor = self.db.db_connection.cursor()
-        
-        cursor.execute(f"""
+        #extract all block in this grid
+        cursor = self.db.execute_query(f"""
             SELECT A.ID_SLOT, A.ID_SUBJECT, A.ROW_POSITION, A.COLUMN_POSITION, A.LEN, 
                 B.CODE, C.RED, C.GREEN, C.BLUE
             FROM SUBJECT_SLOTS A
@@ -63,8 +63,9 @@ class ScheduleGrid:
             WHERE A.ID_SUBJECT IN (
                 SELECT ID_SUBJECT FROM {self.mode}_SUBJECT 
                 WHERE ID_{self.mode} = {self.mode_id}
-            )
+            )    
         """)
+ 
         
         for slot in cursor:
             id_slot = slot[0]
@@ -77,22 +78,39 @@ class ScheduleGrid:
             green = slot[7]
             blue = slot[8]
             
-            self.add_subject_block(column_position-1, row_position-1, 1, len_slot, id_slot, id_subject, code, (red, green, blue), add_in_database = False)
+            self.add_subject_block(column_position-1, 
+                                   row_position-1, 
+                                   1, 
+                                   len_slot, 
+                                   id_slot, 
+                                   id_subject, 
+                                   code, 
+                                   (red, green, blue), 
+                                   add_in_database = False)
+            
+            #! remove 1 for python indexing
         pass
         
         
     def setup_ui(self):
-        global blue_combo_theme
-        
-        """Configurar la interfaz de usuario"""        
-        # Crear temas
+        "build a UI"   
+             
         self.create_themes()
-        # Ventana principal
-            
-        dpg.add_separator()
-
-        dpg.add_spacing()
-        subject_selector  = SubjectSelector(1, database_manager, lambda e , t, c,: print("Hola"), lambda s , a, u,: self.update_color(u, a), mode = "PROFESSOR")
+        
+        if self.mode == "PROFESSOR":
+            default_id = self.db.professors.get()[0]
+        elif self.mode == "CLASSROOM":
+            default_id = self.db.classrooms.get()[0]
+        else:
+            default_id = self.db.classrooms.get()[0]
+    
+        
+        subject_selector  = SubjectSelector(default_id, 
+                                            database_manager, 
+                                            lambda e , t, c,: print("Hola"), 
+                                            lambda s , a, u,: self.update_color(u, a), 
+                                            mode = self.mode)
+    
         self.subject_selector = subject_selector
 
         with dpg.group(horizontal=False, parent="main_content"):
@@ -112,12 +130,12 @@ class ScheduleGrid:
                                     width=100,
                                     overlay=f"{int(.5 * 100)}%")
                     
-            subject_selector.setup_ui(parent="main_content") 
+            subject_selector.setup_ui() 
 
                 # Solo permitimos configurar la altura
                 #slots_selector.setup_widget()
                 #self.slots_selector = slots_selector
-                
+
             dpg.add_separator()
             dpg.add_spacing()
             
@@ -224,7 +242,7 @@ class ScheduleGrid:
                             height=self.cell_height,
                             tag=cell_id,
                             callback=self.cell_clicked,
-                            user_data=(day_idx, hour_idx)
+                            user_data=(day_idx, hour_idx, None, None)
                         )
                         dpg.bind_item_theme(cell_id, self.themes["default"])
     
@@ -260,6 +278,7 @@ class ScheduleGrid:
             else:
                 #self.update_status("Error: El espacio seleccionado no está disponible")
                 pass
+        
         
         elif self.edit_mode == "delete":
             # Buscar y eliminar bloques en esta posición
@@ -584,7 +603,6 @@ class ScheduleGrid:
         print(new_color)
         theme = self.create_subject_theme((red*255, green*255, blue*255)) # ! Format In range (0,255)
         
-        print("ID SUBJECT A CAMBIAR", id_subject)
         for cell_tag in self.categories[id_subject]:
             dpg.bind_item_theme(cell_tag, theme)
 

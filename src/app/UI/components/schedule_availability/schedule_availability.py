@@ -3,7 +3,7 @@ import json
 import os
 from typing import List, Dict, Tuple
 import numpy as np
-from src.schedule_app.database import database_manager
+from src.app.database import database_manager
 
 class HorarioDisponibilidadApp:
     def __init__(self, mode, mode_id, db):

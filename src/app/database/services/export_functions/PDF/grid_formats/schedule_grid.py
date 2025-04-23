@@ -133,24 +133,22 @@ def split_vector_into_blocks(vector: List[bool]) -> List[List[int]]:
         >>> split_vector_into_blocks([True, True, False, True, False, True, True])
         [[1, 2], [4], [6, 7]]
     """
-    blocks = []  # Stores the final list of blocks
-    current_block = []  # Temporarily stores indices of the current block
-    in_block = False  # Flag to track if we are inside a block of True values
+    blocks = [] 
+    current_block = []  
+    in_block = False  
 
     for index, value in enumerate(vector):
         if value:
-            # If the value is True, add its 1-based index to the current block
+
             current_block.append(index + 1)
             in_block = True
             continue
 
         if in_block:
-            # If we were in a block and encounter a False, finalize the current block
             blocks.append(current_block)
-            current_block = []  # Reset the current block
-            in_block = False  # Reset the flag
+            current_block = []  
+            in_block = False  
 
-    # If there's an unfinished block at the end, add it to the list of blocks
     if current_block:
         blocks.append(current_block)
 
@@ -191,7 +189,7 @@ def decompose_days_into_hour_blocks(schedule_matrix: np.ndarray) -> dict[int, li
             # ... (rest of the days)
         }
     """
-    day_blocks = {}  # Dictionary to store blocks for each day
+    day_blocks = {}  
 
     for day in range(7):  # Iterate over each day (0 = Monday, 6 = Sunday)
         day_column = schedule_matrix[:, day]  # Extract the column for the current day

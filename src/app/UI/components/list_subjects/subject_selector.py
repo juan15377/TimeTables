@@ -39,7 +39,6 @@ class SubjectSelector:
     - id_mode (int): The identifier corresponding to the selected mode.
     - db: Instance of the database manager used to handle subject-related data.
     """
-    
     def __init__(self, id_mode, db, subject_changed_callback, color_change_callback, mode = "PROFESSOR"):
         self.subject_changed_callback = subject_changed_callback
         self.db = db
@@ -111,9 +110,9 @@ class SubjectSelector:
         self.set_id_mode(id_mode)
         
 
-    def setup_ui(self, parent):
+    def setup_ui(self):
         "build a widget in interface"
-        with dpg.group(parent=parent, horizontal=True):
+        with dpg.group(horizontal=True):
             dpg.add_text("Materia :")
             
             dpg.add_combo(
@@ -131,12 +130,12 @@ class SubjectSelector:
             color = self.get_subject_color()
             dpg.add_text("  Color:")
             self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, default_color=color)
-            self.color_editor.setup_ui(parent=parent)
+            self.color_editor.setup_ui()
             
             self.update_subjects_display()
 
 
-        with dpg.group(parent=parent, horizontal=True):
+        with dpg.group(horizontal=True):
             dpg.add_spacer(width=10)
             dpg.add_text("Progresso Materia:")
             

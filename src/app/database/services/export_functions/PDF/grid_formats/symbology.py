@@ -3,7 +3,7 @@
 class SymbologyLatex:
     def __init__(self):
         self.subjects = []
-        self.type = 1  # 1: professor, 2: group, 3: classroom
+        self.type = 1  #! 1: professor, 2: group, 3: classroom
 
     def add_subject(self, subject):
         self.subjects.append(subject)

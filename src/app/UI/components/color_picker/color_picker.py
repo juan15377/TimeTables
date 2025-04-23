@@ -36,9 +36,8 @@ class SubjectColorEditor:
         self.id_mode = id_mode
         self.change_color_callback = change_color_callback
 
-    def setup_ui(self, parent: Optional[int] = None):
+    def setup_ui(self):
         """Configura la UI de manera segura"""
-        self._parent = parent
         
         # Verificar si el grupo ya existe
         if dpg.does_item_exist(self._group_tag):

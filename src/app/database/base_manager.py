@@ -779,7 +779,6 @@ class DataBaseManager:
         with destino:
             self.db_connection.backup(destino)
 
-        # Cerrar conexiones
         destino.close()
         
     def execute_query(self, query, parameters = None):
@@ -807,21 +806,21 @@ class DataBaseManager:
             cursor.execute(f"ATTACH DATABASE '{src_db}' AS origen")
 
             # Obtener la lista de tablas compartidas entre ambas
-            tablas = cursor.execute(
+            tables = cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name IN "
                 "(SELECT name FROM origen.sqlite_master WHERE type='table')"
             ).fetchall()
 
-            if not tablas:
+            if not tables:
                 print("No se encontraron tablas compartidas entre las bases de datos.")
                 return
 
             # Copiar los datos tabla por tabla
-            for (tabla,) in tablas:
-                print(f"Copiando datos de la tabla: {tabla}")
+            for (table,) in tables:
+                print(f"Copiando datos de la tabla: {table}")
                 query = f"""
-                    INSERT OR IGNORE INTO main.{tabla}
-                    SELECT * FROM origen.{tabla}
+                    INSERT OR IGNORE INTO main.{table}
+                    SELECT * FROM origen.{table}
                 """
                 cursor.execute(query)
 
@@ -836,6 +835,8 @@ class DataBaseManager:
             cursor.execute("DETACH DATABASE origen")
             conn.close()
 
+
+
 #db.professors.new("Gerardo")
 #db.classrooms.new("Aula 2")
 #db.groups.subgroups.new("Grupo C")
@@ -848,7 +849,6 @@ class DataBaseManager:
 #                1,
 #                4,
 #                10)
-#
 
 database_manager = DataBaseManager(db_connection)
 
