@@ -39,6 +39,7 @@ class GestorEntidad:
             
         # Crear temas
         self.crear_temas()
+        pass
         
     def crear_temas(self):
         """Crea los temas de la interfaz"""
@@ -345,86 +346,85 @@ class GestorEntidad:
         """Actualiza la lista al cambiar de página"""
         self.actualizar_lista()
     
-    def crear_interfaz(self, parent_tag: str) -> None:
+    def setup_ui(self, parent_tag: str) -> None:
         """Crea la interfaz de usuario para gestionar la entidad"""
-        with dpg.child_window(parent=parent_tag, label=f"Gestión de {self.nombre_plural}", height=-1, tag=self.get_tag("container")):
-            with dpg.group(horizontal=False):
-                # Sección de búsqueda
-                with dpg.child_window(height=80, label="Búsqueda"):
-                    with dpg.group(horizontal=True):
-                        dpg.add_input_text(
-                            label=f"Buscar {self.nombre_entidad.lower()}", 
-                            tag=self.get_tag("filtro"),
-                            width=300,
-                            callback=lambda: self.actualizar_lista(force=True)
-                        )
-                        btn_limpiar = dpg.add_button(
-                            label="Limpiar filtro",
-                            callback=lambda: [
-                                dpg.set_value(self.get_tag("filtro"), ""), 
-                                self.actualizar_lista(force=True)
-                            ]
-                        )
-                    with dpg.group(horizontal=True):
-                        # Texto descriptivo según la entidad
-                        campo_principal = self.campos[0] if self.campos else "nombre"
-                        label_text = f"{campo_principal.capitalize()}"
-                        
-                        dpg.add_input_text(
-                            label=label_text,
-                            tag=self.get_tag("nuevo_item"),
-                            width=500,
-                            on_enter=True,
-                            callback=self.agregar_item
-                        )
-                        btn_agregar = dpg.add_button(
-                            label="Agregar",
-                            callback=self.agregar_item
-                        )
-                        dpg.bind_item_theme(btn_agregar, self.tema_accion)
-                
-                # Paginación
-                with dpg.child_window(height=65, label="Paginación"):
-                    with dpg.group(horizontal=True):
-                        dpg.add_text("Página:")
-                        dpg.add_input_int(
-                            tag=self.get_tag("pagina_actual"),
-                            default_value=1,
-                            min_value=1,
-                            min_clamped=True,
-                            width=80,
-                            step=1,
-                            callback=lambda: self.cambiar_pagina()
-                        )
-                        dpg.add_text("", tag=self.get_tag("total_paginas"))
-                        dpg.add_spacer(width=20)
-                        dpg.add_text("Items por página:")
-                        dpg.add_input_int(
-                            tag=self.get_tag("items_por_pagina"),
-                            default_value=50,
-                            min_value=10,
-                            max_value=200,
-                            min_clamped=True,
-                            max_clamped=True,
-                            width=80,
-                            step=10,
-                            callback=lambda: [
-                                dpg.set_value(self.get_tag("pagina_actual"), 1), 
-                                self.actualizar_lista(force=True)
-                            ]
-                        )
-                        dpg.add_spacer(width=20)
-                        # Añadir contador total
-                        dpg.add_text(f"Total {self.nombre_plural}: 0", tag=self.get_tag("contador_total"))
-                
-                # Información de selección
-                with dpg.child_window(height=40):
-                    dpg.add_text(f"Ningún {self.nombre_entidad.lower()} seleccionado", tag=self.get_tag("info_item"))
-                
-                # Lista de items
-                with dpg.child_window(label=f"Lista de {self.nombre_plural}", height=-1, border=True):
-                    with dpg.child_window(tag=self.get_tag("lista"), height=-1, border=False):
-                        pass
+        with dpg.group(horizontal=False):
+            # Sección de búsqueda
+            with dpg.child_window(height=80, label="Búsqueda"):
+                with dpg.group(horizontal=True):
+                    dpg.add_input_text(
+                        label=f"Buscar {self.nombre_entidad.lower()}", 
+                        tag=self.get_tag("filtro"),
+                        width=300,
+                        callback=lambda: self.actualizar_lista(force=True)
+                    )
+                    btn_limpiar = dpg.add_button(
+                        label="Limpiar filtro",
+                        callback=lambda: [
+                            dpg.set_value(self.get_tag("filtro"), ""), 
+                            self.actualizar_lista(force=True)
+                        ]
+                    )
+                with dpg.group(horizontal=True):
+                    # Texto descriptivo según la entidad
+                    campo_principal = self.campos[0] if self.campos else "nombre"
+                    label_text = f"{campo_principal.capitalize()}"
+                    
+                    dpg.add_input_text(
+                        label=label_text,
+                        tag=self.get_tag("nuevo_item"),
+                        width=500,
+                        on_enter=True,
+                        callback=self.agregar_item
+                    )
+                    btn_agregar = dpg.add_button(
+                        label="Agregar",
+                        callback=self.agregar_item
+                    )
+                    dpg.bind_item_theme(btn_agregar, self.tema_accion)
+            
+            # Paginación
+            with dpg.child_window(height=65, label="Paginación"):
+                with dpg.group(horizontal=True):
+                    dpg.add_text("Página:")
+                    dpg.add_input_int(
+                        tag=self.get_tag("pagina_actual"),
+                        default_value=1,
+                        min_value=1,
+                        min_clamped=True,
+                        width=80,
+                        step=1,
+                        callback=lambda: self.cambiar_pagina()
+                    )
+                    dpg.add_text("", tag=self.get_tag("total_paginas"))
+                    dpg.add_spacer(width=20)
+                    dpg.add_text("Items por página:")
+                    dpg.add_input_int(
+                        tag=self.get_tag("items_por_pagina"),
+                        default_value=50,
+                        min_value=10,
+                        max_value=200,
+                        min_clamped=True,
+                        max_clamped=True,
+                        width=80,
+                        step=10,
+                        callback=lambda: [
+                            dpg.set_value(self.get_tag("pagina_actual"), 1), 
+                            self.actualizar_lista(force=True)
+                        ]
+                    )
+                    dpg.add_spacer(width=20)
+                    # Añadir contador total
+                    dpg.add_text(f"Total {self.nombre_plural}: 0", tag=self.get_tag("contador_total"))
+            
+            # Información de selección
+            with dpg.child_window(height=40):
+                dpg.add_text(f"Ningún {self.nombre_entidad.lower()} seleccionado", tag=self.get_tag("info_item"))
+            
+            # Lista de items
+            with dpg.child_window(label=f"Lista de {self.nombre_plural}", height=-1, border=True):
+                with dpg.child_window(tag=self.get_tag("lista"), height=-1, border=False):
+                    pass
         
         # Inicializar lista
         self.actualizar_lista(force=True)
@@ -437,20 +437,22 @@ class GestorProfesores(GestorEntidad):
         # Generar datos de ejemplo
         def generar_datos():
             # Nombres y apellidos aleatorios
-            cursor = db.db_connection.cursor()
             
-            cursor.execute("""
+            query = """
             SELECT ID, NAME 
             FROM PROFESSOR                
-            """)
+            """
+
+            cursor = self.db.execute_query(query)
             
             # Generar profesores aleatorios
             return [{
                 "id": id,
-                "nombre": name
-            } for (id, name) in cursor.fetchall()]
+                "name": name
+            } for (id, name) in cursor]
         
-        super().__init__("PROFESSOR", ["nombre"], db, generar_datos)
+        super().__init__("PROFESSOR", ["name"], db, generar_datos)
+
     
     def get_acciones_item(self) -> List[Dict]:
         """Define acciones específicas para profesores"""
@@ -472,7 +474,7 @@ class GestorProfesores(GestorEntidad):
             dpg.delete_item(ventana_tag)
         
         with dpg.window(modal=True, show=True, tag=ventana_tag, 
-                       label=f"Materias de {profesor['nombre']}", 
+                       label=f"Materias de {profesor['name']}", 
                        width=500, height=400, pos=[200, 200]):
             dpg.add_text("Esta ventana permitirá gestionar las materias del profesor.")
             dpg.add_spacer(height=10)
@@ -482,7 +484,7 @@ class GestorProfesores(GestorEntidad):
             
             # Solo como demostración - Aquí irían los controles reales
             with dpg.child_window(height=200, border=True):
-                dpg.add_text(f"Profesor: {profesor['nombre']} (ID: {profesor['id']})")
+                dpg.add_text(f"Profesor: {profesor['name']} (ID: {profesor['id']})")
                 dpg.add_text("Funcionalidad de gestión de materias a implementar.")
             
             dpg.add_spacer(height=20)
@@ -504,37 +506,25 @@ class GestorProfesores(GestorEntidad):
 
     def mostrar_disponibilidad(self, prof_id: int) -> None:
         """Muestra la ventana de disponibilidad para el profesor seleccionado"""
-        profesor = next((p for p in self.items if p["id"] == prof_id), None)
-        if not profesor:
+        professor = next((p for p in self.items if p["id"] == prof_id), None)
+        if not professor:
             return
+        print(professor)
         
-        ventana_tag = "ventana_disponibilidad"
+        ventana_tag = "window_availability"
         
-        # Verificar si ya existe una ventana abierta y cerrarla
         if dpg.does_item_exist(ventana_tag):
             dpg.delete_item(ventana_tag)
         
+        hor_clas = HorarioDisponibilidadApp("CLASSROOM", prof_id, self.db)
+        
         with dpg.window(modal=True, show=True, tag=ventana_tag, 
-                       label=f"Disponibilidad de {profesor['nombre']}", 
-                       width=500, height=400, pos=[200, 200]):
-            dpg.add_text("Esta ventana permitirá definir la disponibilidad horaria del profesor.")
-            dpg.add_spacer(height=10)
+                       label=f"Disponibilidad de {professor["name"]}", 
+                       width=670, height=650, pos=[200, 200]):
             
-            dpg.add_text("Aquí se implementará un calendario o una grilla de horarios.")
-            dpg.add_spacer(height=20)
-            
-            # Solo como demostración - Aquí irían los controles reales
-            with dpg.child_window(height=200, border=True):
-                dpg.add_text(f"Profesor: {profesor['nombre']} (ID: {profesor['id']})")
-                dpg.add_text("Funcionalidad de disponibilidad a implementar.")
-            
-            dpg.add_spacer(height=20)
-            with dpg.group(horizontal=True):
-                dpg.add_button(
-                    label="Cerrar",
-                    callback=lambda: dpg.delete_item("ventana_disponibilidad"),
-                    width=150
-                )
+            hor_clas.crear_interfaz()
+ 
+
 
 
 class ClassroomsManager(GestorEntidad):
@@ -543,19 +533,19 @@ class ClassroomsManager(GestorEntidad):
     def __init__(self, db):
         # Generar datos de ejemplo
         def generar_datos():
-            # Nombres y apellidos aleatorios
             cursor = db.db_connection.cursor()
             
             cursor.execute("""
             SELECT ID, NAME 
-            FROM CLASSROOM                
+            FROM CLASSROOM           
             """)
             
-            # Generar profesores aleatorios
+            # Generar profesore
             return [{
                 "id": id,
                 "name": name
-            } for (id, name) in cursor.fetchall()]
+            } for (id, name) in cursor]
+            
         
         super().__init__("CLASSROOM", ["name"], db, generar_datos)
     
@@ -574,7 +564,6 @@ class ClassroomsManager(GestorEntidad):
         
         ventana_tag = "window_subjects"
         
-        # Verificar si ya existe una ventana abierta y cerrarla
         if dpg.does_item_exist(ventana_tag):
             dpg.delete_item(ventana_tag)
         
@@ -617,7 +606,6 @@ class ClassroomsManager(GestorEntidad):
         
         ventana_tag = "window_availability"
         
-        # Verificar si ya existe una ventana abierta y cerrarla
         if dpg.does_item_exist(ventana_tag):
             dpg.delete_item(ventana_tag)
         
@@ -629,6 +617,8 @@ class ClassroomsManager(GestorEntidad):
             
             hor_clas.crear_interfaz()
  
+ 
+
 #
 #dpg.create_context()
 #

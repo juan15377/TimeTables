@@ -1,4 +1,4 @@
-from src.schedule_app.database import database_manager 
+from src.app.database import database_manager 
 
 
 # Example

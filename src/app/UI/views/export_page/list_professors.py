@@ -200,7 +200,6 @@ class ListaProfesoresApp:
     def exportar_seleccionados(self):
         """Exporta los profesores seleccionados."""
         ids_seleccionados = self.obtener_ids_seleccionados()
-        print(f"Exportando {len(ids_seleccionados)} profesores:")
         for id_profesor in ids_seleccionados:
             # Buscar el nombre del profesor por su id
             for profesor in self.profesores:

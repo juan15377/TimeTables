@@ -259,7 +259,6 @@ with dpg.window(label="Gestión de Grupos", width=1080, height=830, tag="main_wi
         )
 
 # Configuración final
-dpg.bind_theme(tema_optimizado)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.set_primary_window("main_window", True)

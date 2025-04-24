@@ -24,7 +24,6 @@ class HorarioDisponibilidadApp:
         self.crear_temas()
         #self.cargar_disponibilidad()
         
-        dpg.bind_theme(self.tema_principal)
 
     def crear_temas(self):
         with dpg.theme() as self.tema_disponible:

@@ -1,9 +1,9 @@
 import dearpygui.dearpygui as dpg
 
-from src.schedule_app.UI.views.export_page.list_classrooms import ListaAulasApp
-from src.schedule_app.UI.views.export_page.list_professors import ListaProfesoresApp
-from src.schedule_app.UI.views.export_page.list_groups import ListaGruposApp
-from src.schedule_app.database import database_manager
+from src.app.UI.views.export_page.list_classrooms import ListaAulasApp
+from src.app.UI.views.export_page.list_professors import ListaProfesoresApp
+from src.app.UI.views.export_page.list_groups import ListaGruposApp
+from src.app.database import database_manager
 
 import dearpygui.dearpygui as dpg
 

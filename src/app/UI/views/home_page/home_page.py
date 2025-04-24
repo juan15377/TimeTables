@@ -72,7 +72,6 @@ with dpg.theme() as tema_optimizado:
         dpg.add_theme_color(dpg.mvThemeCol_TableRowBg, (40, 40, 50))
         dpg.add_theme_color(dpg.mvThemeCol_TableRowBgAlt, (50, 50, 60))
 
-dpg.bind_theme(tema_optimizado)
 
 def print_me(sender):
     print(f"Menu Item: {sender}")

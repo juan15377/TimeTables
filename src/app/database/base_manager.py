@@ -214,9 +214,9 @@ def insert_color_of_new_subject(db_connection: str, id_professor: int, id_classr
     """
     cursor = db_connection.cursor()
 
-    range_red_l, range_red_u = 180, 255
-    range_green_l, range_green_u = 180, 255
-    range_blue_l, range_blue_u = 180, 255
+    range_red_l, range_red_u = 100, 255
+    range_green_l, range_green_u = 100, 255
+    range_blue_l, range_blue_u = 100, 255
 
     def generate_color():
         return (random.randint(range_red_l, range_blue_u),

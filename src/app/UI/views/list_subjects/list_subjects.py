@@ -703,7 +703,6 @@ def crear_interfaz_principal():
     
     # Ventana principal
     with dpg.window(tag="ventana_principal", label="Sistema de Gestión de Materias"):
-        dpg.bind_theme(tema_optimizado)
         
         # Cabecera
         with dpg.group():

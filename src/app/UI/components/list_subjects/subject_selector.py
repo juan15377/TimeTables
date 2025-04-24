@@ -110,9 +110,9 @@ class SubjectSelector:
         self.set_id_mode(id_mode)
         
 
-    def setup_ui(self):
+    def setup_ui(self, parent):
         "build a widget in interface"
-        with dpg.group(horizontal=True):
+        with dpg.group(parent = parent, horizontal=True):
             dpg.add_text("Materia :")
             
             dpg.add_combo(
@@ -192,7 +192,6 @@ class SubjectSelector:
             color = self.db.classrooms.get_subject_color(id_subject)
         else:
             color = self.db.groups.get_subject_color(id_subject)
-        print("EL COLOR QUE ARROJA", color)
         if color == None:
             color = (0, 0, 0)
         return color
@@ -207,6 +206,11 @@ class SubjectSelector:
         
         if self.mode == "PROFESSOR":
             color = self.db.professors.get_subject_color(self.get_id())
+        elif self.mode == "CLASSROOM":
+            color = self.db.classrooms.get_subject_color(self.get_id())
+        else:
+            color = self.db.groups.get_subject_color(self.get_id())
+            
         self.color_editor.set_id_subject(self.get_id())
         self.color_editor.set_color(color)
         

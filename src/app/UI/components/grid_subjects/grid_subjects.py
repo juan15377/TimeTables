@@ -113,7 +113,7 @@ class ScheduleGrid:
     
         self.subject_selector = subject_selector
 
-        with dpg.group(horizontal=False, parent="main_content"):
+        with dpg.group(horizontal=False):
                 
             # Segunda fila de herramientas
             with dpg.group(horizontal=True):
@@ -130,14 +130,14 @@ class ScheduleGrid:
                                     width=100,
                                     overlay=f"{int(.5 * 100)}%")
                     
-            subject_selector.setup_ui() 
+            subject_selector.setup_ui(parent="main_content") 
 
                 # Solo permitimos configurar la altura
                 #slots_selector.setup_widget()
                 #self.slots_selector = slots_selector
 
             dpg.add_separator()
-            dpg.add_spacing()
+            dpg.add_spacer()
             
 
             #Contenedor de la cuadrícula
@@ -288,10 +288,8 @@ class ScheduleGrid:
             self.subject_selector.update_bar_progress()
             self.subject_selector.update_subject_slots()
             
-            print(self.categories.keys())
             print(self.categories[id_subject])
             self.categories[id_subject].remove(f"cell_{day_idx}_{hour_idx}")
-            print(id_subject)
                     # Primero verificar si la clave existe en el diccionario
             #if id_subject in self.categories:
             #    # Si existe, añadir el elemento al conjunto
@@ -377,7 +375,6 @@ class ScheduleGrid:
         self.render_block(block)
         
         # Primero verificar si la clave existe en el diccionario
-        print("EL ID_SUBJECT INSERCCION ", id_subject)
         if id_subject in self.categories.keys():
             # Si existe, añadir el elemento al conjunto
             self.categories[id_subject].add(f"cell_{day}_{hour}")
