@@ -125,11 +125,7 @@ class ScheduleGrid:
                 
                 # Usar espaciador en lugar de separador vertical
                 dpg.add_spacer(width=10)  
-                dpg.add_text("Progresso Materia:")
                 
-                dpg.add_progress_bar(default_value=.5,
-                                    width=100,
-                                    overlay=f"{int(.5 * 100)}%")
                     
             subject_selector.setup_ui() 
 
@@ -586,6 +582,8 @@ class ScheduleGrid:
             dpg.configure_item("edit_window", show=False)
             self.update_status("Detalles guardados")
     
+    def show_availability_cell(self):
+        pass
     
     def update_status(self, message: str):
         """Actualizar el mensaje de la barra de estado"""

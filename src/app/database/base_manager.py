@@ -552,24 +552,21 @@ class SubjectsManager:
     def new(self, name, code, id_professor, id_classroom, ids_groups, min_slots, max_slots, total_slots):
         cursor = self.db_connection.cursor()
         try:
-            # Insertar la materia y obtener su ID
+            # Insertar la materia
             cursor.execute(
                 "INSERT INTO SUBJECT (NAME, CODE, MINIMUM_SLOTS, MAXIMUM_SLOTS, TOTAL_SLOTS) VALUES (?, ?, ?, ?, ?) RETURNING ID",
                 (name, code, min_slots, max_slots, total_slots)
             )
             id_new_subject = cursor.fetchone()[0]
 
-            # Insertar relaciones con profesor y aula
             cursor.execute("INSERT INTO PROFESSOR_SUBJECT (ID_PROFESSOR, ID_SUBJECT) VALUES (?, ?)", 
                            (id_professor, id_new_subject))
             cursor.execute("INSERT INTO CLASSROOM_SUBJECT (ID_CLASSROOM, ID_SUBJECT) VALUES (?, ?)", 
                            (id_classroom, id_new_subject))
 
-            # Insertar relaciones con grupos
             for id_group in ids_groups:
                 cursor.execute("INSERT INTO GROUP_SUBJECT (ID_GROUP, ID_SUBJECT) VALUES (?, ?)", (id_group, id_new_subject))
 
-            # Asignar color a la materia
             insert_color_of_new_subject(self.db_connection, id_professor, id_classroom, ids_groups, id_new_subject)
 
             # Confirmar transacción
@@ -704,6 +701,156 @@ class SubjectsManager:
         
     def get_allowed_slots(self, id_subject):
         return get_available_slots_subject(self.db_connection, id_subject)
+    
+    def get_strong_constraints_matrix(self, id_subject):
+        
+        query = """
+        SELECT P_A.ROW_POSITION, P_A.COLUMN_POSITION, MIN(P_A.VAL, C_A.VAL, G_A.VAL) AS VAL
+        FROM (
+            SELECT ROW_POSITION, COLUMN_POSITION, VAL
+            FROM PROFESSOR_AVAILABILITY
+            WHERE ID_PROFESSOR IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
+            ) AS P_A
+        LEFT JOIN (
+            SELECT ROW_POSITION, COLUMN_POSITION, VAL
+            FROM CLASSROOM_AVAILABILITY
+            WHERE ID_CLASSROOM IN (SELECT ID_CLASSROOM FROM CLASSROOM_SUBJECT WHERE ID_SUBJECT = ?)
+            ) AS C_A ON P_A.ROW_POSITION = C_A.ROW_POSITION AND P_A.COLUMN_POSITION = C_A.COLUMN_POSITION
+        LEFT JOIN (
+            SELECT 
+                ROW_POSITION, 
+                COLUMN_POSITION, 
+                MIN(CASE WHEN VAL = 1 THEN 1 ELSE 0 END) AS VAL
+            FROM 
+                GROUP_AVAILABILITY
+            WHERE 
+                ID_GROUP IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)
+            GROUP BY 
+                ROW_POSITION, COLUMN_POSITION
+        ) AS G_A ON P_A.ROW_POSITION = G_A.ROW_POSITION AND P_A.COLUMN_POSITION = G_A.COLUMN_POSITION
+        ORDER BY P_A.ROW_POSITION, P_A.COLUMN_POSITION;
+        
+        """
+        
+        initial_matrix = np.full((30,7), False)
+
+        # filtro todos los slots de esta materia
+
+        cursor = self.db_connection.cursor()
+
+        cursor.execute(query, (id_subject, id_subject, id_subject))
+
+        cells_availability = cursor.fetchall()
+
+        for cell in cells_availability:
+            row_position = cell[0]
+            column_position = cell[1]
+            val = cell[2]
+            
+            initial_matrix[row_position-1, column_position-1] = val
+        
+        return initial_matrix
+        pass  
+    
+    def get_weak_constraints_matrix(self, id_subject):
+        
+        cursor = self.db_connection.cursor()
+        
+        cursor.execute("""
+        SELECT ID
+        FROM PROFESSOR
+        WHERE ID IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
+        """
+        ,(id_subject))
+        
+        
+        id_professor = cursor.fetchone()[0]
+        
+        cursor.execute("""
+        SELECT ID
+        FROM CLASSROOM
+        WHERE ID IN (SELECT ID_CLASSROOM FROM CLASSROOM_SUBJECT WHERE ID_SUBJECT = ?)
+        """
+        ,(id_subject))
+        
+        id_classroom = cursor.fetchone()[0] 
+        
+        cursor.execute("""
+        SELECT ID
+        FROM GROUPS
+        WHERE ID IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)           
+        """)
+        
+        ids_groups = [id[0] for id in cursor] 
+        
+        
+        cursor.execute(f"""
+        SELECT S.ROW_POSITION, S.COLUMN_POSITION, S.LEN
+        FROM PROFESSOR_SUBJECT P
+        LEFT JOIN SUBJECT_SLOTS S ON P.ID_SUBJECT = S.ID_SUBJECT
+        WHERE P.ID_PROFESSOR = ?;  
+        """, (id_professor))
+        
+        
+        slots_professor = cursor.fetchall()
+        
+        if slots_professor is None:
+            slots_professor = []
+        
+        
+        cursor.execute(f"""
+        SELECT S.ROW_POSITION, S.COLUMN_POSITION, S.LEN
+        FROM CLASSROOM_SUBJECT P
+        LEFT JOIN SUBJECT_SLOTS S ON P.ID_SUBJECT = S.ID_SUBJECT
+        WHERE P.ID_CLASSROOM = ?;  
+        """, (id_classroom))
+        
+        slots_classroom = cursor.fetchall()
+        
+        if slots_classroom is None:
+            slots_classroom = []
+        
+        groups_placeholders = ','.join(['?'] * len(ids_groups))
+        
+        cursor.execute(f"""
+        SELECT S.ROW_POSITION, S.COLUMN_POSITION, S.LEN
+        FROM GROUP_SUBJECT P
+        LEFT JOIN SUBJECT_SLOTS S ON P.ID_SUBJECT = S.ID_SUBJECT
+        WHERE P.ID_GROUP IN ({groups_placeholders});             
+        """, ids_groups)
+        
+
+        slots_groups = cursor.fetchall()
+        
+        if slots_groups is None:
+            slots_groups = []
+        
+        total_slots = slots_professor + slots_classroom + slots_groups 
+        
+        initial_matrix = np.full((30,7), True)
+
+        # filtro todos los slots de esta materia
+
+        cursor = self.db_connection.cursor()
+
+        cursor.execute(f"""
+            SELECT * FROM SUBJECT_SLOTS
+            WHERE ID_SUBJECT = {id_subject}
+        """)
+
+        slots_subject = cursor.fetchall()
+        print(slots_subject)
+
+        for slot in total_slots:
+            row_position = slot[2]
+            column_position = slot[3]
+            len_slot = slot[4]
+            
+            initial_matrix[row_position-1:row_position+len_slot-1, column_position-1] = False
+        
+        return initial_matrix
+        
+        pass 
         
 
 class DataBaseManager:
