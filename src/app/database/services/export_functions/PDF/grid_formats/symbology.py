@@ -65,36 +65,41 @@ class SymbologyLatex:
         else:
             return ""
         return self._join_elements(vector)
-
+        
     def to_latex_string(self):
         """Convert the entire SymbolLatex instance into a LaTeX longtable."""
         headers_dict = {
-            1: "\\textbf{Symbol} & \\textbf{Subject} & \\textbf{Classroom} & \\textbf{Hours} & \\textbf{Career} & \\textbf{Semester} & \\textbf{Group}",
-            2: "\\textbf{Symbol} & \\textbf{Subject} & \\textbf{Professor} & \\textbf{Classroom} & \\textbf{Hours}",
-            3: "\\textbf{Symbol} & \\textbf{Subject} & \\textbf{Professor} & \\textbf{Hours} & \\textbf{Career} & \\textbf{Semester} & \\textbf{Group}"
+            1: "\\cellcolor{headercolor}\\textcolor{white}{\\textbf{Symbol}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Subject}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Classroom}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Hours}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Career}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Semester}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Group}}",
+            2: "\\cellcolor{headercolor}\\textcolor{white}{\\textbf{Symbol}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Subject}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Professor}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Classroom}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Hours}}",
+            3: "\\cellcolor{headercolor}\\textcolor{white}{\\textbf{Symbol}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Subject}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Professor}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Hours}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Career}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Semester}} & \\cellcolor{headercolor}\\textcolor{white}{\\textbf{Group}}"
         }
-
+        
+        # Corregidos los formatos de columna eliminando el | final
         column_format_dict = {
-            1: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|",
+            1: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering  \\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|",
             2: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{3.5cm}|>{\centering\\arraybackslash}m{3.5cm}|",
             3: "|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{4cm}|>{\centering\\arraybackslash}m{2.15cm}|>{\centering\\arraybackslash}m{1.8cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|>{\centering\\arraybackslash}m{2cm}|"
         }
-
+        
+        # También eliminé \rowcolor de las especificaciones de columna y lo aplicaré por fila
         header = f"""
         \\begin{{tabular}}{{{column_format_dict[self.type]}}}
         \\hline
+        \\rowcolor{{backgroundcolor}}
         {headers_dict[self.type]} \\\\
         \\hline
-        """
-
+            """
+        
         body = ""
         for subject in self.subjects:
             body += f"""
-            \\hline
-            {self._convert_subject_row(subject, self.type)} \\\\
-            \\hline
-            """
-
+        \\hline
+        \\rowcolor{{backgroundcolor}}
+        {self._convert_subject_row(subject, self.type)} \\\\
+        \\hline
+                """
+            
         footer = """\\end{tabular}
-                    """
+        """
+        
         return header + body + footer

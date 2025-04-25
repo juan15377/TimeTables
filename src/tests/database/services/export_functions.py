@@ -1,4 +1,4 @@
-from src.schedule_app.database import database_manager 
+from src.app.database import database_manager 
 
 #database_manager.restart()
 #database_manager.professors.new("Juan de jesus")
@@ -76,5 +76,5 @@ from src.schedule_app.database import database_manager
 #database_manager.subjects.new_slot(3, 9, 5, 2)
 #database_manager.subjects.new_slot(3, 15, 5, 3)
 
-database_manager.export.pdf.grid_formats.complete_schedule("/home/juan/Escritorio/", "horario")
+database_manager.export.pdf.grid_formats.individual_professors([1, 2], "/home/juan/Escritorio/")
 #print(database_manager.subjects.get_matrix_of_allocated_slots(2))

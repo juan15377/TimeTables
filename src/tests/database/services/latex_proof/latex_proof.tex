@@ -1,0 +1,172 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor, colortbl}
+\usepackage{lscape}
+\usepackage{array, multirow, multicol}
+\usepackage[margin=0.47in]{geometry} % Manteniendo los márgenes originales
+\usepackage{fancyhdr}
+\usepackage{longtable}
+\usepackage{adjustbox}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{enumitem}
+\usepackage{stackengine}
+\usepackage{graphicx}
+\usepackage[nottoc,notlof,notlot]{tocbibind}
+\usepackage{tocloft}
+
+% Define a new command for subsubsubsections (mantenido del original)
+\newcommand{\subsubsubsection}[1]{ \paragraph{#1}\mbox{}\\ }
+
+% Adjust the depth of numbered sections (mantenido del original)
+\setcounter{secnumdepth}{4}
+
+% Adjust the depth of sections in the table of contents (mantenido del original)
+\setcounter{tocdepth}{4} 
+
+\renewcommand{\cfttoctitlefont}{\Large\bfseries}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{10pt}
+\setlength{\cftbeforesecskip}{0pt}
+\setlength{\cftparskip}{0pt}
+
+% Mejoras estéticas
+\definecolor{headercolor}{RGB}{40, 60, 100}  % Azul oscuro para cabeceras
+\definecolor{subjectcolor}{RGB}{42, 157, 80} % Verde para materias (similar al original)
+\definecolor{backgroundcolor}{RGB}{245, 250, 255} % Fondo celeste muy claro
+
+% Configuración de encabezados de página
+\pagestyle{fancy}
+
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+
+% Configuración de la numeración de página para el índice
+\pagenumbering{roman}
+
+\clearpage  % Asegura un salto de página limpio
+
+% Reiniciar numeración de página para el contenido principal
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\subsection{Juan de Jesus}
+\vspace*{.1cm}
+
+\begin{flushright}
+    {\LARGE \textbf{\textcolor{headercolor}{Profesor}: Juan de jesus}}
+\end{flushright}
+\vspace{1cm}
+
+% Mejorando la tabla de horario
+\begin{table}[ht]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2} % Aumentar espacio vertical
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\cellcolor{headercolor}\textcolor{white}{\textbf{Horas}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Lunes}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Martes}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Miércoles}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Jueves}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Viernes}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Sábado}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Domingo}} \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{7:00-7:30} &   & \cellcolor{subjectcolor} &   &   &   &   &   \\
+\cline{1-2} \cline{4-8} 
+\rowcolor{backgroundcolor}\textbf{7:30-8:00} &   & \multirow{-2}{*}{\cellcolor{subjectcolor} \stackunder{\stackon{\textbf{CALACT}}{\scalebox{0.9}{\tiny 7:00AM}}}{\scalebox{0.9}{\tiny 8:00AM}}} &   &   & \cellcolor{subjectcolor} &   &   \\
+\cline{1-5} \cline{7-8} 
+\rowcolor{backgroundcolor}\textbf{8:00-8:30} &   &   &   &   & \cellcolor{subjectcolor} &   &   \\
+\cline{1-5} \cline{7-8} 
+\rowcolor{backgroundcolor}\textbf{8:30-9:00} &   &   &   &   & \multirow{-3}{*}{\cellcolor{subjectcolor} \stackunder{\stackon{\textbf{CALACT}}{\scalebox{0.9}{\tiny 7:30AM}}}{\scalebox{0.9}{\tiny 9:00AM}}} &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{9:00-9:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{9:30-10:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{10:00-10:30} &   &   &   & \cellcolor{subjectcolor} &   &   &   \\
+\cline{1-4} \cline{6-8} 
+\rowcolor{backgroundcolor}\textbf{10:30-11:00} &   &   &   & \cellcolor{subjectcolor} &   &   &   \\
+\cline{1-4} \cline{6-8} 
+\rowcolor{backgroundcolor}\textbf{11:00-11:30} &   &   &   & \multirow{-3}{*}{\cellcolor{subjectcolor} \stackunder{\stackon{\textbf{CALACT}}{\scalebox{0.9}{\tiny 10:00AM}}}{\scalebox{0.9}{\tiny 11:30AM}}} &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{11:30-12:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{12:00-12:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{12:30-1:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{1:00-1:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{1:30-2:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{2:00-2:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{2:30-3:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{3:00-3:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{3:30-4:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{4:00-4:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{4:30-5:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{5:00-5:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{5:30-6:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{6:00-6:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{6:30-7:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{7:00-7:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{7:30-8:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{8:00-8:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{8:30-9:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{9:00-9:30} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\rowcolor{backgroundcolor}\textbf{9:30-10:00} &   &   &   &   &   &   &   \\
+\cline{1-8} 
+\end{tabular}
+\end{table}
+
+% Mejorando la tabla de información de asignaturas
+\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{4cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{2cm}|}
+\hline
+\cellcolor{headercolor}\textcolor{white}{\textbf{Symbol}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Subject}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Classroom}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Hours}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Career}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Semester}} & 
+\cellcolor{headercolor}\textcolor{white}{\textbf{Group}} \\
+\hline
+\cellcolor{subjectcolor} \textbf{CALACT} & 
+\textbf{Calculo Actuarial} & 
+\textbf{Aula 1} & 
+\textbf{8} & 
+\begin{itemize}[left=0pt,align=left]\item Actuaria 
+\end{itemize} & 
+\begin{itemize}[left=0pt,align=left]\item Semestre 1 
+\end{itemize} & 
+\begin{itemize}[left=0pt,align=left]\item Grupo B 
+\end{itemize} \\
+\hline
+\end{tabular}
+
+\newpage
+
+\end{document}

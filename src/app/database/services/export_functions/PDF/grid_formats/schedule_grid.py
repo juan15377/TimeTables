@@ -35,7 +35,7 @@ class GridLatex:
         self.hours_labels = [f"\\textbf{{{x}}}" for x in hours_labels]
         days_labels = ["Horas", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
         
-        self.days_labels = [f"\\cellcolor{{black}}\\textcolor{{white}}{{{x}}}" for x in days_labels]
+        self.days_labels = [f"\\cellcolor{{headercolor}}\\textcolor{{white}}{{{x}}}" for x in days_labels]
 
         self.row_matrix = np.full((31, 8), True)
         self.latex_matrix = np.full((31, 8), " ", dtype=object)
@@ -101,7 +101,11 @@ class GridLatex:
         row_matrix = self.row_matrix
 
         columns = "|".join(["c"] * 30)
-        string_ = f"\\begin{{table}}[ht]\\centering\\small\\begin{{tabular}}{{|{columns}|}}\\hline"
+        string_ = f"""\\begin{{table}}[ht]
+                    \\centering
+                    \\small
+                    \\begin{{tabular}}{{|{columns}|}}
+                    \\hline"""
 
         for row in range(31):
             string_items = unir_elementos_de_un_vector(latex_matrix[row, :])
@@ -221,7 +225,7 @@ def convertir_stringlatex(cuadricula):
     matriz_renglones = cuadricula.matriz_renglones
 
     columnas = "|".join(["c"] * 31)
-    cadena = f"\\begin{{table}}[ht]\\centering\\small\\begin{{tabular}}{{|{columnas}|}}\\hline"
+    cadena = f"\\begin{{table}}[ht]\\centering\\small\\begin{{tabular}}{{|{columnas}|}}\\thickhline"
 
     for fila in range(31):
         cadena_de_elementos = unir_elementos_de_un_vector(matriz_latex[fila, :])
