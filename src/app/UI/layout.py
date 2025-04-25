@@ -1,9 +1,10 @@
 import dearpygui.dearpygui as dpg
-from .route_manager import route_manager, ID_SELECTED
+from .route_manager import route_manager
 import dearpygui_extend as dpge
 import inspect
 from src.app.database import database_manager
 import os
+from .main_views import VIEWS
 
 def print_me(sender, app_data, user_data):
     print("HOLA")
@@ -21,7 +22,7 @@ def on_change_route(sender, app_data, user_data):
         else :
             sub_tag_selected = dpg.get_item_user_data(dpg.get_value("GROUP-OPTIONS")) 
 
-        route_manager.change_route(sub_tag_selected, 1)
+        route_manager.change_route(sub_tag_selected)
         return None 
     
     sub_tags = ["PROFESSOR-GRID",
@@ -32,9 +33,8 @@ def on_change_route(sender, app_data, user_data):
     "GROUP-LIST"]
     
     
-    
     if tab_tag in sub_tags:
-        route_manager.change_route(tab_tag, 1)
+        route_manager.change_route(tab_tag)
     
 def show_window(tag_window):
     if dpg.does_item_exist("main_content"):
@@ -131,7 +131,7 @@ with dpg.window(label="Sistema de Horarios", tag="main_window", width=780, heigh
                     # Crear pestañas y configurar user_data para identificación
                     with dpg.tab(label="Grid", tag="PROFESSOR-GRID") as tab_id:
                         # Configurar user_data para esta pestaña
-                        dpg.set_item_user_data(tab_id, "PROFESSOR-GRID")
+                        dpg.set_item_user_data(tab_id, "PROFESSOR-GRID")                        
                         pass
                         
                     with dpg.tab(label="Lista", tag="PROFESSOR-LIST") as tab_id:
@@ -168,3 +168,14 @@ with dpg.window(label="Sistema de Horarios", tag="main_window", width=780, heigh
                         dpg.set_item_user_data(tab_id, "GROUP-LIST")
                         pass
  
+# 
+#for (tag_view, view) in VIEWS.items():
+#    view.setup_ui(tag_view)
+    
+VIEWS["PROFESSOR-GRID"].setup_ui("PROFESSOR-GRID")
+VIEWS["PROFESSOR-LIST"].setup_ui("PROFESSOR-LIST")
+
+VIEWS["CLASSROOM-GRID"].setup_ui("CLASSROOM-GRID")
+VIEWS["CLASSROOM-LIST"].setup_ui("CLASSROOM-LIST")
+
+VIEWS["GROUP-GRID"].setup_ui("GROUP-GRID")

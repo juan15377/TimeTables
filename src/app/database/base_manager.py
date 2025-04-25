@@ -31,6 +31,8 @@ def intersect_slot(row_position_1: int, len_slot_1: int, row_position_2: int, le
         return row_position_1 + len_slot_1 > row_position_2
 
 
+
+
 def check_availability_subjects_by_new_slot(db_connection, row_position, column_position, len_slot, ids_subjects):
     # Asegurar que sea lista de enteros
     if isinstance(ids_subjects, str):
@@ -42,25 +44,24 @@ def check_availability_subjects_by_new_slot(db_connection, row_position, column_
     placeholders = ','.join(['?'] * len(ids_subjects))
 
     query = f"""
-    SELECT 1 FROM SUBJECT_SLOTS A
+    SELECT * FROM SUBJECT_SLOTS A
     WHERE (
-        A.ROW_POSITION = ?
-        OR (A.ROW_POSITION > ? AND (? + ?) > A.ROW_POSITION)
-        OR (A.ROW_POSITION < ? AND (A.ROW_POSITION + A.LEN) > ?)
+        ? BETWEEN A.ROW_POSITION AND A.ROW_POSITION + A.LEN -1 -- SI INICIA DESDE EL BLOQUE YA LO INTERSECTA
+        OR ? + ? -1 BETWEEN A.ROW_POSITION AND A.ROW_POSITION + A.LEN -1 
     )
     AND A.COLUMN_POSITION = ?
     AND A.ID_SUBJECT IN ({placeholders})
     """
 
     params = [
-        row_position, row_position, row_position, len_slot,
-        row_position, row_position, column_position
+        row_position, 
+        row_position, len_slot,
+        column_position
     ] + ids_subjects
+    
 
     cursor = db_connection.cursor()
-    cursor.execute(query, params)
-    dato = cursor.fetchone()
-    print("DATO =", dato)
+    cursor.execute(query, params)        
     return cursor.fetchone() is None
 
 import sqlite3
@@ -147,8 +148,8 @@ def check_availability_slot_under_classroom(db_connection, row_pos: int, column_
     """
     
     cursor.execute(query, (id_classroom, column_pos, row_pos, row_pos + len_slot - 1))
-
-    if cursor.fetchone() is None:  # No encontró restricciones de disponibilidad
+    result = cursor.fetchone()
+    if result is None:  # No encontró restricciones de disponibilidad
         # Obtener los IDs de las materias asignadas al aula
         query = """
         SELECT GROUP_CONCAT(A.ID_SUBJECT) FROM CLASSROOM_SUBJECT A

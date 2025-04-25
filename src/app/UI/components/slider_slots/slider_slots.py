@@ -1,11 +1,11 @@
 import dearpygui.dearpygui as dpg
 
 class DiscreteValueSelector:
-    def __init__(self, allowed_values, slider_tag):
+    def __init__(self, mode , allowed_values, slider_tag):
         self.allowed_values = allowed_values
         self.window_tag = "main_window"
-        self.slider_tag = slider_tag 
-        self.display_tag = "value_display"
+        self.slider_tag = slider_tag +  "_" + mode
+        self.display_tag = "value_display" + "_" +mode  
 
     def on_slider_changed(self, sender, app_data):
         index = app_data

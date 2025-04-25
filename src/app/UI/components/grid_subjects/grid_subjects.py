@@ -20,6 +20,7 @@ class ScheduleGrid:
         self.db = db 
         self.mode = mode 
         self.mode_id = mode_id
+        self.grid_tag = "grid_container" + "_" + mode
         
         # Datos
         self.hours = [
@@ -130,7 +131,7 @@ class ScheduleGrid:
                                     width=100,
                                     overlay=f"{int(.5 * 100)}%")
                     
-            subject_selector.setup_ui(parent="main_content") 
+            subject_selector.setup_ui() 
 
                 # Solo permitimos configurar la altura
                 #slots_selector.setup_widget()
@@ -142,7 +143,7 @@ class ScheduleGrid:
 
             #Contenedor de la cuadrícula
                 
-            with dpg.child_window(tag="grid_container", height=-30, parent="main_content"):
+            with dpg.child_window(tag = self.grid_tag, height=-30):
                 self.build_grid()
                 self.display_all_blocks()
                 
@@ -208,7 +209,7 @@ class ScheduleGrid:
                 
                 # Celdas de hora
                 for i, hour in enumerate(self.hours):
-                    tag_hour = f"hora_{i}"
+                    tag_hour = f"hora_{self.mode}_{i}"
                     dpg.add_button(
                         label=hour,
                         width=70,
@@ -222,7 +223,7 @@ class ScheduleGrid:
             for day_idx, day_name in enumerate(self.weekdays):
                 with dpg.group():
                     # Encabezado
-                    tag_day = f"day_{day_name}"
+                    tag_day = f"day_{self.mode}_{day_name}"
                     dpg.add_button(
                         label=day_name,
                         height=self.cell_height,
@@ -235,7 +236,7 @@ class ScheduleGrid:
                     
                     # Celdas para cada día
                     for hour_idx in range(len(self.hours)):
-                        cell_id = f"cell_{day_idx}_{hour_idx}"
+                        cell_id = f"cell_{self.mode}_{day_idx}_{hour_idx}"
                         dpg.add_button(
                             label="",
                             width=self.cell_width,
@@ -289,7 +290,7 @@ class ScheduleGrid:
             self.subject_selector.update_subject_slots()
             
             print(self.categories[id_subject])
-            self.categories[id_subject].remove(f"cell_{day_idx}_{hour_idx}")
+            self.categories[id_subject].remove(f"cell_{self.mode}_{day_idx}_{hour_idx}")
                     # Primero verificar si la clave existe en el diccionario
             #if id_subject in self.categories:
             #    # Si existe, añadir el elemento al conjunto
@@ -377,11 +378,11 @@ class ScheduleGrid:
         # Primero verificar si la clave existe en el diccionario
         if id_subject in self.categories.keys():
             # Si existe, añadir el elemento al conjunto
-            self.categories[id_subject].add(f"cell_{day}_{hour}")
+            self.categories[id_subject].add(f"cell_{self.mode}_{day}_{hour}")
             f"Se anadio el bloque {id_block} en la materia {id_subject}"
         else:
             # Si no existe, crear un nuevo conjunto con ese elemento
-            self.categories[id_subject] = {f"cell_{day}_{hour}"}        
+            self.categories[id_subject] = {f"cell_{self.mode}_{day}_{hour}"}        
         
         # guarda el cambio en la base de datos  
         self.subject_selector.update_subject_slots()
@@ -400,7 +401,7 @@ class ScheduleGrid:
         
         # Si el bloque abarca múltiples celdas, ocultar las celdas individuales
         # excepto la primera, que se redimensionará
-        main_cell_id = f"cell_{day}_{hour}"
+        main_cell_id = f"cell_{self.mode}_{day}_{hour}"
         
         # Calcular el tamaño total (ancho siempre es el ancho de una celda)
         total_width = self.cell_width
@@ -423,7 +424,7 @@ class ScheduleGrid:
                 continue  # Saltar la celda principal
             
             if h < len(self.hours):
-                cell_id = f"cell_{day}_{h}"
+                cell_id = f"cell_{self.mode}_{day}_{h}"
                 if dpg.does_item_exist(cell_id):
                     dpg.configure_item(cell_id, show=False)
     
@@ -433,7 +434,7 @@ class ScheduleGrid:
         width, height = block["width"], block["height"]
         
         # Restaurar la celda principal
-        main_cell_id = f"cell_{day}_{hour}"
+        main_cell_id = f"cell_{self.mode}_{day}_{hour}"
         dpg.configure_item(main_cell_id, 
                           width=self.cell_width,
                           height=self.cell_height,
@@ -447,7 +448,7 @@ class ScheduleGrid:
                 continue  # Saltar la celda principal
             
             if h < len(self.hours):
-                cell_id = f"cell_{day}_{h}"
+                cell_id = f"cell_{self.mode}_{day}_{h}"
                 if dpg.does_item_exist(cell_id):
                     dpg.configure_item(cell_id, show=True)
                     #dpg.bind_item_theme(cell_id, self.themes["default"])
@@ -519,7 +520,7 @@ class ScheduleGrid:
         self.selected_block = block
         
         # Cambiar temporalmente el tema para mostrar que está seleccionado
-        main_cell_id = f"cell_{block['day']}_{block['hour']}"
+        main_cell_id = f"cell_{self.mode}_{block['day']}_{block['hour']}"
         dpg.bind_item_theme(main_cell_id, self.themes["selected"])
         
         self.update_status(f"Seleccionado bloque {block['subject']} para mover")
@@ -554,7 +555,7 @@ class ScheduleGrid:
         
         # Limpiar selección al cambiar de modo
         if self.selected_block:
-            main_cell_id = f"cell_{self.selected_block['day']}_{self.selected_block['hour']}"
+            main_cell_id = f"cell_{self.mode}_{self.selected_block['day']}_{self.selected_block['hour']}"
             theme_key = self.selected_block["theme"]
             dpg.bind_item_theme(main_cell_id, self.themes[theme_key])
             self.selected_block = None
@@ -578,7 +579,7 @@ class ScheduleGrid:
             # Actualizar nombre de la materia si fue cambiado
             if name and name != self.selected_block["subject"]:
                 self.selected_block["subject"] = name
-                main_cell_id = f"cell_{self.selected_block['day']}_{self.selected_block['hour']}"
+                main_cell_id = f"cell_{self.mode}_{self.selected_block['day']}_{self.selected_block['hour']}"
                 dpg.set_item_label(main_cell_id, name)
             
             # Cerrar ventana de edición
@@ -617,3 +618,6 @@ class ScheduleGrid:
         self.mode = new_mode
         self.set_id_mode(mode_id)
         pass
+    
+    def update(self):
+        self.set_id_mode(self.mode_id)

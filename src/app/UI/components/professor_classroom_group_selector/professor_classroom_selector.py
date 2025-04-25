@@ -29,9 +29,9 @@ class SelectorBase:
         self.entity_type = entity_type  # "PROFESSOR" or "CLASSROOM"
         self.items = []
         self.original_items = []  # Lista completa sin filtrar
-        self.progress_bar_tag = f"{entity_type.lower()}_progress"
-        self.filter_input_tag = f"{entity_type.lower()}_filter"
-        self.selector_tag = f"{entity_type.lower()}_selector"
+        self.progress_bar_tag = f"{entity_type.lower()}_progress"  
+        self.filter_input_tag = f"{entity_type.lower()}_filter" 
+        self.selector_tag = f"{entity_type.lower()}_selector" 
         self.callback = callback
         self.id_default_selected = default_selected 
         
@@ -41,6 +41,7 @@ class SelectorBase:
         # Añadimos el campo de filtro con botón para limpiar
         with dpg.group(horizontal=True):
             dpg.add_text("Filtrar:")
+            print("BHUGVUHJNKML", self.filter_input_tag)
             dpg.add_input_text(
                 tag=self.filter_input_tag,
                 width=300,
@@ -181,6 +182,7 @@ class SelectorBase:
         self.update_progress_bar()
         if self.callback:
             self.callback(sender, app_data, user_data)
+
 
 
 class ProfessorSelector(SelectorBase):

@@ -45,6 +45,8 @@ class SubjectSelector:
         self.mode = mode
         self.id_mode = id_mode
         self.color_change_callback = color_change_callback
+        self.subject_selector_tag = "subject_selector" + "_" + mode
+        self.subject_progress_bar_tag = "subject_progress" + "_" +  mode
         
         if self.mode == "PROFESSOR":
             self.ids_subjects = self.db.professors.get_subjects(self.id_mode)
@@ -73,10 +75,10 @@ class SubjectSelector:
 
         subjects_display = [f"{name} {code} ID = {id_}" for id_, name, code in self.subjects_data]
         
-        dpg.configure_item("subject_selector", items=subjects_display)
-        dpg.set_value("subject_selector", subjects_display[0] if subjects_display else "")
+        dpg.configure_item(self.subject_selector_tag, items=subjects_display)
+        dpg.set_value(self.subject_selector_tag, subjects_display[0] if subjects_display else "")
         # llamamos al callback manualmente
-        self.subject_changed_callback("subject_selector", subjects_display[0] if subjects_display else "", self.get_id() )
+        self.subject_changed_callback(self.subject_selector_tag, subjects_display[0] if subjects_display else "", self.get_id() )
         self.color_editor.set_id_subject(self.get_id())
 
         pass
@@ -110,26 +112,26 @@ class SubjectSelector:
         self.set_id_mode(id_mode)
         
 
-    def setup_ui(self, parent):
+    def setup_ui(self):
         "build a widget in interface"
-        with dpg.group(parent = parent, horizontal=True):
+        with dpg.group(horizontal=True):
             dpg.add_text("Materia :")
             
             dpg.add_combo(
                 items=[""],
                 default_value="",
-                tag="subject_selector",
+                tag=self.subject_selector_tag,
                 width=530,
                 callback=self.on_change_subject_selected,
                 user_data=1,
             )
             # despues de crear el objecto lo actualizamos
             
-            self.slots_selector = DiscreteValueSelector([0], "slots_subject")
+            self.slots_selector = DiscreteValueSelector(self.mode, [0], "slots_subject")
             
             color = self.get_subject_color()
             dpg.add_text("  Color:")
-            self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, default_color=color)
+            self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, mode=self.mode,  default_color=color)
             self.color_editor.setup_ui()
             
             self.update_subjects_display()
@@ -144,7 +146,7 @@ class SubjectSelector:
             dpg.add_progress_bar(default_value=progress,
                                  width=100,
                                  overlay=f"{int(progress * 100)}%",
-                                 tag = "subject_progress")
+                                 tag = self.subject_progress_bar_tag)
             dpg.add_text("Tamaño Slot:")
 
             self.slots_selector.setup_widget()
@@ -160,7 +162,7 @@ class SubjectSelector:
         pass
 
     def get_selected_subject_index(self):
-        selected = dpg.get_value("subject_selector")
+        selected = dpg.get_value(self.subject_selector_tag)
         for i, (id_, name, code) in enumerate(self.subjects_data):
             if selected == f"{name} {code} ID = {id_}":
                 return i
@@ -271,6 +273,6 @@ class SubjectSelector:
     def update_bar_progress(self):
         
         progress = self.get_progress_subject()
-        dpg.set_value("subject_progress", progress)
-        dpg.configure_item("subject_progress", overlay=f"{int(progress * 100)}%")
+        dpg.set_value(self.subject_progress_bar_tag, progress)
+        dpg.configure_item(self.subject_progress_bar_tag, overlay=f"{int(progress * 100)}%")
         pass

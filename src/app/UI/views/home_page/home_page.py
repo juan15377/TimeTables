@@ -10,7 +10,7 @@ import dearpygui.dearpygui as dpg
 dpg.create_context()
 
 # Crea los componentes principales
-grilla = ScheduleGrid(database_manager, "PROFESSOR", 1)
+#grilla = ScheduleGrid(database_manager, "PROFESSOR", 1)
 
 # Define callbacks útiles para los selectores
 def on_professor_selected(sender, app_data, user_data):

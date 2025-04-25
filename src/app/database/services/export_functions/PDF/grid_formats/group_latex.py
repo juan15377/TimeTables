@@ -64,6 +64,8 @@ class GroupLatex:
         """
         return template
 
+
+
 def create_groups_latex(db, ids_groups= None):
     """Create the LaTeX string for all groups."""
     # tomo todo los grupos que tienen 

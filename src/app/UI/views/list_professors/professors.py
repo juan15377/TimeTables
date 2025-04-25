@@ -99,6 +99,7 @@ class GestorEntidad:
     
     def actualizar_lista(self, force: bool = False) -> None:
         """Actualiza la lista con paginación y caching"""
+
         # Obtener los valores actuales
         filtro = dpg.get_value(self.get_tag("filtro")).lower()
         pagina = dpg.get_value(self.get_tag("pagina_actual"))
@@ -157,8 +158,11 @@ class GestorEntidad:
                 
                 # Contenedor para los botones con ancho fijo
                 with dpg.group(horizontal=True, width=80):
+                    progress = item["progress"]
                     progress_bar = dpg.add_progress_bar(
-                        default_value=.5
+                        default_value=progress,
+                        overlay = f"{int(progress * 100)}%"
+                        
                     )
                     # Botones de acción personalizados
                     for idx, accion in enumerate(self.get_acciones_item()):
@@ -348,7 +352,7 @@ class GestorEntidad:
     
     def setup_ui(self, parent_tag: str) -> None:
         """Crea la interfaz de usuario para gestionar la entidad"""
-        with dpg.group(horizontal=False):
+        with dpg.group(horizontal=False, parent=parent_tag):
             # Sección de búsqueda
             with dpg.child_window(height=80, label="Búsqueda"):
                 with dpg.group(horizontal=True):
@@ -429,6 +433,11 @@ class GestorEntidad:
         # Inicializar lista
         self.actualizar_lista(force=True)
 
+    def update(self):
+        self.items = self.generar_datos()
+
+        self.actualizar_lista(force=True)
+        
 
 class GestorProfesores(GestorEntidad):
     """Gestor específico para profesores"""
@@ -438,18 +447,16 @@ class GestorProfesores(GestorEntidad):
         def generar_datos():
             # Nombres y apellidos aleatorios
             
-            query = """
-            SELECT ID, NAME 
-            FROM PROFESSOR                
-            """
+            query = custom_query("PROFESSOR")
 
             cursor = self.db.execute_query(query)
             
             # Generar profesores aleatorios
             return [{
                 "id": id,
-                "name": name
-            } for (id, name) in cursor]
+                "name": name,
+                "progress" : progress
+            } for (id, name, progress) in cursor]
         
         super().__init__("PROFESSOR", ["name"], db, generar_datos)
 
@@ -460,6 +467,7 @@ class GestorProfesores(GestorEntidad):
             {"label": "Materias", "callback": self.mostrar_materias},
             {"label": "Horario", "callback": self.mostrar_disponibilidad},
         ]
+    
     
     def mostrar_materias(self, prof_id: int) -> None:
         """Muestra la ventana de materias para el profesor seleccionado"""
@@ -524,7 +532,43 @@ class GestorProfesores(GestorEntidad):
             
             hor_clas.crear_interfaz()
  
-
+def custom_query(mode):
+    if not mode in ["PROFESSOR", "CLASSROOM"]:
+        return None 
+    return f"""	
+    SELECT 
+        p.ID AS ID,
+        p.NAME,
+        COALESCE(
+            CAST(ps_completed.COMPLETED_SLOTS AS FLOAT) / 
+            NULLIF(ps_total.TOTAL_SLOTS, 0), 
+            1.0
+        ) AS PROGRESS
+    FROM 
+        {mode} p
+    LEFT JOIN (
+        SELECT 
+            ps.ID_{mode},
+            SUM(s.TOTAL_SLOTS) AS TOTAL_SLOTS
+        FROM 
+            {mode}_SUBJECT ps
+        JOIN 
+            SUBJECT s ON ps.ID_SUBJECT = s.ID
+        GROUP BY 
+            ps.ID_{mode}
+    ) ps_total ON p.ID = ps_total.ID_{mode}
+    LEFT JOIN (
+        SELECT 
+            ps.ID_{mode},
+            SUM(ss.LEN) AS COMPLETED_SLOTS
+        FROM 
+            {mode}_SUBJECT ps
+        JOIN 
+            SUBJECT_SLOTS ss ON ps.ID_SUBJECT = ss.ID_SUBJECT
+        GROUP BY 
+            ps.ID_{mode}
+    ) ps_completed ON p.ID = ps_completed.ID_{mode};
+            """
 
 
 class ClassroomsManager(GestorEntidad):
@@ -533,18 +577,17 @@ class ClassroomsManager(GestorEntidad):
     def __init__(self, db):
         # Generar datos de ejemplo
         def generar_datos():
-            cursor = db.db_connection.cursor()
             
-            cursor.execute("""
-            SELECT ID, NAME 
-            FROM CLASSROOM           
-            """)
-            
+        
+            query = custom_query("CLASSROOM")
+            cursor = db.execute_query(query)
+
             # Generar profesore
             return [{
                 "id": id,
-                "name": name
-            } for (id, name) in cursor]
+                "name": name,
+                "progress" : progress
+            } for (id, name, progress) in cursor]
             
         
         super().__init__("CLASSROOM", ["name"], db, generar_datos)

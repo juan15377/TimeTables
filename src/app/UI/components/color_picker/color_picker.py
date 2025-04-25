@@ -26,9 +26,9 @@ class SubjectColorEditor:
 
         
         self._current_color = default_color
-        self._color_picker_tag = f"color_picker_subject"
-        self._preview_tag = f"color_preview_{id(self)}"
-        self._group_tag = f"color_group_{id(self)}"
+        self._color_picker_tag = f"color_picker_subject" + "_" + mode
+        self._preview_tag = f"color_preview_{id(self)}" + "_" + mode
+        self._group_tag = f"color_group_{id(self)}" + "_" + mode
         self._parent = None
         self.db = db
         self.mode = mode
@@ -44,6 +44,7 @@ class SubjectColorEditor:
             dpg.delete_item(self._group_tag)
         
         # Color Picker
+        print("COOOOOOOOOOLOOOOR_picker", self._color_picker_tag)
         dpg.add_color_edit(
                 default_value=self._current_color + (255,),
                 tag=self._color_picker_tag,

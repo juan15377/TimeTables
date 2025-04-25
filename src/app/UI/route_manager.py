@@ -1,6 +1,6 @@
 # habra 6 rutas 
 
-from .routes import CALLBACK_ROUTES, ID_SELECTED
+from .routes import CALLBACK_UPDATE_ROUTES
 
 class RouteManager:
     
@@ -8,10 +8,10 @@ class RouteManager:
         self.callback_routes = callback_routes 
         pass 
     
-    def change_route(self, route, query):
-        self.callback_routes[route](query)
+    def change_route(self, route):
+        self.callback_routes[route]()
         pass
     
 
-route_manager = RouteManager(CALLBACK_ROUTES)
+route_manager = RouteManager(CALLBACK_UPDATE_ROUTES)
     
