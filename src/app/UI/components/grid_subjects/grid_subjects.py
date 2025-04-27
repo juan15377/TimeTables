@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple, Optional, Any
 from .themes import create_blue_theme  # Importa la función, no el tema directo
 from ..list_subjects.subject_selector import SubjectSelector
 from src.app.database import database_manager
+import concurrent.futures 
 
 class ScheduleGrid:
     """
@@ -128,7 +129,15 @@ class ScheduleGrid:
                 
                     
             subject_selector.setup_ui() 
-
+            
+            dpg.add_button(
+                label = "prender viabilidad",
+                callback= lambda s, a, u : self.show_availability_cells()
+            )
+            dpg.add_button(
+                label = "apagar viabilidad",
+                callback= lambda s, a, u : self.hide_avaible_cells()
+            )
                 # Solo permitimos configurar la altura
                 #slots_selector.setup_widget()
                 #self.slots_selector = slots_selector
@@ -168,6 +177,23 @@ class ScheduleGrid:
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (30, 150, 230))
             dpg.add_theme_color(dpg.mvThemeCol_Text, (255, 255, 255))
 
+        self.themes["avaible"] = dpg.add_theme()
+        with dpg.theme_component(dpg.mvButton, parent=self.themes["avaible"]):
+            dpg.add_theme_color(dpg.mvThemeCol_Button, (10, 2000, 10))
+            #dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (30, 150, 230))
+            dpg.add_theme_color(dpg.mvThemeCol_Text, (255, 255, 255))
+            
+        self.themes["strong_constraint"] = dpg.add_theme()
+        with dpg.theme_component(dpg.mvButton, parent=self.themes["strong_constraint"]):
+            dpg.add_theme_color(dpg.mvThemeCol_Button, (200, 10, 10))
+            #dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (30, 150, 230))
+            dpg.add_theme_color(dpg.mvThemeCol_Text, (185, 0, 0))
+    
+        self.themes["weak_constraint"] = dpg.add_theme()
+        with dpg.theme_component(dpg.mvButton, parent=self.themes["weak_constraint"]):
+            dpg.add_theme_color(dpg.mvThemeCol_Button, (255, 120, 0))
+            #dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (30, 150, 230))
+            dpg.add_theme_color(dpg.mvThemeCol_Text, (240, 105, 0))
     
     def create_subject_theme(self, color: Tuple[int, int, int]):
         """Crear un tema para una materia con el color especificado"""
@@ -268,9 +294,7 @@ class ScheduleGrid:
                 new_id_block = self.db.subjects.new_slot(subject_id, hour_idx + 1, day_idx + 1, height)
                 if new_id_block == None:
                     return None
-                #color = (100, 100, 100)
-                
-                # Añadir el bloque
+
                 self.add_subject_block(day_idx, hour_idx, width, height, new_id_block, id_subject, subject_name, color)
             else:
                 #self.update_status("Error: El espacio seleccionado no está disponible")
@@ -582,9 +606,45 @@ class ScheduleGrid:
             dpg.configure_item("edit_window", show=False)
             self.update_status("Detalles guardados")
     
-    def show_availability_cell(self):
+    def get_cell_tag(self, day, hour):
+        return f"cell_{self.mode}_{day}_{hour}"
+    
+    def show_availability_cells(self):
+        id_subject = self.subject_selector.get_id()
+        
+        matrix_strong_constraints = self.db.subjects.get_strong_constraints_matrix(id_subject)
+        matrix_weak_constraints = self.db.subjects.get_weak_constraints_matrix(id_subject)
+        
+        all_cell_blocks_subject = [(block["day"], block["hour"]) for block in self.blocks]
+                
+        #! todas estas celdas se omitiran 
+                
+        for hour in range(30):
+            for day in range(7):
+                if (day, hour) in all_cell_blocks_subject:
+                    continue 
+                
+                cell_tag = self.get_cell_tag(day, hour)
+        
+                if not matrix_strong_constraints[hour, day]:
+                    dpg.bind_item_theme(cell_tag, self.themes["strong_constraint"])
+                elif not matrix_weak_constraints[hour, day]:
+                    dpg.bind_item_theme(cell_tag, self.themes["weak_constraint"])
+                else:
+                    dpg.bind_item_theme(cell_tag, self.themes["avaible"])
+    
         pass
     
+    def hide_avaible_cells(self):
+        # Versión optimizada
+        all_cell_blocks_set = {(block["day"], block["hour"]) for block in self.blocks}  # Usamos set para búsquedas O(1)
+
+        for hour in range(30):
+            for day in range(7):
+                if (day, hour) not in all_cell_blocks_set:  # Búsqueda más eficiente
+                    dpg.bind_item_theme(self.get_cell_tag(day, hour), self.themes["default"])
+            
+
     def update_status(self, message: str):
         """Actualizar el mensaje de la barra de estado"""
         #dpg.set_value("status_text", message) 
@@ -619,3 +679,36 @@ class ScheduleGrid:
     
     def update(self):
         self.set_id_mode(self.mode_id)
+
+
+    # Versión optimizada con ThreadPoolExecutor
+    def process_cell(day, hour, all_cell_blocks_set, themes, get_cell_tag_func):
+        if (day, hour) not in all_cell_blocks_set:
+            cell_tag = get_cell_tag_func(day, hour)
+            dpg.bind_item_theme(cell_tag, themes["default"])
+
+    # Configuración de la ejecución paralela
+
+    def hide_avaible_cells(self):
+        # Convertir a set para búsquedas O(1)
+        all_cell_blocks_subject = {(block["day"], block["hour"]) for block in self.blocks}
+        
+        # Pre-cargar recursos que se usarán en los hilos
+        default_theme = self.themes["default"]
+        get_cell_tag = self.get_cell_tag  # Local reference para mejor performance
+        
+        # Función que se ejecutará en cada hilo
+        def process_cell(day, hour):
+            if (day, hour) not in all_cell_blocks_subject:
+                cell_tag = get_cell_tag(day, hour)
+                dpg.bind_item_theme(cell_tag, default_theme)
+        
+        # Configurar ThreadPool (ajustar max_workers según necesidades)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            # Crear todas las tareas
+            futures = [executor.submit(process_cell, day, hour) 
+                    for hour in range(30) 
+                    for day in range(7)]
+            
+            # Esperar a que todas las tareas terminen (opcional)
+            concurrent.futures.wait(futures)

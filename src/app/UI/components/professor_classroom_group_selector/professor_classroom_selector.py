@@ -81,11 +81,13 @@ class SelectorBase:
 
     def _load_items(self):
         """Load items from database"""
-        cursor = self.db.db_connection.cursor()
-        cursor.execute(f"""
+        
+        query = f"""
         SELECT CONCAT(NAME, " ( id = ",ID, " )" )
         FROM {self.entity_type};
-        """)
+        """
+        cursor = self.db.execute_query(query)
+
         self.items = list(map(lambda e: e[0], cursor.fetchall()))
         self.original_items = self.items.copy()
     
@@ -142,12 +144,17 @@ class SelectorBase:
     def update(self):
         """Update the UI components with fresh data"""
         # Refresh the list
-        cursor = self.db.db_connection.cursor()
-        cursor.execute(f"""
+        
+        query = f"""
         SELECT CONCAT(NAME, " ( id = ",ID, " )" )
         FROM {self.entity_type};
-        """)
+        """ 
+        
+        cursor = self.db.execute_query(query)
+
         new_items = list(map(lambda e: e[0], cursor.fetchall()))
+        cursor.close()
+        
         
         # Update the original items list
         if new_items != self.original_items:
@@ -193,25 +200,36 @@ class ProfessorSelector(SelectorBase):
         """Update the progress bar based on professor data"""
         professor_id = self.get_id_selected()
         if professor_id is not None:
-            cursor = self.db.db_connection.cursor()
             #? total slots 
-            cursor.execute("""
+            
+            query = """
             SELECT SUM(TOTAL_SLOTS)
             FROM SUBJECT 
             WHERE ID IN (SELECT ID_SUBJECT FROM PROFESSOR_SUBJECT WHERE ID_PROFESSOR = ?)
-            """, (professor_id,))
+            """
+            
+            cursor = self.db.execute_query(query, parameters = (professor_id, ))
+            
             
             result = cursor.fetchone()
+            cursor.close()
+            
             total_slots = result[0] if result[0] is not None else 0
             
             # ? used slots
-            cursor.execute("""
+            
+            query = """
             SELECT SUM(LEN)
             FROM SUBJECT_SLOTS
             WHERE ID_SUBJECT IN (SELECT ID_SUBJECT FROM PROFESSOR_SUBJECT WHERE ID_PROFESSOR = ?)
-            """, (professor_id,))
+            """
+            
+            cursor = self.db.execute_query(query, parameters = (professor_id, ))
+            
             
             result = cursor.fetchone()
+            cursor.close()
+            
             completed_slots = result[0] if result[0] is not None else 0
             
             # Avoid division by zero
@@ -233,26 +251,35 @@ class ClassroomSelector(SelectorBase):
         """Update the progress bar based on classroom data"""
         classroom_id = self.get_id_selected()
         if classroom_id is not None:
-            cursor = self.db.db_connection.cursor()
             
             # ? total slots
-            cursor.execute("""
+            query = """
             SELECT SUM(TOTAL_SLOTS)
             FROM SUBJECT 
             WHERE ID IN (SELECT ID_SUBJECT FROM CLASSROOM_SUBJECT WHERE ID_CLASSROOM = ?)
-            """, (classroom_id,))
+            """ 
+            
+            cursor = self.db.execute_query(query, parameters = (classroom_id,))
+
             
             result = cursor.fetchone()
+            cursor.close()
+            
             total_available_slots = result[0] if result[0] is not None else 0
             
             # ? used slots
-            cursor.execute("""
+            
+            query = """
             SELECT SUM(LEN)
             FROM SUBJECT_SLOTS
             WHERE ID_SUBJECT IN (SELECT ID_SUBJECT FROM CLASSROOM_SUBJECT WHERE ID_CLASSROOM = ?)
-            """, (classroom_id,))
+            """
+            
+            cursor = self.db.execute_query(query, parameters = (classroom_id,))
             
             result = cursor.fetchone()
+            cursor.close()
+            
             used_slots = result[0] if result[0] is not None else 0
             
             # Calculate usage percentage

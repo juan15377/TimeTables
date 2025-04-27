@@ -62,14 +62,16 @@ class SubjectSelector:
     def update_subjects_display(self):
         "actualiza las posibles materias que se pueden seleccionar"
         
-        cursor = self.db.db_connection.cursor()
         
         list_subjects = "(" + ",".join(str(id_) for id_ in self.ids_subjects) + ")"
-        cursor.execute(f"""
+        
+        query = f"""
             SELECT ID, NAME, CODE
             FROM SUBJECT
             WHERE ID IN {list_subjects}
-        """)
+        """
+        
+        cursor = self.db.execute_query(query)
         
         self.subjects_data = cursor.fetchall() 
 
@@ -243,27 +245,34 @@ class SubjectSelector:
     
     def get_progress_subject(self):
         
-        cursor = self.db.db_connection.cursor()
+        
+        query = f"""
+            SELECT TOTAL_SLOTS
+            FROM SUBJECT 
+            WHERE ID = {self.get_id()}
+        """
+        
+        cursor = self.db.execute_query(query)
+        
         
         if self.get_id() == None:
             # ! el valor por defecto cuando un professor no tiene ninguna materia
             return 1
-        
-        cursor.execute(f"""
-            SELECT TOTAL_SLOTS
-            FROM SUBJECT 
-            WHERE ID = {self.get_id()}
-        """)
-        
+                
         total_slots = cursor.fetchone()[0]
+        cursor.close()
         
-        cursor.execute(f"""
+        query = f"""
             SELECT SUM(LEN)
             FROM SUBJECT_SLOTS
             WHERE ID_SUBJECT =  {self.get_id()}     
-        """)
+        """
+        
+        cursor = self.db.execute_query(query)
+
         
         completed_slots = cursor.fetchone()[0]
+        cursor.close()
         
         if completed_slots == None:
             completed_slots = 0

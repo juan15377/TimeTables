@@ -19,6 +19,7 @@ def insert_default_availability_matrix(type_, id_type, db_concection):
                 cursor.execute("INSERT INTO CLASSROOM_AVAILABILITY (ID_CLASSROOM, ROW_POSITION, COLUMN_POSITION, VAL) VALUES (?, ?, ?, ?)", (id_type, row, column, True ))
             else:
                 cursor.execute("INSERT INTO GROUP_AVAILABILITY (ID_GROUP, ROW_POSITION, COLUMN_POSITION, VAL) VALUES (?, ?, ?, ?)", (id_type, row, column, True )) 
+    cursor.close()
     db_concection.commit()
 
 
@@ -61,8 +62,11 @@ def check_availability_subjects_by_new_slot(db_connection, row_position, column_
     
 
     cursor = db_connection.cursor()
-    cursor.execute(query, params)        
-    return cursor.fetchone() is None
+    cursor.execute(query, params)      
+    result =   cursor.fetchone() is None
+    cursor.close()
+    
+    return result 
 
 import sqlite3
 from typing import List
@@ -96,6 +100,7 @@ def get_available_slots_subject(db_connection, id_subject: int) -> List[int]:
     cursor.execute("SELECT COALESCE(SUM(LEN), 0) FROM SUBJECT_SLOTS WHERE ID_SUBJECT = ?", (id_subject,))
     used_slots = cursor.fetchone()[0]
 
+    cursor.close()
     # Calcular los slots disponibles
     return get_available_slots(min_slots, max_slots, total_slots - used_slots)
 
@@ -125,8 +130,12 @@ def check_availability_slot_under_professor(db_connection, row_pos: int, column_
         subject_ids = cursor.fetchone()[0]
 
         if subject_ids and check_availability_subjects_by_new_slot(db_connection, row_pos, column_pos, len_slot, subject_ids):
+            cursor.close()
+            
             return True
         else:
+            cursor.close()
+            
             print("no se pudo")
             return False
     else:
@@ -381,7 +390,10 @@ class BaseManager:
         """
         )
 
-        return cursor.fetchone()[0]
+        result = cursor.fetchone()[0]
+        cursor.close()
+        
+        return result
     
     def get_subjects(self, id):
 
@@ -392,8 +404,10 @@ class BaseManager:
             WHERE ID_{self.type_} = ?
         """
         cursor.execute(query, (id,))
-
-        return [row[0] for row in cursor.fetchall()]
+        result = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+        
+        return result
     
     
     def get(self):
@@ -402,8 +416,12 @@ class BaseManager:
         cursor.execute(f"""
             SELECT ID FROM {self.type_}
         """)
+        
+        result = list(map(lambda x : x[0], cursor.fetchall()))
 
-        return list(map(lambda x : x[0], cursor.fetchall()))
+        cursor.close()
+        
+        return result
         
         
 
@@ -442,6 +460,8 @@ class BaseElementsGroupManager:
         cursor = self.db_connection.cursor() 
 
         cursor.execute(f"INSERT INTO {self.type_} (NAME) VALUES (?)", (name,))
+        
+        cursor.close()
 
         self.db_connection.commit()
 
@@ -482,6 +502,8 @@ def check_exists_group(db_connection, id_career, id_semester, id_subgroup):
     )
 
     first_row = cursor.fetchone()
+    
+    cursor.close()
 
     # Si first_row es None, no existe; si tiene un valor, entonces existe
     return first_row is not None
@@ -510,6 +532,8 @@ class GroupsManager(BaseManager):
 
         cursor.execute(f"INSERT INTO {self.type_}S (CAREER, SEMESTER, SUBGROUP) VALUES (?, ?, ?)", (id_career, id_semester, id_subgroup))
 
+        cursor.close()
+        
         self.db_connection.commit()
 
         new_type_id = cursor.lastrowid
@@ -530,8 +554,11 @@ class GroupsManager(BaseManager):
             WHERE A.ID = ?
         """, (id,))  # <-- nota la coma aquí
 
-        resultado = cursor.fetchone()
-        return resultado[0] if resultado else None
+        result = cursor.fetchone()
+        
+        cursor.close()
+        
+        return result[0] if result else None
 
     
     def get(self):
@@ -540,8 +567,12 @@ class GroupsManager(BaseManager):
         cursor.execute(f"""
             SELECT ID FROM {self.type_}S
         """)
+        
+        result = list(map(lambda x : x[0], cursor.fetchall()))
+        
+        cursor.close()
 
-        return list(map(lambda x : x[0], cursor.fetchall()))
+        return result
         
         
 
@@ -570,6 +601,7 @@ class SubjectsManager:
             insert_color_of_new_subject(self.db_connection, id_professor, id_classroom, ids_groups, id_new_subject)
 
             # Confirmar transacción
+            
             self.db_connection.commit()
 
         except sqlite3.Error as e:
@@ -663,6 +695,8 @@ class SubjectsManager:
         id_new_slot = cursor.lastrowid
 
         self.db_connection.commit()
+        cursor.close()
+        
         print("Nueva slot insertado")
         return id_new_slot
     
@@ -672,6 +706,7 @@ class SubjectsManager:
             DELETE FROM SUBJECT_SLOTS
             WHERE ID_SLOT = {id_slot}   
         """)
+        cursor.close()
 
         self.db_connection.commit()
 
@@ -696,6 +731,8 @@ class SubjectsManager:
             len_slot = slot[4]
             
             initial_matrix[row_position-1:row_position+len_slot-1, column_position-1] = True
+        
+        cursor.close()
         
         return initial_matrix
         
@@ -749,114 +786,111 @@ class SubjectsManager:
             
             initial_matrix[row_position-1, column_position-1] = val
         
+        cursor.close()
+        
         return initial_matrix
         pass  
     
     def get_weak_constraints_matrix(self, id_subject):
-        
         cursor = self.db_connection.cursor()
-        
+
+        # Obtener ID del profesor - CORRECCIÓN PRINCIPAL
         cursor.execute("""
         SELECT ID
         FROM PROFESSOR
         WHERE ID IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
-        """
-        ,(id_subject))
-        
-        
-        id_professor = cursor.fetchone()[0]
-        
+        """, (id_subject,))
+        professor_row = cursor.fetchone()
+        id_professor = professor_row[0] if professor_row else None
+
+        # Obtener ID del aula
         cursor.execute("""
         SELECT ID
         FROM CLASSROOM
         WHERE ID IN (SELECT ID_CLASSROOM FROM CLASSROOM_SUBJECT WHERE ID_SUBJECT = ?)
-        """
-        ,(id_subject))
-        
-        id_classroom = cursor.fetchone()[0] 
-        
+        """, (id_subject,))
+        classroom_row = cursor.fetchone()
+        id_classroom = classroom_row[0] if classroom_row else None
+
+        # Obtener IDs de grupos
         cursor.execute("""
         SELECT ID
         FROM GROUPS
-        WHERE ID IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)           
-        """)
-        
-        ids_groups = [id[0] for id in cursor] 
-        
-        
-        cursor.execute(f"""
-        SELECT S.ROW_POSITION, S.COLUMN_POSITION, S.LEN
-        FROM PROFESSOR_SUBJECT P
-        LEFT JOIN SUBJECT_SLOTS S ON P.ID_SUBJECT = S.ID_SUBJECT
-        WHERE P.ID_PROFESSOR = ?;  
-        """, (id_professor))
-        
-        
-        slots_professor = cursor.fetchall()
-        
-        if slots_professor is None:
-            slots_professor = []
-        
-        
-        cursor.execute(f"""
-        SELECT S.ROW_POSITION, S.COLUMN_POSITION, S.LEN
-        FROM CLASSROOM_SUBJECT P
-        LEFT JOIN SUBJECT_SLOTS S ON P.ID_SUBJECT = S.ID_SUBJECT
-        WHERE P.ID_CLASSROOM = ?;  
-        """, (id_classroom))
-        
-        slots_classroom = cursor.fetchall()
-        
-        if slots_classroom is None:
-            slots_classroom = []
-        
-        groups_placeholders = ','.join(['?'] * len(ids_groups))
-        
-        cursor.execute(f"""
-        SELECT S.ROW_POSITION, S.COLUMN_POSITION, S.LEN
-        FROM GROUP_SUBJECT P
-        LEFT JOIN SUBJECT_SLOTS S ON P.ID_SUBJECT = S.ID_SUBJECT
-        WHERE P.ID_GROUP IN ({groups_placeholders});             
-        """, ids_groups)
-        
+        WHERE ID IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)
+        """, (id_subject,))
+        ids_groups = [row[0] for row in cursor.fetchall()]  # fetchall() siempre devuelve una lista (puede estar vacía)
 
-        slots_groups = cursor.fetchall()
-        
-        if slots_groups is None:
+        # Resto del código permanece igual como en la corrección anterior...
+        # Obtener slots del profesor
+        cursor.execute("""
+        SELECT ROW_POSITION, COLUMN_POSITION, LEN
+        FROM SUBJECT_SLOTS
+        WHERE ID_SUBJECT IN (
+            SELECT ID_SUBJECT 
+            FROM PROFESSOR_SUBJECT 
+            WHERE ID_PROFESSOR = ?
+        )
+        """, (id_professor,))
+        slots_professor = cursor.fetchall() or []
+
+        # Obtener slots del aula
+        cursor.execute("""
+        SELECT ROW_POSITION, COLUMN_POSITION, LEN
+        FROM SUBJECT_SLOTS
+        WHERE ID_SUBJECT IN (
+            SELECT ID_SUBJECT 
+            FROM CLASSROOM_SUBJECT 
+            WHERE ID_CLASSROOM = ?
+        )
+        """, (id_classroom,))
+        slots_classroom = cursor.fetchall() or []
+
+        # Obtener slots de los grupos
+        if ids_groups:
+            groups_placeholders = ','.join(['?'] * len(ids_groups))
+            cursor.execute(f"""
+            SELECT ROW_POSITION, COLUMN_POSITION, LEN
+            FROM SUBJECT_SLOTS
+            WHERE ID_SUBJECT IN (
+                SELECT ID_SUBJECT 
+                FROM GROUP_SUBJECT 
+                WHERE ID_GROUP IN ({groups_placeholders})
+            )
+            """, ids_groups)
+            slots_groups = cursor.fetchall() or []
+        else:
             slots_groups = []
-        
-        total_slots = slots_professor + slots_classroom + slots_groups 
-        
-        initial_matrix = np.full((30,7), True)
 
-        # filtro todos los slots de esta materia
+        # Combinar todos los slots
+        total_slots = slots_professor + slots_classroom + slots_groups
 
-        cursor = self.db_connection.cursor()
+        # Crear matriz inicial
+        initial_matrix = np.full((30, 7), True)
 
-        cursor.execute(f"""
-            SELECT * FROM SUBJECT_SLOTS
-            WHERE ID_SUBJECT = {id_subject}
-        """)
-
-        slots_subject = cursor.fetchall()
-        print(slots_subject)
-
+        # Procesar slots para marcar como no disponibles
         for slot in total_slots:
-            row_position = slot[2]
-            column_position = slot[3]
-            len_slot = slot[4]
-            
-            initial_matrix[row_position-1:row_position+len_slot-1, column_position-1] = False
-        
+            row_position = slot[0]  # Primer elemento es ROW_POSITION
+            column_position = slot[1]  # Segundo es COLUMN_POSITION
+            len_slot = slot[2]  # Tercero es LEN
+
+            # Asegurar que los índices estén dentro de los límites
+            start_row = max(0, row_position - 1)
+            end_row = min(30, start_row + len_slot)
+            col = max(0, min(6, column_position - 1))
+
+            initial_matrix[start_row:end_row, col] = False
+
+        cursor.close()
+
         return initial_matrix
-        
+
         pass 
         
 
 class DataBaseManager:
 
     def __init__(self, db_connection):
-        self.db_connection = db_connection
+        self.__db_connection = db_connection
 
         def is_intersect(row_1, t1, row_2, t2):
             if row_1 == row_2:
@@ -869,34 +903,26 @@ class DataBaseManager:
         # Conectar a SQLite
 
         # Registrar la función en SQLite
-        self.db_connection.create_function("is_intersect", 4, is_intersect)
+        self.__db_connection.create_function("is_intersect", 4, is_intersect)
 
 
-        cursor = self.db_connection.cursor()
+        cursor = self.__db_connection.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
+        cursor.close()
 
-        self.professors = ProfessorsManager(self.db_connection)
-        self.classrooms = ClassroomManager(self.db_connection)
-        self.groups = GroupsManager(self.db_connection)
+        self.professors = ProfessorsManager(self.__db_connection)
+        self.classrooms = ClassroomManager(self.__db_connection)
+        self.groups = GroupsManager(self.__db_connection)
 
-        self.subjects = SubjectsManager(self.db_connection)
+        self.subjects = SubjectsManager(self.__db_connection)
 
         self.export = ExportFunctions(self)
 
     def execute_query(select = "*", from_ = "PROFESSOR", where_ = "TRUE", group_by = "ID"):
         pass 
 
-
-
-    def change_database(self, new_db_path):
-        self.db_connection.close()
-        self.db_path = new_db_path
-        self.db_connection = sqlite3.connect(self.db_path)
-
-        pass 
-
     def restart(self):
-        cursor = self.db_connection.cursor()
+        cursor = self.__db_connection.cursor()
 
         cursor.execute("""
             DELETE FROM PROFESSOR;
@@ -918,27 +944,29 @@ class DataBaseManager:
             DELETE FROM SUBGROUP;
         """)
 
-        self.db_connection.commit()
+        self.__db_connection.commit()
         
     def backup(self, file_path):
         destino = sqlite3.connect(file_path)
 
         # Hacer backup
         with destino:
-            self.db_connection.backup(destino)
+            self.__db_connection.backup(destino)
 
         destino.close()
         
-    def execute_query(self, query, parameters = None):
-        cursor = self.db_connection.cursor()
+    def execute_query(self, query, parameters=None):
+        cursor = self.__db_connection.cursor()
+        try:
+            if parameters is None:
+                cursor.execute(query)
+            else:
+                cursor.execute(query, parameters)
+            return cursor
+        except Exception as e:
+            raise Exception(f"Database query failed: {e}")
+
         
-        if parameters == None:
-            cursor.execute(query)
-        else:
-            cursor.execute(query, parameters)
-
-        return cursor
-
     def import_database(self, database_path):
         try:
             self.restart()  # reinicia la base de datos

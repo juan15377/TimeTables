@@ -156,14 +156,18 @@ class GroupSelector:
     
     def _load_groups_data(self):
         """Carga todos los grupos desde la base de datos"""
-        cursor = self.db.db_connection.cursor()
-        cursor.execute("""
+        query = """
             SELECT ID, CAREER, SEMESTER, SUBGROUP, 
                    CAREER || ' - Sem ' || SEMESTER || ' - ' || SUBGROUP AS FULL_NAME
             FROM GROUPS
             ORDER BY CAREER, SEMESTER, SUBGROUP
-        """)
+        """
+        
+        cursor = self.db.execute_query(query)
+
         self.all_groups = cursor.fetchall()
+        cursor.close() 
+        
         self.filtered_groups = self.all_groups.copy()
     
     def _extract_filter_options(self):

@@ -262,7 +262,6 @@ def actualizar_lista():
         dpg.set_value("contador_materias", f"Total materias mostradas: {contador_filas} de {len(materias)}")
 
 
-
 def abrir_modal_creacion():
     """Abre la ventana modal para crear una nueva materia"""
     global grupos_seleccionados
@@ -270,7 +269,7 @@ def abrir_modal_creacion():
     
     # Calcular posición central
     window_width = 800
-    window_height = 600
+    window_height = 650  # Aumentado para acomodar más elementos
     pos_x = (dpg.get_viewport_width() - window_width) // 2
     pos_y = (dpg.get_viewport_height() - window_height) // 2
     
@@ -288,7 +287,7 @@ def abrir_modal_creacion():
             # Primera fila: código y nombre
             with dpg.group(horizontal=True):
                 dpg.add_input_text(label="Código", tag="modal_create_codigo", width=120)
-                dpg.add_input_text(label="Nombre", tag="modal_create_nombre", width=300)
+                dpg.add_input_text(label="Nombre", tag="modal_create_nombre", width=400)
             
             # Segunda fila: slots
             with dpg.group(horizontal=True):
@@ -296,54 +295,372 @@ def abrir_modal_creacion():
                 dpg.add_input_int(label="Máx. Slots", tag="modal_create_max_slots", width=120, min_value=1, min_clamped=True, default_value=30)
                 dpg.add_input_int(label="Total Slots", tag="modal_create_total_slots", width=120, min_value=1, min_clamped=True, default_value=15)
             
-            # Tercera fila: profesor (con filtro)
+            # Tercera fila: modalidad (presencial/online)
             with dpg.group(horizontal=True):
-                dpg.add_text("Profesor:")
+                dpg.add_text("Modalidad:")
+                dpg.add_radio_button(
+                    items=["Presencial", "Online", "Híbrida"],
+                    tag="modal_create_modalidad",
+                    default_value="Presencial",
+                    horizontal=True,
+                    callback=lambda s, a, u: toggle_aula_selector(a)
+                )
+            
+            # Cuarta fila: profesor (con búsqueda mejorada)
+            dpg.add_text("Profesor:")
+            with dpg.group(horizontal=True):
                 dpg.add_input_text(
-                    label="Filtrar", 
-                    tag="modal_create_filtro_profesores", 
-                    width=200, 
+                    hint="Buscar profesor...",
+                    tag="modal_create_filtro_profesores",
+                    width=300,
                     callback=lambda s, a, u: actualizar_lista_profesores(modal_prefix="modal_create_")
                 )
-                dpg.add_combo(
-                    items=profesores, 
-                    tag="modal_create_combo_profesores", 
-                    width=300
+                dpg.add_button(
+                    label="Buscar",
+                    callback=lambda: actualizar_lista_profesores(modal_prefix="modal_create_"),
+                    width=80
                 )
             
-            # Cuarta fila: aula (con filtro)
-            with dpg.group(horizontal=True):
+            dpg.add_combo(
+                items=profesores,
+                tag="modal_create_combo_profesores",
+                width=400
+            )
+            
+            # Quinta fila: aula (con búsqueda mejorada)
+            with dpg.collapsing_header(label="Información de Aula", tag="modal_create_aula_header", default_open=True):
                 dpg.add_text("Aula:")
-                dpg.add_input_text(
-                    label="Filtrar", 
-                    tag="modal_create_filtro_aulas", 
-                    width=200, 
-                    callback=lambda s, a, u: actualizar_lista_aulas(modal_prefix="modal_create_")
-                )
+                with dpg.group(horizontal=True):
+                    dpg.add_input_text(
+                        hint="Buscar aula...",
+                        tag="modal_create_filtro_aulas",
+                        width=300,
+                        callback=lambda s, a, u: actualizar_lista_aulas(modal_prefix="modal_create_")
+                    )
+                    dpg.add_button(
+                        label="Buscar",
+                        callback=lambda: actualizar_lista_aulas(modal_prefix="modal_create_"),
+                        width=80
+                    )
+                
                 dpg.add_combo(
-                    items=aulas, 
-                    tag="modal_create_combo_aulas", 
-                    width=300
+                    items=aulas,
+                    tag="modal_create_combo_aulas",
+                    width=400
                 )
             
-            # Quinta fila: grupos
-            dpg.add_text("Seleccione grupos para la materia:")
+            # Sexta fila: administración de grupos
+            dpg.add_separator()
+            dpg.add_text("Administración de Grupos", color=[255, 255, 0])
+            
+            # Búsqueda y selección de grupos
+            with dpg.group(horizontal=True):
+                dpg.add_input_text(
+                    hint="Buscar grupo...",
+                    tag="modal_create_filtro_grupos",
+                    width=300,
+                    callback=lambda s, a, u: actualizar_lista_grupos_disponibles()
+                )
+                dpg.add_button(
+                    label="Buscar",
+                    callback=lambda: actualizar_lista_grupos_disponibles(),
+                    width=80
+                )
+            
+            with dpg.group(horizontal=True):
+                # Grupos disponibles
+                with dpg.child_window(width=380, height=150, border=True):
+                    dpg.add_text("Grupos Disponibles:")
+                    dpg.add_table(
+                        tag="modal_create_tabla_grupos_disponibles",
+                        header_row=True,
+                        borders_innerH=True,
+                        borders_outerH=True,
+                        borders_innerV=True,
+                        borders_outerV=True
+                    )
+                    
+                    # Agregar encabezados a la tabla
+                    with dpg.table_row():
+                        dpg.add_table_cell()
+                        dpg.add_text("ID")
+                        dpg.add_text("Nombre")
+                        dpg.add_text("Carrera")
+                
+                # Botones para agregar/quitar
+                with dpg.group(width=40):
+                    dpg.add_spacer(height=60)
+                    dpg.add_button(
+                        label=">>",
+                        callback=agregar_grupo_seleccionado,
+                        width=40
+                    )
+                    dpg.add_spacer(height=10)
+                    dpg.add_button(
+                        label="<<",
+                        callback=quitar_grupo_seleccionado,
+                        width=40
+                    )
+                
+                # Grupos seleccionados
+                with dpg.child_window(width=380, height=150, border=True):
+                    dpg.add_text("Grupos Asignados:")
+                    dpg.add_table(
+                        tag="modal_create_tabla_grupos_asignados",
+                        header_row=True,
+                        borders_innerH=True,
+                        borders_outerH=True,
+                        borders_innerV=True,
+                        borders_outerV=True
+                    )
+                    
+                    # Agregar encabezados a la tabla
+                    with dpg.table_row():
+                        dpg.add_table_cell()
+                        dpg.add_text("ID")
+                        dpg.add_text("Nombre")
+                        dpg.add_text("Carrera")
+            
             dpg.add_text("Grupos seleccionados: 0", tag="modal_create_contador_grupos")
             
-            # Lista de grupos en una ventana con scroll
-            with dpg.child_window(height=200, width=-1, border=True):
-                with dpg.group(tag="modal_create_grupos"):
-                    # Los grupos se añaden dinámicamente
-                    pass
-            
             # Botones de acción
-            dpg.add_spacer(height=20)
+            dpg.add_separator()
+            dpg.add_spacer(height=10)
             with dpg.group(horizontal=True):
-                dpg.add_button(label="Guardar", callback=agregar_materia, width=150)
-                dpg.add_button(label="Cancelar", callback=lambda: dpg.delete_item("modal_create"), width=150)
+                dpg.add_button(
+                    label="Guardar",
+                    callback=agregar_materia,
+                    width=150
+                )
+                dpg.add_button(
+                    label="Cancelar",
+                    callback=lambda: dpg.delete_item("modal_create"),
+                    width=150
+                )
+    
+    # Actualizar listas dinámicas
+    actualizar_lista_grupos_disponibles()
+    actualizar_lista_profesores(modal_prefix="modal_create_")
+    actualizar_lista_aulas(modal_prefix="modal_create_")
+
+
+def toggle_aula_selector(value):
+    """Habilita o deshabilita el selector de aula según la modalidad"""
+    if value == "Online":
+        dpg.configure_item("modal_create_aula_header", default_open=False)
+        dpg.disable_item("modal_create_combo_aulas")
+        dpg.disable_item("modal_create_filtro_aulas")
+    else:
+        dpg.configure_item("modal_create_aula_header", default_open=True)
+        dpg.enable_item("modal_create_combo_aulas")
+        dpg.enable_item("modal_create_filtro_aulas")
+
+
+def actualizar_lista_grupos_disponibles():
+    """Actualiza la lista de grupos disponibles según el filtro"""
+    filtro = dpg.get_value("modal_create_filtro_grupos").lower()
+    
+    # Limpiar tabla existente, manteniendo los encabezados
+    dpg.delete_item("modal_create_tabla_grupos_disponibles", children_only=True, slot=1)
+    
+    # Recrear encabezados
+    with dpg.table_row(parent="modal_create_tabla_grupos_disponibles"):
+        dpg.add_table_cell()
+        dpg.add_text("ID")
+        dpg.add_text("Nombre")
+        dpg.add_text("Carrera")
+    
+    # Filtrar y agregar grupos que no estén ya seleccionados
+    for grupo in grupos:
+        if grupo["id"] in grupos_seleccionados:
+            continue
+            
+        if filtro and filtro not in grupo["nombre"].lower() and filtro not in grupo["carrera"].lower():
+            continue
+            
+        with dpg.table_row(parent="modal_create_tabla_grupos_disponibles"):
+            dpg.add_checkbox(
+                callback=lambda s, a, u: seleccionar_grupo_disponible(u),
+                user_data=grupo["id"]
+            )
+            dpg.add_text(grupo["id"])
+            dpg.add_text(grupo["nombre"])
+            dpg.add_text(grupo["carrera"])
+
+
+def actualizar_tabla_grupos_asignados():
+    """Actualiza la tabla de grupos asignados"""
+    # Limpiar tabla existente, manteniendo los encabezados
+    dpg.delete_item("modal_create_tabla_grupos_asignados", children_only=True, slot=1)
+    
+    # Recrear encabezados
+    with dpg.table_row(parent="modal_create_tabla_grupos_asignados"):
+        dpg.add_table_cell()
+        dpg.add_text("ID")
+        dpg.add_text("Nombre")
+        dpg.add_text("Carrera")
+    
+    # Agregar grupos seleccionados
+    for grupo_id in grupos_seleccionados:
+        # Buscar información del grupo
+        grupo = next((g for g in grupos if g["id"] == grupo_id), None)
+        if grupo:
+            with dpg.table_row(parent="modal_create_tabla_grupos_asignados"):
+                dpg.add_checkbox(
+                    default_value=True,
+                    callback=lambda s, a, u: seleccionar_grupo_asignado(u),
+                    user_data=grupo["id"]
+                )
+                dpg.add_text(grupo["id"])
+                dpg.add_text(grupo["nombre"])
+                dpg.add_text(grupo["carrera"])
+    
+    # Actualizar contador
+    dpg.set_value("modal_create_contador_grupos", f"Grupos seleccionados: {len(grupos_seleccionados)}")
+
+
+def seleccionar_grupo_disponible(grupo_id):
+    """Marca un grupo disponible para ser agregado"""
+    global grupos_para_agregar
+    if "grupos_para_agregar" not in globals():
+        global grupos_para_agregar
+        grupos_para_agregar = set()
+    
+    if grupo_id in grupos_para_agregar:
+        grupos_para_agregar.remove(grupo_id)
+    else:
+        grupos_para_agregar.add(grupo_id)
+
+
+def seleccionar_grupo_asignado(grupo_id):
+    """Marca un grupo asignado para ser eliminado"""
+    global grupos_para_quitar
+    if "grupos_para_quitar" not in globals():
+        global grupos_para_quitar
+        grupos_para_quitar = set()
+    
+    if grupo_id in grupos_para_quitar:
+        grupos_para_quitar.remove(grupo_id)
+    else:
+        grupos_para_quitar.add(grupo_id)
+
+
+def agregar_grupo_seleccionado():
+    """Agrega los grupos seleccionados a la lista de asignados"""
+    global grupos_seleccionados, grupos_para_agregar
+    
+    if "grupos_para_agregar" in globals() and grupos_para_agregar:
+        grupos_seleccionados.update(grupos_para_agregar)
+        grupos_para_agregar.clear()
         
-        # Actualizar listas dinámicas
-        actualizar_lista_grupos("modal_create_grupos")
+        # Actualizar ambas tablas
+        actualizar_lista_grupos_disponibles()
+        actualizar_tabla_grupos_asignados()
+
+
+def quitar_grupo_seleccionado():
+    """Quita los grupos seleccionados de la lista de asignados"""
+    global grupos_seleccionados, grupos_para_quitar
+    
+    if "grupos_para_quitar" in globals() and grupos_para_quitar:
+        grupos_seleccionados.difference_update(grupos_para_quitar)
+        grupos_para_quitar.clear()
+        
+        # Actualizar ambas tablas
+        actualizar_lista_grupos_disponibles()
+        actualizar_tabla_grupos_asignados()
+
+
+def actualizar_lista_profesores(modal_prefix=""):
+    """Actualiza la lista de profesores según el filtro"""
+    filtro = dpg.get_value(f"{modal_prefix}filtro_profesores").lower()
+    
+    # Filtrar profesores
+    profesores_filtrados = [
+        p for p in profesores 
+        if not filtro or filtro in p["nombre"].lower() or filtro in p["id"].lower()
+    ]
+    
+    # Actualizar el combo
+    dpg.configure_item(
+        f"{modal_prefix}combo_profesores",
+        items=[f"{p['id']} - {p['nombre']}" for p in profesores_filtrados]
+    )
+
+
+def actualizar_lista_aulas(modal_prefix=""):
+    """Actualiza la lista de aulas según el filtro"""
+    filtro = dpg.get_value(f"{modal_prefix}filtro_aulas").lower()
+    
+    # Filtrar aulas
+    aulas_filtradas = [
+        a for a in aulas 
+        if not filtro or filtro in a["nombre"].lower() or filtro in a["edificio"].lower()
+    ]
+    
+    # Actualizar el combo
+    dpg.configure_item(
+        f"{modal_prefix}combo_aulas",
+        items=[f"{a['id']} - {a['edificio']} {a['nombre']}" for a in aulas_filtradas]
+    )
+
+
+def agregar_materia():
+    """Guarda la nueva materia con los datos proporcionados"""
+    codigo = dpg.get_value("modal_create_codigo")
+    nombre = dpg.get_value("modal_create_nombre")
+    min_slots = dpg.get_value("modal_create_min_slots")
+    max_slots = dpg.get_value("modal_create_max_slots")
+    total_slots = dpg.get_value("modal_create_total_slots")
+    profesor = dpg.get_value("modal_create_combo_profesores")
+    modalidad = dpg.get_value("modal_create_modalidad")
+    
+    # Validar campos obligatorios
+    if not codigo or not nombre or not profesor or (modalidad != "Online" and not dpg.get_value("modal_create_combo_aulas")):
+        dpg.configure_item("modal_info_error", show=True)
+        return
+    
+    # Obtener aula solo si no es online
+    aula = None
+    if modalidad != "Online":
+        aula = dpg.get_value("modal_create_combo_aulas")
+    
+    # Crear nueva materia con los datos
+    nueva_materia = {
+        "id": codigo,
+        "nombre": nombre,
+        "min_slots": min_slots,
+        "max_slots": max_slots,
+        "total_slots": total_slots,
+        "profesor": profesor.split(" - ")[0] if " - " in profesor else profesor,
+        "aula": aula.split(" - ")[0] if aula and " - " in aula else aula,
+        "modalidad": modalidad,
+        "grupos": list(grupos_seleccionados)
+    }
+    
+    # Agregar a la lista de materias
+    materias.append(nueva_materia)
+    
+    # Actualizar tabla principal
+    #actualizar_tabla_materias()
+    
+    # Cerrar modal
+    dpg.delete_item("modal_create")
+    
+    # Mostrar mensaje de éxito
+    dpg.configure_item("modal_info_success", show=True)
+
+
+def limpiar_campos_creacion():
+    """Limpia los campos del formulario de creación"""
+    global grupos_seleccionados
+    grupos_seleccionados = set()
+    if "grupos_para_agregar" in globals():
+        global grupos_para_agregar
+        grupos_para_agregar.clear()
+    if "grupos_para_quitar" in globals():
+        global grupos_para_quitar
+        grupos_para_quitar.clear()
 
 def abrir_modal_edicion(codigo):
     """Abre la ventana modal para editar una materia"""
@@ -526,6 +843,7 @@ def agregar_materia():
     actualizar_lista()
     mostrar_exito(f"Materia {codigo} agregada correctamente")
 
+
 def actualizar_materia():
     """Actualiza la materia seleccionada"""
     if not materia_seleccionada:
@@ -586,6 +904,8 @@ def actualizar_materia():
     dpg.delete_item("modal_edit")
     actualizar_lista()
     mostrar_exito(f"Materia {nuevo_codigo} actualizada correctamente")
+
+
 
 def confirmar_eliminar(codigo):
     """Muestra confirmación para eliminar"""
@@ -698,6 +1018,7 @@ def mostrar_exito(mensaje):
             callback=lambda: dpg.delete_item("modal_exito"),
             width=100
         )
+    
 def crear_interfaz_principal():
     """Crea la interfaz principal de la aplicación"""
     
@@ -742,6 +1063,8 @@ def crear_interfaz_principal():
             dpg.add_table_column(label="Código", width_fixed=True, width=100)
             dpg.add_table_column(label="Nombre", width_stretch=True, init_width_or_weight=300)
             dpg.add_table_column(label="Acciones", width_fixed=True, width=120)
+
+
 
 # Código para iniciar la aplicación
 def iniciar_aplicacion():
