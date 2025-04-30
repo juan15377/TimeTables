@@ -3,7 +3,7 @@ import dearpygui.dearpygui as dpg
 with dpg.theme() as tema_optimizado:
     with dpg.theme_component(dpg.mvAll):
         dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 8, 6)
-        dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 10, 6)
+        #dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 10, 6)
         dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 8, 5)
         dpg.add_theme_style(dpg.mvStyleVar_WindowPadding, 12, 12)
         dpg.add_theme_style(dpg.mvStyleVar_ScrollbarSize, 14)

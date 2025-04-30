@@ -169,7 +169,7 @@ class GestorEntidad:
                         btn = dpg.add_button(
                             label=accion["label"],
                             user_data=(item["id"], accion["callback"]),
-                            callback=lambda s, a, u : u[1](u[0]), #! u = (id, accion)
+                            callback=lambda s, a, u : u[1](u[0]), #! u = (id, accion), se ejecuta accion(id)
                             width=50,
                             height=20
                         )
@@ -524,7 +524,7 @@ class GestorProfesores(GestorEntidad):
         if dpg.does_item_exist(ventana_tag):
             dpg.delete_item(ventana_tag)
         
-        hor_clas = HorarioDisponibilidadApp("CLASSROOM", prof_id, self.db)
+        hor_clas = HorarioDisponibilidadApp("PROFESSOR", prof_id, self.db)
         
         with dpg.window(modal=True, show=True, tag=ventana_tag, 
                        label=f"Disponibilidad de {professor["name"]}", 

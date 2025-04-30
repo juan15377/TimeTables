@@ -7,6 +7,7 @@ import numpy as np
 from typing import Dict, Callable, List
 
 
+
 def get_available_slots(min_slots: float, max_slots: float, sum_slots: float) -> List[int]:
     if sum_slots < min_slots:
         return [0]  # Devuelve 0 si no hay suficientes slots disponibles

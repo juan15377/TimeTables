@@ -77,11 +77,14 @@ class SubjectSelector:
 
         subjects_display = [f"{name} {code} ID = {id_}" for id_, name, code in self.subjects_data]
         
-        dpg.configure_item(self.subject_selector_tag, items=subjects_display)
-        dpg.set_value(self.subject_selector_tag, subjects_display[0] if subjects_display else "")
+        dpg.configure_item(self.subject_selector_tag, items=subjects_display, default_value = subjects_display[0] if subjects_display else "")
+
+        #dpg.set_value(self.subject_selector_tag, subjects_display[0] if subjects_display else "")
         # llamamos al callback manualmente
         self.subject_changed_callback(self.subject_selector_tag, subjects_display[0] if subjects_display else "", self.get_id() )
         self.color_editor.set_id_subject(self.get_id())
+        
+        dpg.configure_item(self.subject_selector_tag, user_data = self.get_id())
 
         pass
         
@@ -136,7 +139,7 @@ class SubjectSelector:
             self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, mode=self.mode,  default_color=color)
             self.color_editor.setup_ui()
             
-            self.update_subjects_display()
+            self.update_subjects_display()            
 
 
         with dpg.group(horizontal=True):
@@ -202,7 +205,7 @@ class SubjectSelector:
         pass
 
     def on_change_subject_selected(self, sender, app_data, user_data, force = True):
-        self.subject_changed_callback(sender, app_data, user_data)
+        self.subject_changed_callback(sender, app_data, self.get_id()) # ! callback inyected
         
         
         self.update_subject_slots()
@@ -218,6 +221,7 @@ class SubjectSelector:
         self.color_editor.set_id_subject(self.get_id())
         self.color_editor.set_color(color)
         
+        dpg.configure_item(self.subject_selector_tag, user_data = self.get_id())
         pass
 
     def on_change_color_subject(self, sender, app_data, user_data):

@@ -14,6 +14,7 @@ materias: List[Dict] = [
         "aula": "A-101",
         "grupos": ["ING-1-A", "ING-1-B", "ECO-1-A"]
     },
+    
     {
         "codigo": "FIS-201",
         "nombre": "Física Avanzada",
