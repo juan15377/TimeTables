@@ -24,21 +24,21 @@ def get_available_slots(min_slots: float, max_slots: float, sum_slots: float) ->
 def get_available_slots_subject(db_connection, id_subject: int) -> List[int]:
     cursor = db_connection.cursor()
 
-    # Obtener total de slots asignados a la materia
+    # ? obtener total de slots asignados a la materia
     cursor.execute("SELECT TOTAL_SLOTS, MINIMUM_SLOTS, MAXIMUM_SLOTS FROM SUBJECT WHERE ID = ?", (id_subject,))
     result = cursor.fetchone()
 
     if result is None:
+        print("no se encontro la materia")
         return []  # Si no se encuentra la materia, retorna una lista vacía
 
     total_slots, min_slots, max_slots = result
 
-    # Obtener la suma de slots ya utilizados
     cursor.execute("SELECT COALESCE(SUM(LEN), 0) FROM SUBJECT_SLOTS WHERE ID_SUBJECT = ?", (id_subject,))
     used_slots = cursor.fetchone()[0]
 
     cursor.close()
-    # Calcular los slots disponibles
+    
     return get_available_slots(min_slots, max_slots, total_slots - used_slots)
 
 def delete_subject_slots_after_update_availability(db_connection, type_, id_type, row_position, column_position, val):
@@ -49,7 +49,7 @@ def delete_subject_slots_after_update_availability(db_connection, type_, id_type
         raise ValueError("Tipo no válido")
     
     cursor = db_connection.cursor()
-    # si el cambio en la nueva posicion insersecta con algunos de los bloques entonces se debe eliminar
+    # ?si el cambio en la nueva posicion insersecta con algunos de los bloques entonces se debe eliminar
     cursor.execute(f"""DELETE FROM SUBJECT_SLOTS WHERE ID_SUBJECT IN (SELECT ID_{type_} FROM {type_}_SUBJECT WHERE ID_{type_} = {id_type}) 
                    AND COLUMN_POSITION = {column_position}
                    AND {row_position} BETWEEN ROW_POSITION AND ROW_POSITION +  LEN-1
@@ -76,6 +76,7 @@ def check_availability_subjects_by_new_slot(db_connection, row_position, column_
     )
     AND A.COLUMN_POSITION = ?
     AND A.ID_SUBJECT IN ({placeholders})
+    
     """
 
     params = [
@@ -167,7 +168,6 @@ def check_availability_slot_under_group(db_connection, row_pos: int, column_pos:
     cursor = db_connection.cursor()
 
     # ! Restricciones fuertes 
-    # Verificar si el grupo está disponible en el horario solicitado
     query = """
     SELECT 1 FROM GROUP_AVAILABILITY A
     WHERE A.ID_GROUP = ?
@@ -178,7 +178,7 @@ def check_availability_slot_under_group(db_connection, row_pos: int, column_pos:
     
     cursor.execute(query, (id_group, column_pos, row_pos, row_pos + len_slot - 1))
 
-    if cursor.fetchone() is None:  # No encontró restricciones de disponibilidad
+    if cursor.fetchone() is None:  #? No encontró restricciones de disponibilidad
         # Obtener los IDs de las materias asignadas al grupo
         query = """
         SELECT GROUP_CONCAT(A.ID_SUBJECT) FROM GROUP_SUBJECT A
@@ -197,7 +197,7 @@ def check_availability_slot_under_group(db_connection, row_pos: int, column_pos:
     return False
 
 
-def insert_color_of_new_subject(db_connection: str, id_professor: int, id_classroom: int, ids_groups: str, id_subject: int):
+def insert_color_of_new_subject(db_connection: str, id_professor: int, id_classroom: int, ids_groups: str, id_subject: int, online : bool):
     """
     Inserta colores aleatorios para un nuevo sujeto/profesor/aula/grupo
     
@@ -226,12 +226,13 @@ def insert_color_of_new_subject(db_connection: str, id_professor: int, id_classr
         VALUES (?, ?, ?, ?, ?)
         """, (id_professor, id_subject, prof_red, prof_green, prof_blue))
 
-    room_red, room_green, room_blue = generate_color()
+    if not online:
+        room_red, room_green, room_blue = generate_color()
 
-    cursor.execute("""
-            INSERT INTO CLASSROOM_COLORS(ID_CLASSROOM, ID_SUBJECT, RED, GREEN, BLUE)
-            VALUES (?, ?, ?, ?, ?)
-        """, (id_classroom, id_subject, room_red, room_green, room_blue))
+        cursor.execute("""
+                INSERT INTO CLASSROOM_COLORS(ID_CLASSROOM, ID_SUBJECT, RED, GREEN, BLUE)
+                VALUES (?, ?, ?, ?, ?)
+            """, (id_classroom, id_subject, room_red, room_green, room_blue))
 
     for id_group in ids_groups:
             group_red, group_green, group_blue = generate_color()
@@ -248,28 +249,38 @@ class SubjectsManager:
     def __init__(self, db_connection):
         self.db_connection = db_connection
 
-    def new(self, name, code, id_professor, id_classroom, ids_groups, min_slots, max_slots, total_slots):
+    def new(self,   name, 
+                    code, 
+                    id_professor, 
+                    id_classroom, 
+                    ids_groups,
+                    min_slots, 
+                    max_slots, 
+                    total_slots,
+                    online):
+        
         cursor = self.db_connection.cursor()
+        
         try:
-            # Insertar la materia
             cursor.execute(
-                "INSERT INTO SUBJECT (NAME, CODE, MINIMUM_SLOTS, MAXIMUM_SLOTS, TOTAL_SLOTS) VALUES (?, ?, ?, ?, ?) RETURNING ID",
-                (name, code, min_slots, max_slots, total_slots)
+                "INSERT INTO SUBJECT (NAME, CODE, MINIMUM_SLOTS, MAXIMUM_SLOTS, TOTAL_SLOTS, ONLINE) VALUES (?, ?, ?, ?, ?, ?) RETURNING ID",
+                (name, code, min_slots, max_slots, total_slots, online)
             )
             id_new_subject = cursor.fetchone()[0]
 
             cursor.execute("INSERT INTO PROFESSOR_SUBJECT (ID_PROFESSOR, ID_SUBJECT) VALUES (?, ?)", 
                            (id_professor, id_new_subject))
-            cursor.execute("INSERT INTO CLASSROOM_SUBJECT (ID_CLASSROOM, ID_SUBJECT) VALUES (?, ?)", 
-                           (id_classroom, id_new_subject))
+            if not online:
+                cursor.execute("INSERT INTO CLASSROOM_SUBJECT (ID_CLASSROOM, ID_SUBJECT) VALUES (?, ?)", 
+                            (id_classroom, id_new_subject))
 
             for id_group in ids_groups:
                 cursor.execute("INSERT INTO GROUP_SUBJECT (ID_GROUP, ID_SUBJECT) VALUES (?, ?)", (id_group, id_new_subject))
 
-            insert_color_of_new_subject(self.db_connection, id_professor, id_classroom, ids_groups, id_new_subject)
+            insert_color_of_new_subject(self.db_connection, id_professor, id_classroom, ids_groups, id_new_subject, online)
 
-            # Confirmar transacción
-            
+            # ! guardar cambios 
+                        
             self.db_connection.commit()
 
         except sqlite3.Error as e:
@@ -292,10 +303,8 @@ class SubjectsManager:
 
     def new_slot(self, id_subject, row_position, column_position, len_slot):
         # checar primero si el tamaño de slot es viable bajo las condiciones de la materia
-
         cursor = self.db_connection.cursor()
         
-
         if not len_slot in get_available_slots_subject(self.db_connection, id_subject):
             print("El tamaño del slot no cumple con los requerimientos")
             print(len_slot)
@@ -316,7 +325,11 @@ class SubjectsManager:
                 WHERE ID_SUBJECT = {id_subject}
                 """)
         
-        id_classroom =  cursor.fetchall()[0][0]
+        try:
+            id_classroom =  cursor.fetchall()[0][0]
+        except:
+            # ! es una materia que se da en linea
+            id_classroom = None
 
 
         cursor.execute(F"""
@@ -327,11 +340,6 @@ class SubjectsManager:
         
         ids_groups = [id_group[0] for id_group in cursor.fetchall()]
 
-        print(check_availability_slot_under_professor(self.db_connection,
-                                                       row_position,
-                                                       column_position,
-                                                       len_slot,
-                                                       id_professor))
     
         if not check_availability_slot_under_professor(self.db_connection,
                                                        row_position,
@@ -340,13 +348,16 @@ class SubjectsManager:
                                                        id_professor):
             return None 
         
-        if not check_availability_slot_under_classroom(self.db_connection,
-                                                       row_position,
-                                                       column_position,
-                                                       len_slot,
-                                                       id_classroom):
-            return None
+        #! is online
+        if not id_classroom is None:
         
+            if not check_availability_slot_under_classroom(self.db_connection,
+                                                        row_position,
+                                                        column_position,
+                                                        len_slot,
+                                                        id_classroom):
+                return None
+
         for id_group in ids_groups:
 
             if not check_availability_slot_under_group(self.db_connection,
@@ -409,43 +420,84 @@ class SubjectsManager:
     
     def get_strong_constraints_matrix(self, id_subject):
         
-        query = """
-        SELECT P_A.ROW_POSITION, P_A.COLUMN_POSITION, MIN(P_A.VAL, C_A.VAL, G_A.VAL) AS VAL
-        FROM (
-            SELECT ROW_POSITION, COLUMN_POSITION, VAL
-            FROM PROFESSOR_AVAILABILITY
-            WHERE ID_PROFESSOR IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
-            ) AS P_A
-        LEFT JOIN (
-            SELECT ROW_POSITION, COLUMN_POSITION, VAL
-            FROM CLASSROOM_AVAILABILITY
-            WHERE ID_CLASSROOM IN (SELECT ID_CLASSROOM FROM CLASSROOM_SUBJECT WHERE ID_SUBJECT = ?)
-            ) AS C_A ON P_A.ROW_POSITION = C_A.ROW_POSITION AND P_A.COLUMN_POSITION = C_A.COLUMN_POSITION
-        LEFT JOIN (
-            SELECT 
-                ROW_POSITION, 
-                COLUMN_POSITION, 
-                MIN(CASE WHEN VAL = 1 THEN 1 ELSE 0 END) AS VAL
-            FROM 
-                GROUP_AVAILABILITY
-            WHERE 
-                ID_GROUP IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)
-            GROUP BY 
-                ROW_POSITION, COLUMN_POSITION
-        ) AS G_A ON P_A.ROW_POSITION = G_A.ROW_POSITION AND P_A.COLUMN_POSITION = G_A.COLUMN_POSITION
-        ORDER BY P_A.ROW_POSITION, P_A.COLUMN_POSITION;
+        # ? get if is online 
+        cursor = self.db_connection.cursor()
         
-        """
+        cursor.execute("""
+            SELECT ONLINE 
+            FROM SUBJECT 
+            WHERE ID = ?
+        """, (id_subject,))
+        
+        is_online = cursor.fetchone()[0]
+        
+        if is_online:
+            query = """
+            SELECT P_A.ROW_POSITION, P_A.COLUMN_POSITION, MIN(P_A.VAL, G_A.VAL) AS VAL
+            FROM (
+                SELECT ROW_POSITION, COLUMN_POSITION, VAL
+                FROM PROFESSOR_AVAILABILITY
+                WHERE ID_PROFESSOR IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
+                ) AS P_A
+            LEFT JOIN (
+                SELECT 
+                    ROW_POSITION, 
+                    COLUMN_POSITION, 
+                    MIN(CASE WHEN VAL = 1 THEN 1 ELSE 0 END) AS VAL
+                FROM 
+                    GROUP_AVAILABILITY
+                WHERE 
+                    ID_GROUP IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)
+                GROUP BY 
+                    ROW_POSITION, COLUMN_POSITION
+            ) AS G_A ON P_A.ROW_POSITION = G_A.ROW_POSITION AND P_A.COLUMN_POSITION = G_A.COLUMN_POSITION
+            ORDER BY P_A.ROW_POSITION, P_A.COLUMN_POSITION;
+            
+            """ 
+            
+            cursor = self.db_connection.cursor()
+
+            cursor.execute(query, (id_subject, id_subject))
+
+            cells_availability = cursor.fetchall()
+            
+        else:
+            query = """
+            SELECT P_A.ROW_POSITION, P_A.COLUMN_POSITION, MIN(P_A.VAL, C_A.VAL, G_A.VAL) AS VAL
+            FROM (
+                SELECT ROW_POSITION, COLUMN_POSITION, VAL
+                FROM PROFESSOR_AVAILABILITY
+                WHERE ID_PROFESSOR IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
+                ) AS P_A
+            LEFT JOIN (
+                SELECT ROW_POSITION, COLUMN_POSITION, VAL
+                FROM CLASSROOM_AVAILABILITY
+                WHERE ID_CLASSROOM IN (SELECT ID_CLASSROOM FROM CLASSROOM_SUBJECT WHERE ID_SUBJECT = ?)
+                ) AS C_A ON P_A.ROW_POSITION = C_A.ROW_POSITION AND P_A.COLUMN_POSITION = C_A.COLUMN_POSITION
+            LEFT JOIN (
+                SELECT 
+                    ROW_POSITION, 
+                    COLUMN_POSITION, 
+                    MIN(CASE WHEN VAL = 1 THEN 1 ELSE 0 END) AS VAL
+                FROM 
+                    GROUP_AVAILABILITY
+                WHERE 
+                    ID_GROUP IN (SELECT ID_GROUP FROM GROUP_SUBJECT WHERE ID_SUBJECT = ?)
+                GROUP BY 
+                    ROW_POSITION, COLUMN_POSITION
+            ) AS G_A ON P_A.ROW_POSITION = G_A.ROW_POSITION AND P_A.COLUMN_POSITION = G_A.COLUMN_POSITION
+            ORDER BY P_A.ROW_POSITION, P_A.COLUMN_POSITION;
+            """
+            
+            cursor = self.db_connection.cursor()
+
+            cursor.execute(query, (id_subject, id_subject, id_subject))
+
+            cells_availability = cursor.fetchall()
+        
         
         initial_matrix = np.full((30,7), False)
 
-        # filtro todos los slots de esta materia
-
-        cursor = self.db_connection.cursor()
-
-        cursor.execute(query, (id_subject, id_subject, id_subject))
-
-        cells_availability = cursor.fetchall()
 
         for cell in cells_availability:
             row_position = cell[0]
@@ -462,7 +514,7 @@ class SubjectsManager:
     def get_weak_constraints_matrix(self, id_subject):
         cursor = self.db_connection.cursor()
 
-        # Obtener ID del profesor - CORRECCIÓN PRINCIPAL
+        # Obtener ID del profesor 
         cursor.execute("""
         SELECT ID
         FROM PROFESSOR
@@ -488,7 +540,6 @@ class SubjectsManager:
         """, (id_subject,))
         ids_groups = [row[0] for row in cursor.fetchall()]  # fetchall() siempre devuelve una lista (puede estar vacía)
 
-        # Resto del código permanece igual como en la corrección anterior...
         # Obtener slots del profesor
         cursor.execute("""
         SELECT ROW_POSITION, COLUMN_POSITION, LEN
@@ -502,16 +553,20 @@ class SubjectsManager:
         slots_professor = cursor.fetchall() or []
 
         # Obtener slots del aula
-        cursor.execute("""
-        SELECT ROW_POSITION, COLUMN_POSITION, LEN
-        FROM SUBJECT_SLOTS
-        WHERE ID_SUBJECT IN (
-            SELECT ID_SUBJECT 
-            FROM CLASSROOM_SUBJECT 
-            WHERE ID_CLASSROOM = ?
-        )
-        """, (id_classroom,))
-        slots_classroom = cursor.fetchall() or []
+        if not id_classroom is None:
+            cursor.execute("""
+            SELECT ROW_POSITION, COLUMN_POSITION, LEN
+            FROM SUBJECT_SLOTS
+            WHERE ID_SUBJECT IN (
+                SELECT ID_SUBJECT 
+                FROM CLASSROOM_SUBJECT 
+                WHERE ID_CLASSROOM = ?
+            )
+            """, (id_classroom,))
+            slots_classroom = cursor.fetchall() or []
+        else:
+            # ! esta en linea la materia y los slots por defecto son vacios
+            slots_classroom = []
 
         # Obtener slots de los grupos
         if ids_groups:

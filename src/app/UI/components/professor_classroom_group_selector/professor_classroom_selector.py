@@ -41,10 +41,9 @@ class SelectorBase:
         # Añadimos el campo de filtro con botón para limpiar
         with dpg.group(horizontal=True):
             dpg.add_text("Filtrar:")
-            print("BHUGVUHJNKML", self.filter_input_tag)
             dpg.add_input_text(
                 tag=self.filter_input_tag,
-                width=300,
+                width=500,
                 hint=f"Buscar por nombre o ID...",
                 callback=self._filter_items
             )
@@ -58,7 +57,7 @@ class SelectorBase:
             dpg.add_text("Progresso :")
             dpg.add_progress_bar(
                 default_value=0.0,
-                width=150,
+                width=200,
                 tag=self.progress_bar_tag,
                 overlay="0%"
             )
@@ -189,7 +188,7 @@ class SelectorBase:
         self.update_progress_bar()
         if self.callback:
             self.callback(sender, app_data, user_data)
-
+        
 
 
 class ProfessorSelector(SelectorBase):

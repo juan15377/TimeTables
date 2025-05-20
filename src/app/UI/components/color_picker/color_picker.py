@@ -50,8 +50,11 @@ class SubjectColorEditor:
                 tag=self._color_picker_tag,
                 no_alpha=True,
                 callback=self._on_color_changed,
-                width=300,
-                user_data=self.id_subject
+                width=310,
+                user_data=self.id_subject,
+                no_small_preview=False,
+                alpha_preview=50
+                
         )
 
     def _draw_preview(self):

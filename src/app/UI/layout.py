@@ -1,10 +1,13 @@
 import dearpygui.dearpygui as dpg
-from .route_manager import route_manager
+from .windows.main_window.route_manager import route_manager
 import dearpygui_extend as dpge
 import inspect
 from src.app.database import database_manager
 import os
 from .main_views import VIEWS
+
+from src.app.UI.components.windows_manager.windows_manager import Window
+
 
 def print_me(sender, app_data, user_data):
     print("HOLA")
@@ -101,9 +104,9 @@ with dpg.window(label="Save", tag="save_window", show=False, width=800, height=6
     
 
 
-    
 
-with dpg.window(label="Sistema de Horarios", tag="main_window", width=780, height=580):
+with dpg.window(label="Sistema de Horarios", 
+                tag="main_window", width=780, height=580):      # Opcional: impedir minimizar la ventana):
     # Barra de menú principal
     with dpg.menu_bar():
         with dpg.menu(label="Archivo"):
@@ -167,8 +170,8 @@ with dpg.window(label="Sistema de Horarios", tag="main_window", width=780, heigh
                     with dpg.tab(label="Lista", tag="GROUP-LIST") as tab_id:
                         dpg.set_item_user_data(tab_id, "GROUP-LIST")
                         pass
- 
-# 
+
+
 #for (tag_view, view) in VIEWS.items():
 #    view.setup_ui(tag_view)
     
@@ -179,3 +182,4 @@ VIEWS["CLASSROOM-GRID"].setup_ui("CLASSROOM-GRID")
 VIEWS["CLASSROOM-LIST"].setup_ui("CLASSROOM-LIST")
 
 VIEWS["GROUP-GRID"].setup_ui("GROUP-GRID")
+VIEWS["GROUP-LIST"].setup_ui("GROUP-LIST")

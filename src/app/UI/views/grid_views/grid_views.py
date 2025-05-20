@@ -12,7 +12,9 @@ class BaseItemGridView():
             selected_id = self.item_selector.get_id_selected()
             if selected_id is not None:
                 self.grid.set_id_mode(selected_id)
+                print("Se actualizo la grilla")
             pass
+            
         
         selectors = {
             "PROFESSOR": ProfessorSelector,
@@ -37,13 +39,12 @@ class BaseItemGridView():
         
             self.item_selector.setup_ui(parent)
             self.grid.setup_ui()
-        
-
+    
 class ProfessorGridView(BaseItemGridView):
     
     def __init__(self):
         super().__init__("PROFESSOR") 
-        
+
 class ClassroomGridView(BaseItemGridView):
     
     def __init__(self):
@@ -51,5 +52,4 @@ class ClassroomGridView(BaseItemGridView):
         
 class GroupGridView(BaseItemGridView):
     def __init__(self):
-        super().__init__("GROUP") 
-
+        super().__init__("GROUP")

@@ -4,6 +4,9 @@ import time
 from typing import List, Dict, Callable, Optional, Any
 from src.app.database import database_manager
 from src.app.UI.components.schedule_availability.schedule_availability import HorarioDisponibilidadApp
+
+from src.app.UI.components.windows_manager import windows_manager
+
 class GestorEntidad:
     """Clase base para gestionar entidades (profesores, aulas, etc.)"""
     
@@ -439,7 +442,7 @@ class GestorEntidad:
         self.actualizar_lista(force=True)
         
 
-class GestorProfesores(GestorEntidad):
+class ProfessorsManager(GestorEntidad):
     """Gestor específico para profesores"""
     
     def __init__(self, db):
@@ -475,42 +478,13 @@ class GestorProfesores(GestorEntidad):
         if not profesor:
             return
         
-        ventana_tag = "ventana_materias"
+        subject_list_window = windows_manager.get_window("list_subjects_window")
+        subject_list_window.set_mode(mode_id = prof_id, mode = "PROFESSOR")
+        windows_manager.show_window("list_subjects_window")
         
-        # Verificar si ya existe una ventana abierta y cerrarla
-        if dpg.does_item_exist(ventana_tag):
-            dpg.delete_item(ventana_tag)
+        #windows_manager.get_window("list_subjects_window").create()
+        #windows_manager.show_window("list_subjects_window")
         
-        with dpg.window(modal=True, show=True, tag=ventana_tag, 
-                       label=f"Materias de {profesor['name']}", 
-                       width=500, height=400, pos=[200, 200]):
-            dpg.add_text("Esta ventana permitirá gestionar las materias del profesor.")
-            dpg.add_spacer(height=10)
-            
-            dpg.add_text("Aquí se implementará la lista de materias y opciones para agregar/eliminar.")
-            dpg.add_spacer(height=20)
-            
-            # Solo como demostración - Aquí irían los controles reales
-            with dpg.child_window(height=200, border=True):
-                dpg.add_text(f"Profesor: {profesor['name']} (ID: {profesor['id']})")
-                dpg.add_text("Funcionalidad de gestión de materias a implementar.")
-            
-            dpg.add_spacer(height=20)
-            with dpg.group(horizontal=True):
-                btn_agregar_materia = dpg.add_button(
-                    label="Agregar Materia",
-                    callback=lambda: None,  # Implementar en el futuro
-                    width=150
-                )
-                dpg.bind_item_theme(btn_agregar_materia, self.tema_accion)
-                
-                dpg.add_spacer(width=20)
-                
-                dpg.add_button(
-                    label="Cerrar",
-                    callback=lambda: dpg.delete_item("ventana_materias"),
-                    width=150
-                )
 
     def mostrar_disponibilidad(self, prof_id: int) -> None:
         """Muestra la ventana de disponibilidad para el profesor seleccionado"""

@@ -47,6 +47,7 @@ class SubjectSelector:
         self.color_change_callback = color_change_callback
         self.subject_selector_tag = "subject_selector" + "_" + mode
         self.subject_progress_bar_tag = "subject_progress" + "_" +  mode
+        self.example_slot_tag = "example_slot_tag_" +  mode
         
         if self.mode == "PROFESSOR":
             self.ids_subjects = self.db.professors.get_subjects(self.id_mode)
@@ -110,6 +111,7 @@ class SubjectSelector:
         #cambiamos la seleccion de slots
         self.update_subject_slots()
         self.update_bar_progress()
+        self.updadte_subject_slot_example(color)
         
     def update_mode(self, new_mode, id_mode = None):
         "cnhages the mode and id_mode"
@@ -118,45 +120,50 @@ class SubjectSelector:
         
 
     def setup_ui(self):
-        "build a widget in interface"
         with dpg.group(horizontal=True):
-            dpg.add_text("Materia :")
-            
-            dpg.add_combo(
-                items=[""],
-                default_value="",
-                tag=self.subject_selector_tag,
-                width=530,
-                callback=self.on_change_subject_selected,
-                user_data=1,
-            )
-            # despues de crear el objecto lo actualizamos
-            
-            self.slots_selector = DiscreteValueSelector(self.mode, [0], "slots_subject")
-            
-            color = self.get_subject_color()
-            dpg.add_text("  Color:")
-            self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, mode=self.mode,  default_color=color)
-            self.color_editor.setup_ui()
-            
-            self.update_subjects_display()            
+            with dpg.group():
+                "build a widget in interface"
+                with dpg.group(horizontal=True):
+                    dpg.add_text("Materia :")
+                    
+                    dpg.add_combo(
+                        items=[""],
+                        default_value="",
+                        tag=self.subject_selector_tag,
+                        width=530,
+                        callback=self.on_change_subject_selected,
+                        user_data=None,
+                    )
+                    # despues de crear el objecto lo actualizamose
+                    
+                    self.slots_selector = DiscreteValueSelector(self.mode, [0], "slots_subject")
+                    
+                    color = self.get_subject_color()
+                    dpg.add_text("  Color:")
+                    self.color_editor = SubjectColorEditor(self.id_mode, self.get_id(), database_manager, self.on_change_color_subject, mode=self.mode,  default_color=color)
+                    self.color_editor.setup_ui()
+                    
+                    self.update_subjects_display()            
 
 
-        with dpg.group(horizontal=True):
-            dpg.add_spacer(width=10)
-            dpg.add_text("Progresso Materia:")
-            
-            progress = self.get_progress_subject()
+                with dpg.group(horizontal=True):
+                    dpg.add_spacer(width=10)
+                    dpg.add_text("Progresso Materia:")
+                    
+                    progress = self.get_progress_subject()
 
-            dpg.add_progress_bar(default_value=progress,
-                                 width=100,
-                                 overlay=f"{int(progress * 100)}%",
-                                 tag = self.subject_progress_bar_tag)
-            dpg.add_text("Tamaño Slot:")
+                    dpg.add_progress_bar(default_value=progress,
+                                        width=200,
+                                        overlay=f"{int(progress * 100)}%",
+                                        tag = self.subject_progress_bar_tag)
+                    dpg.add_text("Tamaño Slot:")
 
-            self.slots_selector.setup_widget()
-            self.update_subject_slots()
+                    self.slots_selector.setup_widget()
+                    self.update_subject_slots()
 
+            with dpg.group():
+                dpg.add_button(label = "COMPM", width=100, height=41, tag = self.example_slot_tag)
+                pass
     def update_subject_slots(self):
         "after update subject selected update the allowed slots"
         id_subject_selected = self.get_id()
@@ -203,6 +210,14 @@ class SubjectSelector:
             color = (0, 0, 0)
         return color
         pass
+    
+    def updadte_subject_slot_example(self, color):
+        dpg.configure_item(self.example_slot_tag, label = self.get_code())
+        #! change color of example slot 
+        theme = self.create_subject_theme(color)
+        dpg.bind_item_theme(self.example_slot_tag, theme)
+        print("SE ACTUALIZO")
+        
 
     def on_change_subject_selected(self, sender, app_data, user_data, force = True):
         self.subject_changed_callback(sender, app_data, self.get_id()) # ! callback inyected
@@ -211,6 +226,8 @@ class SubjectSelector:
         self.update_subject_slots()
         self.update_bar_progress()
         
+        
+
         if self.mode == "PROFESSOR":
             color = self.db.professors.get_subject_color(self.get_id())
         elif self.mode == "CLASSROOM":
@@ -221,7 +238,11 @@ class SubjectSelector:
         self.color_editor.set_id_subject(self.get_id())
         self.color_editor.set_color(color)
         
+        
         dpg.configure_item(self.subject_selector_tag, user_data = self.get_id())
+        
+        self.updadte_subject_slot_example(color)        
+        
         pass
 
     def on_change_color_subject(self, sender, app_data, user_data):
@@ -238,6 +259,8 @@ class SubjectSelector:
         red = color[0]
         green = color[1]
         blue = color[2]
+        
+        self.updadte_subject_slot_example(color)
 
                 
         if self.mode == "PROFESSOR":
@@ -247,14 +270,37 @@ class SubjectSelector:
         else:
             self.db.groups.set_subject_color(id_mode, id_subject, red, green, blue)
     
+    
+    def create_subject_theme(self, color):
+            """Crear un tema para una materia con el color especificado"""
+            theme = dpg.add_theme()
+            with dpg.theme_component(dpg.mvButton, parent=theme):
+                # Colores (como ya tienes)
+                dpg.add_theme_color(dpg.mvThemeCol_Button, color)
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [min(c + 40, 255) for c in color])
+                
+                # Ajustar color de texto según brillo
+                brightness = (0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2])/255
+                text_color = (0, 0, 0) if brightness > 0.5 else (255, 255, 255)
+                dpg.add_theme_color(dpg.mvThemeCol_Text, text_color)
+                
+                # Aumentar tamaño de fuente (agrega esto)
+                dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 10, 5)  # Padding interno
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 5)     # Bordes redondeados    
+            return theme
     def get_progress_subject(self):
         
+        if self.get_id() is None:
+            return 1
         
         query = f"""
             SELECT TOTAL_SLOTS
             FROM SUBJECT 
             WHERE ID = {self.get_id()}
         """
+        
+        print("QUERY")
+        print(query)
         
         cursor = self.db.execute_query(query)
         

@@ -1,1 +1,1 @@
-from .professors import GestorProfesores, ClassroomsManager
+from .professors import ProfessorsManager, ClassroomsManager

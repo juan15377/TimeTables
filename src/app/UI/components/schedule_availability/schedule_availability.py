@@ -131,7 +131,7 @@ class HorarioDisponibilidadApp:
     def crear_interfaz(self):
         with dpg.group(horizontal=False):  
 
-            with dpg.child_window(width=-1, height=500, autosize_x=True, horizontal_scrollbar=True):
+            with dpg.child_window(width=-1, height=-1, autosize_x=True, horizontal_scrollbar=True):
                 with dpg.table(header_row=True, resizable=False, policy=dpg.mvTable_SizingFixedFit,
                             borders_innerH=True, borders_outerH=True, borders_innerV=True, borders_outerV=True):
 
@@ -160,37 +160,7 @@ class HorarioDisponibilidadApp:
                                 btn = dpg.add_button(label=" ", tag = button_tag, callback=self.toggle_disponibilidad,
                                                     user_data=(idx_hour, idx_day, False), width=col_width - 10, height=25)
                                 dpg.bind_item_theme(btn, self.tema_no_disponible)
-                                
-            with dpg.child_window(width=340, height=80, border=True):
-                with dpg.theme() as button_theme:
-                    with dpg.theme_component(dpg.mvButton):
-                        dpg.add_theme_color(dpg.mvThemeCol_Button, (30, 144, 255, 255))         # Azul bonito
-                        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (65, 150, 255, 255))   # Al pasar el cursor
-                        dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, (20, 120, 220, 255))    # Al hacer clic
-                        dpg.add_theme_color(dpg.mvThemeCol_Text, (255, 255, 255, 255))           # Texto blanco
-                        dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10)                   # Bordes redondeados
-
-                with dpg.group(horizontal=True):
-                    dpg.add_spacer(width=10)
-                    dpg.add_button(
-                        label="💾 Guardar cambios",
-                        callback=self.guardar_disponibilidad,
-                        height=45,
-                        width=150,
-                        tag="guardar_btn"
-                    )
-                    dpg.bind_item_theme("guardar_btn", button_theme)
-
-                    dpg.add_spacer(width=20)
-
-                    dpg.add_button(
-                        label="🔄 Cargar original",
-                        callback=self.cargar_disponibilidad,
-                        height=45,
-                        width=150,
-                        tag="cargar_btn"
-                    )
-                    dpg.bind_item_theme("cargar_btn", button_theme)
+               
 
 
         self.cargar_disponibilidad()

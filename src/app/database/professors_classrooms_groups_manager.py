@@ -71,8 +71,6 @@ class BaseManager:
 
         cursor = self.db_connection.cursor()
 
-        # Verifica el valor de self.type_ antes de ejecutar la consulta
-        print(f"self.type_: {self.type_}")
         
         if self.type_ == "GROUP":
             cursor.execute(f"INSERT INTO {self.type_}S (NAME) VALUES (?)", (name,))
@@ -89,12 +87,25 @@ class BaseManager:
     def remove(self, id_type):
 
         delete_subjects_before_delete(self.type_, self.db_connection, id_type)
-
+        if id_type is None:
+            return None 
+        
         cursor = self.db_connection.cursor()
+        try:
+            if self.type_ == "GROUP":
+                query = f"DELETE FROM GROUPS WHERE ID = {id_type}"
+                print(query)
+                cursor.execute(query)
+                return None
+            query = f"DELETE FROM {self.type_} WHERE ID = {id_type}"
+            print(query)
+            cursor.execute(query)
+            self.db_connection.commit()
+            
+        except:
+            self.db_connection.rollback()
+            
 
-        cursor.execute(f"DELETE FROM {self.type_} WHERE ID = {id_type}")
-
-        self.db_connection.commit()
 
 
     def update_availability(self, id_type, row_position, column_position, new_val):

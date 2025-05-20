@@ -1,13 +1,17 @@
 from src.app.database import database_manager 
 
 
+
 # Example
 #database_manager.restart()
+
+
 
 database_manager.professors.new("Juan de jesus")
 database_manager.professors.new("Manuel Nava")
 database_manager.professors.new("Akdiel Novella")
 database_manager.professors.new("Eduardo Miramontes")
+
 
 database_manager.classrooms.new("Aula 1")
 database_manager.classrooms.new("Aula 2")
@@ -41,7 +45,8 @@ database_manager.subjects.new(
     [1],
     1,
     3,
-    8
+    8,
+    False
 )
 
 database_manager.subjects.new(
@@ -52,7 +57,8 @@ database_manager.subjects.new(
     [2, 3],
     1,
     4,
-    20
+    20,
+    False
 )
 
 database_manager.subjects.new(
@@ -63,9 +69,9 @@ database_manager.subjects.new(
     [4],
     1,
     4,
-    20
+    20,
+    True
 )
-
 
 database_manager.subjects.new_slot(1, 1, 1, 3)
 database_manager.subjects.new_slot(1, 3, 2, 3)

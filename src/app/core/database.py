@@ -6,6 +6,8 @@ DB_NAME = "TimeTables.db"
 DB_PATH = Path(__file__).resolve().parent / "TimeTables.db"
 
 def get_connection():
+    
+    
     """
     Devuelve una conexión a la base de datos SQLite.
     Asegura que el archivo esté en la raíz del proyecto.
@@ -80,7 +82,8 @@ def init_db():
             CODE TEXT,
             MINIMUM_SLOTS INTEGER CHECK(MINIMUM_SLOTS > 0),
             MAXIMUM_SLOTS INTEGER CHECK(MAXIMUM_SLOTS > MINIMUM_SLOTS),
-            TOTAL_SLOTS INTEGER CHECK(TOTAL_SLOTS > 0)
+            TOTAL_SLOTS INTEGER CHECK(TOTAL_SLOTS > 0),
+            ONLINE BOOLEAN
         );""",
 
         """CREATE TABLE PROFESSOR_COLORS (

@@ -3,7 +3,9 @@ import random
 from typing import List, Dict, Tuple, Optional
 
 class ListaGruposApp:
-    def __init__(self):
+    def __init__(self, db):
+        self.db = db 
+        
         dpg.create_context()
         
         self.grupos = []  # Lista de todos los grupos
@@ -54,9 +56,9 @@ class ListaGruposApp:
         self.semestres = sorted(list(set(grupo["semestre"] for grupo in self.grupos)))
         self.subgrupos = sorted(list(set(grupo["subgrupo"] for grupo in self.grupos)))
     
-    def setup_ui(self):
+    def setup_ui(self, parent):
         """Configura la interfaz gráfica."""
-        with dpg.group():
+        with dpg.group(parent = parent):
             # Filtros
             with dpg.group(horizontal=True):
                 # Filtro de carrera
@@ -127,7 +129,7 @@ class ListaGruposApp:
             dpg.add_spacer(height=10)
             
             # Lista de grupos
-            with dpg.child_window(width=600, height=200, tag="lista_grupos"):
+            with dpg.child_window(width=600, height=200, tag="lista_grupos_exportar"):
                 pass  # Se llena dinámicamente
             
             dpg.add_spacer(height=10)

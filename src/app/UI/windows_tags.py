@@ -1,0 +1,7 @@
+MAIN_WINDOW_TAG = "main_window"
+SUBJECTS_MANAGER_WINDOW_TAG = "subjects_manager_window"
+NEW_SUBJECT_WINDOW_TAG = "new_subject_window"
+EXPORT_WINDOW_TAG = "export_window_tag"
+SAVE_FILE_WINDOW_TAG = "save_file_window"
+IMPORT_DATABASE_WINDOW_TAG = "import_database_window"
+SCHEDULE_AVAILABILITY_WINDOW_TAG = "schedule_availability_window"

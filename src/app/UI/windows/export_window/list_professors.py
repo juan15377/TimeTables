@@ -11,7 +11,6 @@ class ListaProfesoresApp:
         self.db = db 
         
         self._inicializar_datos()
-        self.setup_ui()
     
     def _inicializar_datos(self):
         """Inicializa la lista de profesores y estructuras auxiliares."""
@@ -31,10 +30,10 @@ class ListaProfesoresApp:
         self.seleccion_profesores = {profesor["id"]: False for profesor in self.profesores}
         self.profesores_con_indice = [(profesor, i) for i, profesor in enumerate(self.profesores)]
     
-    def setup_ui(self):
+    def setup_ui(self, parent):
         """Configura la interfaz gráfica."""
 
-        with dpg.group():
+        with dpg.group(parent=parent):
             # Área de búsqueda
             with dpg.group(horizontal=True):
                 dpg.add_text("Buscar:")

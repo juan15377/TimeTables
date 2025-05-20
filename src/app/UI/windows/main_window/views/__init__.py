@@ -1,0 +1,1 @@
+from .views import MAIN_WINDOW_VIEWS

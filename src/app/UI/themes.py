@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg 
 
+
 with dpg.theme() as tema_optimizado:
     with dpg.theme_component(dpg.mvAll):
         dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 8, 6)
@@ -18,4 +19,3 @@ with dpg.theme() as tema_optimizado:
         dpg.add_theme_color(dpg.mvThemeCol_HeaderActive, (110, 110, 180))
         dpg.add_theme_color(dpg.mvThemeCol_TableRowBg, (40, 40, 50))
         dpg.add_theme_color(dpg.mvThemeCol_TableRowBgAlt, (50, 50, 60))
-

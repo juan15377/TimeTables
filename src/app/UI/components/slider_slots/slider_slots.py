@@ -20,7 +20,7 @@ class DiscreteValueSelector:
                 default_value=0,
                 min_value=0,
                 max_value=len(self.allowed_values) - 1,
-                width=200,
+                width=500,
                 callback=self.on_slider_changed,
                 format=""
             )

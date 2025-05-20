@@ -1,8 +1,6 @@
-from .main_views import VIEWS
+from .views import MAIN_WINDOW_VIEWS
 import dearpygui.dearpygui as dpg 
-from ..database import database_manager
-from .components import ProfessorSelector, ClassroomSelector, GroupSelector 
-from .views import GestorProfesores, ClassroomsManager
+from src.app.database import database_manager
 
 ROUTES = {
     "PROFESSOR-GRID",
@@ -21,7 +19,7 @@ def delete_actual_content():
 def update(route):
     global database_manager
     
-    view = VIEWS[route]
+    view = MAIN_WINDOW_VIEWS[route]
     
     view.update()
     
