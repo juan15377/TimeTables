@@ -27,10 +27,9 @@ class SubjectLatex:
         - color: Color in RGBA format.
         - hours_matrix: Boolean matrix for the schedule.
         """
-        cursor = db.db_connection.cursor()
 
         # Obtener información de la materia
-        cursor.execute("SELECT * FROM SUBJECT WHERE ID = ?", (id_subject,))
+        cursor = db.execute_query("SELECT * FROM SUBJECT WHERE ID = ?", (id_subject,))
         subject_info = cursor.fetchone()
         if not subject_info:
             raise ValueError(f"Subject with ID {id_subject} not found.")
@@ -40,7 +39,7 @@ class SubjectLatex:
         self.hours = subject_info[5]
 
         # Obtener información del profesor
-        cursor.execute("""
+        cursor = db.execute_query("""
             SELECT ID, NAME FROM PROFESSOR 
             WHERE ID IN (SELECT ID_PROFESSOR FROM PROFESSOR_SUBJECT WHERE ID_SUBJECT = ?)
         """, (id_subject,))
@@ -52,7 +51,7 @@ class SubjectLatex:
             self.professor_name = "Unknown"
 
         # Obtener información del aula
-        cursor.execute("""
+        cursor = db.execute_query("""
             SELECT ID, NAME FROM CLASSROOM
             WHERE ID IN (SELECT ID_CLASSROOM FROM CLASSROOM_SUBJECT WHERE ID_SUBJECT = ?)
         """, (id_subject,))
@@ -61,10 +60,10 @@ class SubjectLatex:
             self.classroom_id, self.classroom_name = classroom
         else:
             self.classroom_id = None
-            self.classroom_name = "Unknown"
+            self.classroom_name = "Online"
 
         # Obtener información de carreras, semestres y subgrupos
-        cursor.execute("""
+        cursor = db.execute_query("""
             SELECT A.ID AS ID_GROUP, B.ID AS ID_CAREER, B.NAME AS NAME_CAREER, 
                    C.ID AS ID_SEMESTER, C.NAME AS NAME_SEMESTER, D.ID AS ID_SUBGROUP, D.NAME AS NAME_SUBGROUP
             FROM GROUPS A

@@ -46,9 +46,8 @@ class ClassroomLatex:
 
 def create_classrooms_latex(db, ids_classrooms = None):
 
-    cursor = db.db_connection.cursor()
 
-    cursor.execute("""
+    cursor = db.execute_query("""
         SELECT ID FROM CLASSROOM
     """)
 

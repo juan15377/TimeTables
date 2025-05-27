@@ -54,9 +54,8 @@ class ProfessorLatex:
 
 def create_professors_latex(db, ids_professors=None):
 
-    cursor = db.db_connection.cursor()
 
-    cursor.execute("""
+    cursor = db.execute_query("""
         SELECT ID FROM PROFESSOR
     """)
     

@@ -10,9 +10,8 @@ class GroupLatex:
         # necesitamos extraer el nombre de la carrera, del semestre y del subgrupo 
         self.db = db  
         self.id_group = id_group
-        cursor = self.db.db_connection.cursor()
 
-        cursor.execute(f"""
+        cursor = db.execute_query(f"""
         SELECT A.ID AS ID_GROUP, B.ID AS ID_CAREER, B.NAME AS NAME_CAREER, C.ID AS ID_SEMESTER, C.NAME AS NAME_SEMESTER, D.ID AS ID_SUBGROUP, D.NAME AS NAME_SUBGROUP
         FROM GROUPS A
         INNER JOIN CAREER B ON A.CAREER = B.ID
@@ -69,9 +68,8 @@ class GroupLatex:
 def create_groups_latex(db, ids_groups= None):
     """Create the LaTeX string for all groups."""
     # tomo todo los grupos que tienen 
-    cursor = db.db_connection.cursor()
 
-    cursor.execute("""
+    cursor = db.execute_query("""
     SELECT A.ID AS ID_GROUP, B.ID AS ID_CAREER, B.NAME AS NAME_CAREER, C.ID AS ID_SEMESTER, C.NAME AS NAME_SEMESTER, D.ID AS ID_SUBGROUP, D.NAME AS NAME_SUBGROUP
 	FROM GROUPS A
 	INNER JOIN CAREER B ON A.CAREER = B.ID
