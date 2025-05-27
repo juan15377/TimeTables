@@ -7,6 +7,7 @@ from src.app.database import database_manager
 import concurrent.futures 
 import numpy as np
 from ..switch_button import SwitchButton
+
 class ScheduleGrid:
     """
     Clase principal para gestionar una cuadrícula de horarios con materias personalizables.
@@ -26,10 +27,10 @@ class ScheduleGrid:
         
         # Datos
         self.hours = [
-            '7:00', '7:30', '8:00', '8:30', '9:00', '9:30', '10:00', '10:30',
-            '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
-            '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
-            '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'
+            "7:00-7:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00", "10:00-10:30",
+                        "10:30-11:00", "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-1:00", "1:00-1:30", "1:30-2:00",
+                        "2:00-2:30", "2:30-3:00", "3:00-3:30", "3:30-4:00", "4:00-4:30", "4:30-5:00", "5:00-5:30", 
+                        "5:30-6:00", "6:00-6:30", "6:30-7:00", "7:00-7:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00"
         ]
         self.weekdays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
         
@@ -51,11 +52,12 @@ class ScheduleGrid:
         
         # Modo de edición
         self.edit_mode = "add"  # add, delete, move
-        self.selected_block = None
+        self.selected_block = None # ID Integer 
         
         
         # Inicializar DPG
         self.is_show_availability_cell = False
+        self.blocks_info = {}
         
     def display_all_blocks(self):
         
@@ -138,24 +140,16 @@ class ScheduleGrid:
                 switch_button_show_availability_cells = SwitchButton(ancho = 30, alto = 15, callback=lambda estado : self.on_change_show_availability_cell(estado))
                 switch_button_show_availability_cells.setup_ui()
 
-
-
             dpg.add_separator()
             dpg.add_spacer()
             
-
-            #Contenedor de la cuadrícula
-            
-            # En tu código de inicialización de la UI
-            # Contenedor para los encabezados fijos
-
             
                         
             dpg.add_group(tag=f"fixed_headers_container_{self.mode}")
             
             # Contenedor scrollable para la rejilla principal
-            with dpg.child_window(tag=f"scrollable_viewport_{self.mode}", border=False, height=self.height, width=self.width):
-                dpg.add_group(tag=f"scrollable_grid_container_{self.mode}", width=self.cell_width)
+            with dpg.child_window(tag=f"scrollable_viewport_{self.mode}", border=False, height=-1, width=-1):
+                dpg.add_group(tag=f"scrollable_grid_container_{self.mode}", height=-1, width=-1)
                 
             # Llamada a la función para construir la rejilla
             self.build_grid()
@@ -215,6 +209,7 @@ class ScheduleGrid:
     def create_subject_theme(self, color: Tuple[int, int, int]):
         """Crear un tema para una materia con el color especificado"""
         theme = dpg.add_theme()
+ # cambia el tamaño aquí
         with dpg.theme_component(dpg.mvButton, parent=theme):
             # Colores (como ya tienes)
             dpg.add_theme_color(dpg.mvThemeCol_Button, color)
@@ -233,7 +228,33 @@ class ScheduleGrid:
     
     def build_grid(self):
         """Construir la cuadrícula del horario con encabezados fijos"""
-        
+        with dpg.group(parent = f"scrollable_grid_container_{self.mode}"):
+            with dpg.table(header_row=True, resizable=True, policy=dpg.mvTable_SizingStretchProp):
+                # Agrega las columnas (una para cada día)
+                    dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+                    for dia in dias:
+                        dpg.add_table_column(label=dia, indent_disable=True)
+                        
+
+                    with dpg.table_row():   
+                        with dpg.group(horizontal=False):       
+                            for _ in self.hours:
+                                btn = dpg.add_button(label = _, width=-1, height=self.cell_height)
+                                #dpg.bind_item_theme(btn, self.themes["default"])
+                        
+                        for column in range(7):
+                            with dpg.group(horizontal=False):       
+                                for row in range(30):
+                                    cell_tag = self.get_cell_tag(column, row)
+                                    dpg.add_button(label = f"", width=-1,
+                                                   height=self.cell_height, tag = cell_tag,
+                                                   callback= self.cell_clicked,
+                                                   user_data=(column, row, None, None))
+                                    dpg.bind_item_theme(cell_tag, self.themes["default"])
+
+        return None 
+                            
+                
         # SECCIÓN 1: ENCABEZADOS FIJOS (no scrollables)
         with dpg.group(horizontal=True, parent=f"fixed_headers_container_{self.mode}"):
             # Espacio para alinear con la columna de horas
@@ -257,6 +278,8 @@ class ScheduleGrid:
         
         with dpg.group(horizontal=True, parent=f"scrollable_grid_container_{self.mode}"):
             # Columna de horas
+
+            return None
             with dpg.group():
                 # Sin encabezado (ya está en la sección fija)
                 # Celdas de hora
@@ -304,10 +327,8 @@ class ScheduleGrid:
                 # Obtener información de la materia
                 subject_id = self.subject_selector.get_id()
                 
-                print("ID obtenido del subject selector", subject_id)
                 
                 if subject_id is None:
-                    print("LA FUNCION DEBERIA ACABAR y no renderizar el bloque")
                     return None
                 
                 subject_name = self.subject_selector.get_code()
@@ -321,7 +342,7 @@ class ScheduleGrid:
                     return None
 
                 self.add_subject_block(day_idx, hour_idx, width, height, new_id_block, subject_id, subject_name, color)
-
+                self.blocks_info[new_id_block] = {"day_idx" : day_idx, "hour_idx" : hour_idx, "heigh" : height}
         
         
         elif self.edit_mode == "delete":
@@ -332,7 +353,6 @@ class ScheduleGrid:
             self.subject_selector.update_bar_progress()
             self.subject_selector.update_subject_slots()
             
-            theme_key = f"subject_{self.mode}_{id_subject}"
             if id_subject in self.cell_subjects:
                 self.cell_subjects[id_subject].remove(f"cell_{self.mode}_{day_idx}_{hour_idx}")
             if self.is_show_availability_cell:
@@ -340,16 +360,79 @@ class ScheduleGrid:
         
         elif self.edit_mode == "move":
             # Seleccionar bloque para mover
-            block = self.find_block_at(day_idx, hour_idx)
-            cell_tag = self.get_cell_tag(day_idx, hour_idx)
             
-            if block:
-                self.select_block(block)
-            elif self.selected_block:
+            if id_block is None:
+                # se selecciono una celda vacia
+                return None 
+            
+            blocK_selected_id = self.select_block
+            
+            if blocK_selected_id is None:
+                self.select_block = id_block 
+                # se pone como seleccionado a este bloque y se le aplica un tema de seleccionado
+                self.select_block = id_block
+                block_info = self.blocks_info[id_block]
+                day_idx = block_info["day_idx"]
+                hour_idx = block_info["hour_idx"]
+                cell_tag = self.get_cell_tag(day_idx, hour_idx)
+                dpg.bind_item_theme(cell_tag, self.themes["selected"])
+                return None 
+            else:
+                new_day_idx = day_idx 
+                new_hour_idx = hour_idx 
+                
+                print(self.blocks_info)
+                block_info = self.blocks_info[blocK_selected_id]
+                
+                old_day_idx = block_info["day_idx"]
+                old_hour_idx = block_info["hour_idx"]
+                
+                # ! eliminamos el bloque anterior 
+                
+                            # Buscar y eliminar bloques en esta posición
+                self.delete_blocks_at(old_day_idx, old_hour_idx)
+                # borrar en la base de datos
+                self.db.subjects.remove_slot(blocK_selected_id)
+                self.subject_selector.update_bar_progress()
+                self.subject_selector.update_subject_slots()
+                
+                if id_subject in self.cell_subjects:
+                    self.cell_subjects[id_subject].remove(f"cell_{self.mode}_{day_idx}_{hour_idx}")
+                if self.is_show_availability_cell:
+                    self.show_availability_cells()
+        
+                # ! añadimos el bloque en la nueva posicion 
+                
+                
+                width = 1 
+                height = block_info["height"]
+                
+            
+                # Verificar si el espacio está disponible
+                if self.check_space_available(new_day_idx, new_hour_idx, width, height):
+                    # Obtener información de la materia
+                    subject_id = self.subject_selector.get_id()
+                    
+                    
+                    if subject_id is None:
+                        return None
+                    
+                    subject_name = self.subject_selector.get_code()
+                    color_values = self.subject_selector.get_subject_color()
+                    
+                    color = tuple(int(c) for c in color_values[:3])
+                    
+                    new_id_block = self.db.subjects.new_slot(subject_id, new_hour_idx + 1, new_day_idx + 1, height)
+                    
+                    if new_id_block == None:
+                        return None
+
+                    self.add_subject_block(new_day_idx, new_hour_idx, width, height, new_id_block, subject_id, subject_name, color)
+                            
+        
+
                 # Mover el bloque seleccionado a la nueva posición
-                # Ancho siempre es 1
-                width = 1
-                height = self.selected_block["height"]
+                return None 
                 
                 if self.check_space_available(day_idx, hour_idx, width, height, exclude_block=self.selected_block):
                     # Eliminar el bloque anterior
@@ -414,6 +497,7 @@ class ScheduleGrid:
         self.blocks.append(block)
         
         self.render_block(block)
+        
 
         self.subject_selector.update_subject_slots()
         self.subject_selector.update_bar_progress()
@@ -432,16 +516,28 @@ class ScheduleGrid:
         main_cell_id = self.get_cell_tag(day, hour)
         
         total_width = self.cell_width
-        total_height = self.cell_height * height +  (height -1)*6
+        total_height = self.cell_height * height + (height-1)*6
+        
+       
         
         dpg.configure_item(main_cell_id, 
-                          width=total_width,
+                          width=-1,
                           height=total_height,
                           label=subject,
                           user_data = (day, hour, id_block, id_subject),
                           callback = self.cell_clicked)
         
+
+        
+        if dpg.does_alias_exist(main_cell_id + "_toolip"):
+            dpg.delete_item(main_cell_id + "_toolip")
+        
+        with dpg.tooltip(parent = main_cell_id, delay=.35, tag= main_cell_id + "_toolip"):
+            dpg.add_text(self.db.subjects.get_name(id_subject))
+            
         dpg.bind_item_theme(main_cell_id, self.subject_themes[theme_key])
+        self.blocks_info[id_block] = {"day_idx" : day, "hour_idx" : hour, "heigh" : height}
+        
         
                 
         if id_subject in self.cell_subjects:
@@ -465,8 +561,12 @@ class ScheduleGrid:
         
         # Restaurar la celda principal
         main_cell_id = f"cell_{self.mode}_{day}_{hour}"
+        
+        if dpg.does_alias_exist(main_cell_id + "_toolip"):
+            dpg.delete_item(main_cell_id + "_toolip")
+        
         dpg.configure_item(main_cell_id, 
-                          width=self.cell_width,
+                          width=-1,
                           height=self.cell_height,
                           label="")
         dpg.bind_item_theme(main_cell_id, self.themes["default"])
@@ -619,7 +719,6 @@ class ScheduleGrid:
     
     def show_availability_cells(self):
         id_subject = self.subject_selector.get_id()
-        print("Mostrando celdas activas (modo optimizado)")
 
         # 1. Pre-cálculo de estructuras de datos
         matrix_strong = self.db.subjects.get_strong_constraints_matrix(id_subject)
@@ -657,13 +756,10 @@ class ScheduleGrid:
         #! New color is in format (red, green, blue, transparency)
         #! where between 0 an 1 
         
-        print("COLOR ARROJADO POR SUBJECT_SELECTOR", id_subject)
         red = new_color[0]
         green = new_color[1]
         blue = new_color[2]
-        
-        print(self.cell_subjects)
-        
+                
         theme_key = f"subject_{self.mode}_{id_subject}"
         
         self.subject_themes[theme_key] =  self.create_subject_theme((red*255, green*255, blue*255)) # ! Format In range (0,255)
@@ -678,8 +774,9 @@ class ScheduleGrid:
         self.clear_all_blocks()
         self.subject_themes = {}
         self.cell_subjects = {}
-        self.subject_selector.set_id_mode(id_mode)
         self.display_all_blocks()
+        self.subject_selector.set_id_mode(id_mode)
+        
         
         #if self.is_show_availability_cell:
         #    self.show_availability_cells()

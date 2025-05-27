@@ -1,0 +1,10 @@
+-- mejorar el gestor de materias para que muestre mas información 
+-- cuando se presione el boton de agregar el boton se pongan valores establecidos dependiendo de donde 
+-- se presione 
+-- de la ventana de nueva materia poder eliminar todos los grupos seleccionados
+-- un lanzador de errores que diga por que un slot no puede ser colocado
+-. arreglar los niveles de progresso de todos 
+-- añadir una ventana de detalles de una materia 
+-- que la materia seleccionada no se pierda cuando se actualiza la grilla 
+-- arreglar doble tooltip 
+

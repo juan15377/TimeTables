@@ -15,8 +15,9 @@ class ImportDataBaseWindow(Window):
         self.db = db 
         
         super().__init__(window_tag=IMPORT_DATABASE_WINDOW_TAG,
-                         height=560, width=600,
-                         no_resize=True)
+                         height=600, width=610,
+                         no_resize=True,
+                         label = "Importar Archivo")
         
         
         self.create()

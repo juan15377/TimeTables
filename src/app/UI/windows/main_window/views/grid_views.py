@@ -12,7 +12,6 @@ class BaseItemGridView():
             selected_id = self.item_selector.get_id_selected()
             if selected_id is not None:
                 self.grid.set_id_mode(selected_id)
-                print("Se actualizo la grilla")
             pass
             
         

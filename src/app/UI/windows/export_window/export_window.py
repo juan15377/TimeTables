@@ -37,8 +37,6 @@ class ExportWindow(Window):
             with dpg.tab(label="Aula"):
                 with dpg.group(tag=self.tab_classrooms_tag):
                     pass
-                
-        
     
     def show(self):
         lp = ListaProfesoresApp(self.db)

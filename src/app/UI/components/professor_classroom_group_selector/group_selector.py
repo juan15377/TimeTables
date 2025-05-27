@@ -193,6 +193,7 @@ class GroupSelector:
         self._extract_filter_options()
         
         # Actualizar listas de filtros
+        self.items.update()
         dpg.configure_item(self.career_filter_tag, items=[""] + sorted(self.items.get_careers()))
         dpg.configure_item(self.semester_filter_tag, items=[""] + sorted(self.items.get_semesters()))
         dpg.configure_item(self.subgroup_filter_tag, items=[""] + sorted(self.items.get_subgroups()))

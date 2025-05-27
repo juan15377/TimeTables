@@ -61,11 +61,15 @@ class SelectorBase:
                 tag=self.progress_bar_tag,
                 overlay="0%"
             )
+            
                 
         with dpg.group(horizontal=True):
             dpg.add_text(f"{self.entity_type.title()} :")
              #! remove 1 for python indexing
-            defaul_item_selected = self.items[self.id_default_selected-1] if self.id_default_selected != None else self.id_default_selected
+            if len(self.items) == 0:
+                defaul_item_selected = " "
+            else :
+                defaul_item_selected = self.items[self.id_default_selected-1] if self.id_default_selected != None else self.id_default_selected
             dpg.add_combo(
                 items=self.items,
                 default_value=defaul_item_selected, 
@@ -152,6 +156,7 @@ class SelectorBase:
         cursor = self.db.execute_query(query)
 
         new_items = list(map(lambda e: e[0], cursor.fetchall()))
+        dpg.configure_item(self.selector_tag, items = new_items)
         cursor.close()
         
         

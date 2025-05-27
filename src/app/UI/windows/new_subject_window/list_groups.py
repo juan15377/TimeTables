@@ -102,7 +102,7 @@ class CreateSubjectGroupsSelector:
     # Agregar encabezados de tabla
             with dpg.table(header_row=True, borders_innerH=True, borders_outerH=True,
                         borders_innerV=True, borders_outerV=True, tag="table_groups_create_subject", 
-                        parent="tabla_container"):
+                        parent="lista_grupos_create_subject"):
                 
                 # Definir columnas
                 dpg.add_table_column(label="ID", width_fixed=True, width=50)
@@ -279,7 +279,6 @@ class CreateSubjectGroupsSelector:
         # Extraer el ID del grupo seleccionado
         try:
             selected_id = get_id(dpg.get_value(self.groups_list_tag))
-            print("ID Seleccionado ", selected_id)
             # Encontrar el grupo completo
             
             # Enviar señal con el grupo seleccionado

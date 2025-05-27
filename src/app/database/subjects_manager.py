@@ -108,8 +108,7 @@ def check_availability_slot_under_professor(db_connection, row_pos: int, column_
 
     cursor.execute(query, (id_professor, column_pos, row_pos, row_pos + len_slot - 1))
 
-    if cursor.fetchone() is None:  # No encontró restricciones de disponibilidad
-        # Obtener los IDs de las materias del profesor
+    if cursor.fetchone() is None:  # No encontro restricciones de disponibilidad
         query = """
         SELECT GROUP_CONCAT(A.ID_SUBJECT) FROM PROFESSOR_SUBJECT A
         WHERE A.ID_PROFESSOR = ?
@@ -135,7 +134,6 @@ def check_availability_slot_under_classroom(db_connection, row_pos: int, column_
     cursor = db_connection.cursor()
 
     # ! Restricciones fuertes 
-    # Verificar si el aula está disponible en el horario solicitado
     query = """
     SELECT 1 FROM CLASSROOM_AVAILABILITY A
     WHERE A.ID_CLASSROOM = ?
@@ -609,3 +607,12 @@ class SubjectsManager:
 
         pass 
         
+    def get_name(self, id_subject):
+        cursor = self.db_connection.cursor()
+        
+        cursor.execute(f"""
+                       SELECT NAME
+                       FROM SUBJECT
+                       WHERE ID = {id_subject}
+                       """)
+        return cursor.fetchone()[0]

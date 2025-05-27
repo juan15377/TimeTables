@@ -3,7 +3,8 @@ from .list_groups import CreateSubjectGroupsSelector
 from src.app.database import database_manager
 
 from src.app.UI.components.items_groups_manager import get_id
-from src.app.UI.components.windows_manager import Window
+from src.app.UI.components.windows_manager import Window, windows_manager
+from src.app.UI.windows_tags import NEW_SUBJECT_WINDOW_TAG, SUBJECTS_MANAGER_WINDOW_TAG
 
 class SubjectRegistrationWindow(Window):
     
@@ -25,6 +26,8 @@ class SubjectRegistrationWindow(Window):
             SELECT ID, NAME
             FROM PROFESSOR            
         """)
+        
+        
         self.profesores = [
             F"{name} (id = {id})" for (id, name) in cursor
         ]
@@ -34,6 +37,7 @@ class SubjectRegistrationWindow(Window):
             SELECT ID, NAME
             FROM CLASSROOM           
         """)
+        
         self.aulas = [
             F"{name} (id = {id})" for (id, name) in cursor
         ]
@@ -55,6 +59,11 @@ class SubjectRegistrationWindow(Window):
         self.input_total_slots_tag = "modal_create_total_slots"
         self.modal_create_mode_space = "modal_create_mode_space" # ! online or presencial
         
+        #! filters 
+        
+        self.input_filter_professor = "modal_create_new_subject_filter_professors"
+        self.input_filter_classroom = "modal_create_new_subject_filter_classroom"
+        
         super().__init__(
             window_tag="new_subject_window",
             label = "Nueva Materia",
@@ -65,10 +74,59 @@ class SubjectRegistrationWindow(Window):
         ) 
         
         self.create()
+    
+    def show(self):
+        
+        self.update()
+        
+        super().show()
+        
+        pass 
+    
+    
+    def update_items(self):
+        
+        
+        cursor = self.db.execute_query("""
+            SELECT ID, NAME
+            FROM PROFESSOR            
+        """)
+        
+        
+        self.profesores = [
+            F"{name} (id = {id})" for (id, name) in cursor
+        ]
+        cursor.close()
+        
+        cursor = self.db.execute_query("""
+            SELECT ID, NAME
+            FROM CLASSROOM           
+        """)
+        
+        self.aulas = [
+            F"{name} (id = {id})" for (id, name) in cursor
+        ]
+        cursor.close()
+        
+        self.create_subject_list_groups.update()
+        
+        
+        pass 
+        
+        
+    def update_combos(self):
+        
+        dpg.configure_item(self.modal_create_subject_professor_tag, items = self.profesores)
+        dpg.configure_item(self.modal_create_subject_classroom_tag, items = self.aulas)
+    
+    def update(self):
+        
+        self.update_items()
+        self.update_combos()
+        
         
     def _create_content(self):
         
-        dpg.add_text("Registrar Nueva Materia", color=(255, 255, 0))
         dpg.add_separator()
         with dpg.group():
             with dpg.group(horizontal=True):
@@ -88,15 +146,17 @@ class SubjectRegistrationWindow(Window):
                     horizontal=True,
                     callback=lambda s, a, u: self.toggle_aula_selector(a)
                 )
+            
+                
             with dpg.group(horizontal=True):
                 with dpg.group():
                     dpg.add_text("Profesor:")
                     with dpg.group(horizontal=True):
                         dpg.add_input_text(
                             hint="Buscar profesor...",
-                            tag="modal_create_filtro_profesores",
+                            tag=self.input_filter_professor,
                             width=300,
-                            callback=lambda s, a, u: print(10)
+                            callback=self.filter_items
                         )
                         dpg.add_button(
                             label="Buscar",
@@ -113,9 +173,9 @@ class SubjectRegistrationWindow(Window):
                     with dpg.group(horizontal=True):
                         dpg.add_input_text(
                             hint="Buscar aula...",
-                            tag="modal_create_filtro_aulas",
+                            tag=self.input_filter_classroom,
                             width=300,
-                            callback=lambda s, a, u: print(10)
+                            callback=self.filter_items
                         )
                         dpg.add_button(
                             label="Buscar",
@@ -128,19 +188,50 @@ class SubjectRegistrationWindow(Window):
                         width=400
                     )
             dpg.add_separator()
-            dpg.add_text("Administración de Grupos", color=[255, 255, 0])
             self.create_subject_list_groups.setup_ui()
             dpg.add_button(label="Guardar Materia", callback=lambda: self.register_new_subject())
 
 
         
+    def filter_items(self, sender, coincidence, user_data):
+        """Filtra la lista según el texto ingresado"""
+        filter_text = coincidence.lower()
         
+        if sender == self.input_filter_professor:
+            all_items = self.profesores
+            selector_tag = self.modal_create_subject_professor_tag
+        else:
+            all_items = self.aulas
+            selector_tag = self.modal_create_subject_classroom_tag
+        
+        
+        if not filter_text:
+            # Si no hay texto de filtro, restaurar la lista completa
+            filter_items = all_items
+        else:
+            # Filtrar por nombre o I
+            filter_items = [item for item in all_items if filter_text in item.lower()]
+        
+        current_selection = dpg.get_value(selector_tag)
+        dpg.configure_item(selector_tag, items=filter_items)
+        
+        # Si la selección actual ya no está en la lista filtrada y hay elementos,
+        # establecer el primer elemento como seleccionado
+        if current_selection not in filter_items and filter_items:
+            dpg.set_value(selector_tag, filter_items[0])
+        # Si no hay elementos en la lista filtrada, limpiar la selección
+        elif not all_items:
+            dpg.set_value(selector_tag, current_selection)
+            
+        # Update progress bar after selection change
+        pass 
         
 
     def register_new_subject(self):
         name = dpg.get_value(self.input_name_tag)
         code = dpg.get_value(self.input_code_tag)
         
+
         min_slots = dpg.get_value(self.input_min_slots_tag)
         max_slots = dpg.get_value(self.input_max_slots_tag)
         total_slots = dpg.get_value(self.input_total_slots_tag)
@@ -153,7 +244,14 @@ class SubjectRegistrationWindow(Window):
         group_ids = self.create_subject_list_groups.get_groups_ids()
         
         
+        online = False if mode_space == "Presencial" else True
+        
         # ? Filtro que se debe hacer para saber si los argumentos son validos 
+        
+        
+        if professor_id is None:
+            windows_manager.notification_system.show_notification("Error: No se ah Seleccionado ningun Profesor", 3, "error")
+            return None
         
         self.db.subjects.new(
         name,
@@ -164,20 +262,26 @@ class SubjectRegistrationWindow(Window):
         min_slots,
         max_slots,
         total_slots,
-        mode_space
+        online
         )
         
+        dpg.set_value(self.input_name_tag, "")
+        dpg.set_value(self.input_code_tag, "")
+        
+        windows_manager.notification_system.show_notification("Materia Agregada correctamente", 3, "success")
+
+        windows_manager.get_window(SUBJECTS_MANAGER_WINDOW_TAG).update()
         
         
         
         pass 
     def toggle_aula_selector(self, value):
         if value == "Online":
-            dpg.disable_item("modal_create_combo_aulas")
-            dpg.disable_item("modal_create_filtro_aulas")
+            dpg.disable_item(self.modal_create_subject_classroom_tag)
+            dpg.disable_item(self.input_filter_classroom)
         else:
-            dpg.enable_item("modal_create_combo_aulas")
-            dpg.enable_item("modal_create_filtro_aulas")
+            dpg.enable_item(self.modal_create_subject_classroom_tag)
+            dpg.enable_item(self.input_filter_classroom)
 
     def save_subject(self):
         codigo = dpg.get_value("input_codigo")

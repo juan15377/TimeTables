@@ -66,7 +66,7 @@ class MainWindow(Window):
                 dpg.add_menu_item(label="Guardar", callback = lambda s, a, u : windows_manager.show_window(SAVE_FILE_WINDOW_TAG))
                 dpg.add_menu_item(label="Cargar", callback=lambda s, a, u : windows_manager.show_window(IMPORT_DATABASE_WINDOW_TAG))
                 dpg.add_menu_item(label="export", callback= lambda s, a, u : windows_manager.show_window(EXPORT_WINDOW_TAG))
-                dpg.add_menu_item(label="Salir", callback=lambda: dpg.stop_dearpygui())
+                dpg.add_menu_item(label="Salir", callback=lambda s, a, u: windows_manager.notife("hola") )
 
             with dpg.menu(label="Ayuda"):
                 dpg.add_menu_item(label="Acerca de", callback=print_me)
@@ -77,7 +77,7 @@ class MainWindow(Window):
             with dpg.tab_bar(callback= on_change_route) as tab_id:
                 dpg.set_item_user_data(tab_id, "MAIN-TAB")
                 # Tab Professor
-                with dpg.tab(label="PROFESSOR") as tab_id:
+                with dpg.tab(label="Profesor") as tab_id:
                     dpg.set_item_user_data(tab_id, "PROFESSOR")
 
 
@@ -85,16 +85,16 @@ class MainWindow(Window):
                         dpg.set_item_user_data(tab_id, "PROFESSOR-OPTIONS")
 
                         # Crear pestañas y configurar user_data para identificación
-                        with dpg.tab(label="Grid", tag="PROFESSOR-GRID") as tab_id:
+                        with dpg.tab(label="Panel de Materias", tag="PROFESSOR-GRID") as tab_id:
                             # Configurar user_data para esta pestaña
                             dpg.set_item_user_data(tab_id, "PROFESSOR-GRID")                        
                             pass
 
-                        with dpg.tab(label="Lista", tag="PROFESSOR-LIST") as tab_id:
+                        with dpg.tab(label="Lista de Profesores", tag="PROFESSOR-LIST") as tab_id:
                             dpg.set_item_user_data(tab_id, "PROFESSOR-LIST")
                             pass
                 # Tab Classroom
-                with dpg.tab(label="CLASSROOM") as tab_id:
+                with dpg.tab(label="Aula") as tab_id:
                     dpg.set_item_user_data(tab_id, "CLASSROOM")
 
 
@@ -102,25 +102,25 @@ class MainWindow(Window):
                         dpg.set_item_user_data(tab_id, "CLASSROOM-OPTIONS")
 
 
-                        with dpg.tab(label="Grid", tag="CLASSROOM-GRID") as tab_id:
+                        with dpg.tab(label="Panel de Materias", tag="CLASSROOM-GRID") as tab_id:
                             dpg.set_item_user_data(tab_id, "CLASSROOM-GRID")
                             pass
 
-                        with dpg.tab(label="Lista", tag="CLASSROOM-LIST") as tab_id:
+                        with dpg.tab(label="Lista de Aulas", tag="CLASSROOM-LIST") as tab_id:
                             dpg.set_item_user_data(tab_id, "CLASSROOM-LIST")
                             pass
                 # Tab Group
-                with dpg.tab(label="GROUP") as tab_id:
+                with dpg.tab(label="Grupo") as tab_id:
                     dpg.set_item_user_data(tab_id, "GROUP")
 
                     with dpg.tab_bar(tag="GROUP-OPTIONS", callback=on_change_route) as tab_id:
                         dpg.set_item_user_data(tab_id, "GROUP-OPTIONS")
 
-                        with dpg.tab(label="Grid", tag="GROUP-GRID") as tab_id:
+                        with dpg.tab(label="Panel de Materias", tag="GROUP-GRID") as tab_id:
                             dpg.set_item_user_data(tab_id, "GROUP-GRID")
                             pass 
 
-                        with dpg.tab(label="Lista", tag="GROUP-LIST") as tab_id:
+                        with dpg.tab(label="Lista de Grupos", tag="GROUP-LIST") as tab_id:
                             dpg.set_item_user_data(tab_id, "GROUP-LIST")
                             pass
                         

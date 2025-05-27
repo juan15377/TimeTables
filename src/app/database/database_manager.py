@@ -37,9 +37,6 @@ class DataBaseManager:
 
         self.export = ExportFunctions(self)
 
-    def execute_query(select = "*", from_ = "PROFESSOR", where_ = "TRUE", group_by = "ID"):
-        pass 
-
     def restart(self):
         cursor = self.__db_connection.cursor()
 

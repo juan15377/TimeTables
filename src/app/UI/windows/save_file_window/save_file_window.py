@@ -15,9 +15,10 @@ class SaveFileWindow(Window):
         self.db = db
         
         super().__init__(window_tag=SAVE_FILE_WINDOW_TAG,
-                         height=580,
-                         width=600,
-                         no_resize=True)
+                         height=620,
+                         width=610,
+                         no_resize=True,
+                         label="Guardar Archivo")
         
         
         self.create()

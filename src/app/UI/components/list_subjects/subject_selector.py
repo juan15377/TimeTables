@@ -78,8 +78,14 @@ class SubjectSelector:
 
         subjects_display = [f"{name} {code} ID = {id_}" for id_, name, code in self.subjects_data]
         
+        current_selected = dpg.get_value(self.subject_selector_tag)
+        
         dpg.configure_item(self.subject_selector_tag, items=subjects_display, default_value = subjects_display[0] if subjects_display else "")
 
+        if current_selected in subjects_display and current_selected is not None:
+            dpg.set_value(self.subject_selector_tag, current_selected)
+        
+            
         #dpg.set_value(self.subject_selector_tag, subjects_display[0] if subjects_display else "")
         # llamamos al callback manualmente
         self.subject_changed_callback(self.subject_selector_tag, subjects_display[0] if subjects_display else "", self.get_id() )
@@ -215,9 +221,7 @@ class SubjectSelector:
         dpg.configure_item(self.example_slot_tag, label = self.get_code())
         #! change color of example slot 
         theme = self.create_subject_theme(color)
-        dpg.bind_item_theme(self.example_slot_tag, theme)
-        print("SE ACTUALIZO")
-        
+        dpg.bind_item_theme(self.example_slot_tag, theme)        
 
     def on_change_subject_selected(self, sender, app_data, user_data, force = True):
         self.subject_changed_callback(sender, app_data, self.get_id()) # ! callback inyected
@@ -252,9 +256,7 @@ class SubjectSelector:
         
         id_subject = self.get_id()
         id_mode = self.id_mode
-        
-        print("ID_SUBJECT = ", id_subject)
-        
+                
         color = self.color_editor.get_color() # extrae el color del color picker
         red = color[0]
         green = color[1]
@@ -298,9 +300,7 @@ class SubjectSelector:
             FROM SUBJECT 
             WHERE ID = {self.get_id()}
         """
-        
-        print("QUERY")
-        print(query)
+
         
         cursor = self.db.execute_query(query)
         

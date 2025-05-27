@@ -142,8 +142,6 @@ class GroupCatalogManager():
 
     def update_combos(self):
         """Actualiza los combos con los valores actualizados"""
-        print(sorted(self.items.get_careers()))
-        print("JUAN DE JESUS VENEGAS FLORES")
         dpg.configure_item(self.combo_careers_tag, items=sorted(self.items.get_careers()))
         dpg.configure_item(self.combo_semesters_tag, items=sorted(self.items.get_semesters()))
         dpg.configure_item(self.combo_subgroups_tag, items=sorted(self.items.get_subgroups()))
@@ -269,20 +267,6 @@ class GroupsManager:
         self.filter_groups = []
         
         
-        
-        # Datos por defecto para materias y horarios
-        self.materias_por_carrera = {
-            "Ingeniería": ["Cálculo", "Física", "Programación", "Álgebra Lineal", "Estadística"],
-            "Medicina": ["Anatomía", "Fisiología", "Bioquímica", "Histología", "Embriología"],
-            "Derecho": ["Civil", "Penal", "Administrativo", "Constitucional", "Mercantil"]
-        }
-        
-        self.horarios_disponibles = {
-            "Matutino": ["7:00-9:00", "9:00-11:00", "11:00-13:00"],
-            "Vespertino": ["13:00-15:00", "15:00-17:00", "17:00-19:00"],
-            "Nocturno": ["19:00-21:00", "21:00-23:00"]
-        }
-        
         # Variables de estado
         self.grupo_seleccionado = None
         self.filtros = {"carrera": "", "semestre": "", "subgrupo": "", "nombre": ""}
@@ -297,16 +281,62 @@ class GroupsManager:
         dpg.create_viewport(title='Gestión de Grupos', width=1100, height=850)
         
         # Crear tema
-        self._crear_tema()
+        self._crear_temas()
         #self.actualizar_lista_grupos()
                 
-    def _crear_tema(self):
         """Crea un tema personalizado con mejor espaciado"""
-        with dpg.theme() as self.tema_optimizado:
+    def _crear_temas(self):
+        """Crea los temas de la interfaz"""
+        # Tema principal
+        with dpg.theme() as self.tema_principal:
             with dpg.theme_component(dpg.mvAll):
-                dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 4, 4)
-                dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 4, 4)
+                # Espaciado general
+                dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 8, 4)
                 dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 6, 4)
+                dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 4, 4)
+                # Bordes y esquinas
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+                dpg.add_theme_style(dpg.mvStyleVar_ChildRounding, 3)
+                dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+                # Colores
+                dpg.add_theme_color(dpg.mvThemeCol_Button, [100, 140, 230, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [130, 170, 255, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [80, 120, 210, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_Header, [100, 140, 230, 120])
+                dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, [130, 170, 255, 160])
+
+        # Tema para botones de eliminación
+        with dpg.theme() as self.tema_eliminar:
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, [230, 100, 100, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 130, 130, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [210, 80, 80, 255])
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+
+        # Tema para botones de acción positiva
+        with dpg.theme() as self.tema_accion:
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, [100, 180, 130, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [130, 210, 160, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [80, 160, 110, 255])
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+
+        # Tema para botones de detalles primarios
+        with dpg.theme() as self.tema_detalle1:
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, [70, 100, 180, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [100, 160, 210, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [50, 110, 160, 255])
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+
+        # Tema para botones de detalles secundarios
+        with dpg.theme() as self.tema_detalle2:
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, [180, 120, 70, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [210, 150, 100, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [160, 100, 50, 255])
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+        
     
     def setup_ui(self, parent):
         """Construye toda la interfaz de usuario"""
@@ -479,11 +509,10 @@ class GroupsManager:
             dpg.add_table_column(label="Semestre", width_stretch=True, init_width_or_weight=250)
             dpg.add_table_column(label="Subgrupo", width_fixed=True, width=150)
             
-            dpg.add_table_column(label="Progreso", width_fixed=True, width=150)
-            
-            dpg.add_table_column(label="Materias", width_fixed=True, width=1250)
-            dpg.add_table_column(label="Horario", width_fixed=True, width=1250)
-            dpg.add_table_column(label="Eliminar", width_fixed=True, width=1250)
+            dpg.add_table_column(label="PROGRESO", width_fixed=True,init_width_or_weight=100)
+            dpg.add_table_column(label="Materias", width_fixed=True, init_width_or_weight=120)
+            dpg.add_table_column(label="Horario", width_fixed=True, init_width_or_weight=120)
+            dpg.add_table_column(label="Eliminar", width_fixed=True, width=100)
                 
             for i in range(inicio, fin):
             
@@ -511,17 +540,25 @@ class GroupsManager:
                         self.db.groups.remove(mode_id)
                         self.actualizar_lista_grupos()
                         
-                    dpg.add_button(label = "Materias", callback= lambda s, a, mode_id : show_subjects_window(mode_id=mode_id),
+                    btn = dpg.add_button(label = "Materias", callback= lambda s, a, mode_id : show_subjects_window(mode_id=mode_id),
                                    user_data= group_id,
                                     width = -1)
                     
-                    dpg.add_button(label = "Horario", callback= lambda s, a, mode_id : windows_manager.show_window(SCHEDULE_AVAILABILITY_WINDOW_TAG, mode = "GROUP", mode_id = mode_id),
+                    dpg.bind_item_theme(btn, self.tema_detalle1)
+                    
+                    btn = dpg.add_button(label = "Horario", callback= lambda s, a, mode_id : windows_manager.show_window(SCHEDULE_AVAILABILITY_WINDOW_TAG, mode = "GROUP", mode_id = mode_id),
                                    user_data= group_id,
                                     width = -1)
                     
-                    dpg.add_button(label = "X", callback= lambda s, a, mode_id : delete_group(mode_id),
+                    dpg.bind_item_theme(btn, self.tema_detalle2)
+                    
+                    
+                    btn = dpg.add_button(label = "X", callback= lambda s, a, mode_id : delete_group(mode_id),
                                    user_data= group_id,
                                     width = -1)
+                    
+                    dpg.bind_item_theme(btn, self.tema_eliminar)
+                    
                     
                         #
                     ## Columna de acciones
@@ -1049,6 +1086,8 @@ class GroupsManager:
             self.mostrar_horario(grupo_id)
     
     def update(self):
+        self.items.update()
+        self.aplicar_filtros()
         self.actualizar_combos()
         pass 
 

@@ -2,7 +2,6 @@
 
 # me genere el grid -> string 
 # genere la simbologia -> string
-import pandas as pd
 import numpy as np  
 from typing import List
 

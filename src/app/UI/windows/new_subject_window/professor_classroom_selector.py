@@ -140,8 +140,6 @@ if __name__ == "__main__":
         def on_button_click():
             prof_id = object_.get_id_professor_selected()
             classroom_id = object_.get_id_classroom_selected()
-            print(f"Selected Professor ID: {prof_id}")
-            print(f"Selected Classroom ID: {classroom_id}")
             
         dpg.add_spacer(height=20)
         dpg.add_button(label="Get Selected IDs", callback=on_button_click)

@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 from typing import Dict, Optional, Callable, List, Any, Union
-
+from .notification_bar import NotificationBar
 class Window:
     """Clase base para ventanas configurables"""
     
@@ -16,6 +16,7 @@ class Window:
         self.on_close = on_close
         self._is_created = False
         self.no_resize = no_resize
+        
         
         
     def create(self, parent: Optional[str] = None) -> str:
@@ -142,6 +143,8 @@ class WindowManager:
         if not self._initialized:
             self._windows: Dict[str, Window] = {}
             self._initialized = True
+            
+        self.notification_system = NotificationBar()
     
     def register_window(self, window: Window) -> Window:
         """Registra una ventana en el gestor"""
@@ -232,6 +235,11 @@ class WindowManager:
             dpg.delete_item(window_tag)
         if window_tag in self._windows:
             del self._windows[window_tag]
+    
+    def notife(self, message):
+        self.notification_system.show_notification(message, 4, "info")
+        pass 
+        
 
 windows_manager = WindowManager() 
 

@@ -7,7 +7,6 @@ import numpy as np
 import sqlite3
 from typing import List
 
-from .services import ExportFunctions
 #from .components.export_functions import ExportFunctionsLatex
 
 

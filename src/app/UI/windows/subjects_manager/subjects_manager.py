@@ -42,8 +42,8 @@ class SubjectsManager(Window):
             window_tag = SUBJECTS_MANAGER_WINDOW_TAG,
             label = f"materia de {mode_id}",
             on_close= lambda s, a, u : print(10),
-            width=700,
-            height=600,
+            width=860,
+            height=680,
             no_resize=True
         )
         
@@ -93,16 +93,34 @@ class SubjectsManager(Window):
                     dpg.add_text(str(len(self.datos_filtrados)), tag="materias_mostradas")
             
         # Aplicar tema global
-        dpg.bind_theme(self.global_theme)
-        dpg.bind_item_theme("filtros_container", self.theme_filter)
+        #dpg.bind_item_theme("filtros_container", self.theme_filter)
         
         # Actualizar tabla inicial
         self.actualizar_tabla()
+
+    def generate_label(self, mode, mode_id):
+        if mode == "PROFESSOR":
+            name = self.db.professors.get_name(mode_id)
+            label = f"materias del professor {name} (ID = {mode_id})"
+        elif mode == "CLASSROOM":
+            name = self.db.classrooms.get_name(mode_id)
+            label = f"materias del salon {name} (ID = {mode_id})"
+        else:
+            name = self.db.groups.get_name(mode_id)
+            label = f"materia del grupo {name} (ID = {mode_id})"
+        
+        return label
+    
+        pass
     
     def show(self, **kwargs):
         mode = kwargs["mode"]
         
         mode_id = kwargs["mode_id"]
+        
+        label = self.generate_label(mode, mode_id)
+        
+        self.set_title(label)
         
         self.set_mode(mode,mode_id)
         
@@ -114,30 +132,22 @@ class SubjectsManager(Window):
             self.datos_tabla = []
             self.datos_filtrados = []
             return None 
-        query = f"""
-        SELECT A.ID, A.CODE, A.NAME, B.PROGRESS
-        FROM SUBJECT A
-		JOIN(
-		
-		SELECT A.ID, CAST(B.COMPLETED_SLOTS AS REAL) / CAST(A.TOTAL_SLOTS AS REAL) AS PROGRESS
-		FROM SUBJECT A 
-		JOIN (
-			SELECT A.ID, coalesce(B.LEN, 0) AS COMPLETED_SLOTS
-			FROM SUBJECT A
-			LEFT JOIN SUBJECT_SLOTS B ON A.ID = B.ID_SUBJECT
-			GROUP BY A.ID
-			) B ON A.ID = B.ID
-
-		
-		) B ON A.ID = B.ID
-		WHERE A.ID IN (
-				SELECT ID_SUBJECT
-				FROM {self.mode}_SUBJECT
-				WHERE ID_{self.mode} = {self.mode_id}
-			);
         
+        query = f"""
+         SELECT S.ID, S.CODE, S.NAME, 
+            CAST(SUM(coalesce(SS.LEN, 0)) AS REAL) / CAST(S.TOTAL_SLOTS AS REAL) AS PROGRESS
+            FROM (
+                SELECT *
+                FROM SUBJECT S
+                WHERE ID IN (
+                            SELECT ID_SUBJECT
+                            FROM {self.mode}_SUBJECT
+                            WHERE ID_{self.mode} = {self.mode_id}
+                )
+            ) S
+            LEFT JOIN SUBJECT_SLOTS  SS ON S.ID = SS.ID_SUBJECT
+            GROUP BY S.ID;
         """
-        print(query)
         
         cursor = self.db.execute_query(query)
         
@@ -185,6 +195,14 @@ class SubjectsManager(Window):
             with dpg.theme_component(dpg.mvAll):
                 dpg.add_theme_color(dpg.mvThemeCol_ChildBg, self.COLOR_FILTER_BG)
     
+            # Tema para botones de eliminación
+        with dpg.theme() as self.tema_eliminar:
+            with dpg.theme_component(dpg.mvButton):
+                dpg.add_theme_color(dpg.mvThemeCol_Button, [230, 100, 100, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 130, 130, 255])
+                dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [210, 80, 80, 255])
+                dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+                
     def setup_ui(self):
         
         with dpg.group(parent=self.window_tag, width=800, height=600):
@@ -238,6 +256,8 @@ class SubjectsManager(Window):
         dpg.delete_item("tabla_container", children_only=True)
         
         # Actualizar contadores
+        
+        dpg.set_value("materias_mostradas", len(self.datos_filtrados))
         #dpg.set_value("total_materias", str(len(self.datos_tabla)))
         #dpg.set_value("materias_mostradas", str(len(self.datos_filtrados)))
         
@@ -248,10 +268,11 @@ class SubjectsManager(Window):
             
             # Definir columnas
             dpg.add_table_column(label="ID", width_fixed=True, width=50)
-            dpg.add_table_column(label="CÓDIGO", width_fixed=True, width=100)
-            dpg.add_table_column(label="NOMBRE", width_stretch=True, init_width_or_weight=250)
-            dpg.add_table_column(label="CRÉDITOS", width_fixed=True, width=150)
-            dpg.add_table_column(label="ACCIONES", width_fixed=True, width=1250)
+            dpg.add_table_column(label="Codigo", width_fixed=True, width=100)
+            dpg.add_table_column(label="Nombre", width_stretch=True, init_width_or_weight=250)
+            dpg.add_table_column(label="Creditos", width_fixed=True, width=150)
+            dpg.add_table_column(label="Detalles", width_fixed=True, width=1250)
+            dpg.add_table_column(label="Eliminar", width_fixed=True, width=1250)
             
             # Agregar filas con datos filtrados
             for i, dato in enumerate(self.datos_filtrados):
@@ -263,14 +284,14 @@ class SubjectsManager(Window):
                     
                     
                     # Columna de acciones
-                    with dpg.group(horizontal=True):
-                        btn_ver = dpg.add_button(label="Ver", width=70, callback=lambda s, a, u: self.ver_detalles(u), user_data=dato)
-                        dpg.add_spacer(width=5)
-                        btn_eliminar = dpg.add_button(label="Eliminar", width=70, callback=lambda s, a, u: self.eliminar_fila(u), user_data=dato['id'])
-                        
+                    btn_ver = dpg.add_button(label="Ver", width=70, callback=lambda s, a, u: self.ver_detalles(u), user_data=dato)
+                    btn_eliminar = dpg.add_button(label="Eliminar", width=70, callback=lambda s, a, u: self.eliminar_fila(u), user_data=dato['id'])
+                    
+                    dpg.bind_item_theme(btn_eliminar, self.tema_eliminar)
+                    
                         # Aplicar temas a los botones
-                        dpg.bind_item_theme(btn_ver, self.theme_btn_ver)
-                        dpg.bind_item_theme(btn_eliminar, self.theme_btn_eliminar)
+                        #dpg.bind_item_theme(btn_ver, self.theme_btn_ver)
+                        #dpg.bind_item_theme(btn_eliminar, self.theme_btn_eliminar)
     
     def ver_detalles(self, materia):
         with dpg.window(label=f"Detalles de Materia", modal=True, 
@@ -288,7 +309,7 @@ class SubjectsManager(Window):
             dpg.add_text(f"¿Está seguro que desea eliminar la materia ID: {id_subject}?")
             
             with dpg.group(horizontal=True):
-                dpg.add_button(label="Cancelar", width=100, callback=lambda: dpg.delete_item(dpg.last_container()))
+                dpg.add_button(label="Cancelar", width=100, callback=lambda: dpg.delete_item("accept_delete_subject"))
                 
                 def confirmar_eliminar():
                     # Filtrar la materia a eliminar
@@ -296,9 +317,12 @@ class SubjectsManager(Window):
                     # Actualizar también los datos filtrados
                     self.update_subjects()
                     self.aplicar_filtros()
-                    #dpg.delete_item("accept_delete_subject")
+                    dpg.delete_item("accept_delete_subject")
+                    windows_manager.notification_system.show_notification(f"Se ah Eliminado la materia con ID = {id_subject}", 3, "success")
+
                     
                 dpg.add_button(label="Eliminar", width=100, callback=confirmar_eliminar)
+    
     
     def agregar_fila(self):
         global windows_manager
@@ -310,7 +334,6 @@ class SubjectsManager(Window):
         # Obtener valores de filtros
         filtro_codigo = dpg.get_value("filtro_codigo").upper() if dpg.get_value("filtro_codigo") else ""
         filtro_nombre = dpg.get_value("filtro_nombre").upper() if dpg.get_value("filtro_nombre") else ""
-        filtro_creditos = dpg.get_value("filtro_creditos")
         
         # Aplicar filtros
         self.datos_filtrados = []
@@ -350,4 +373,8 @@ class SubjectsManager(Window):
         
         self.update_subjects()
         self.actualizar_tabla()
+        
+    def update(self):
+        if self.is_visible():
+            self.set_mode(self.mode, self.mode_id)
         

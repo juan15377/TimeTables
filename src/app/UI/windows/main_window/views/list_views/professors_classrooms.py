@@ -118,7 +118,6 @@ class GestorEntidad:
             self.items_filtrados = [p for p in self.items if filtro in str(p.get(campo_filtro, "")).lower()]
             
             self.cache_busqueda[filtro] = self.items_filtrados
-            print(f"Filtrado completado en {time.time()-start_time:.3f}s ({len(self.items_filtrados)} resultados)")
             self.ultima_busqueda = filtro
             
             # Resetear la página al cambiar el filtro
@@ -347,6 +346,9 @@ class GestorEntidad:
         
         if self.nombre_entidad == "PROFESSOR":
             self.db.professors.remove(item_id)
+        else :
+            self.db.classrooms.remove(item_id)
+        
             
         self.items = self.generar_datos()
 
