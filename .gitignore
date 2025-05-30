@@ -12,7 +12,7 @@ pyvenv.cfg
 lib/
 bin/
 share/
-lib64/ 
+lib64
 etc/ 
 
 # Archivos de caché de Python
