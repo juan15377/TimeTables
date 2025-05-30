@@ -9,6 +9,12 @@ venv.bak/
 .Python
 pyvenv.cfg
 
+lib/
+bin/
+share/
+lib64/ 
+etc/ 
+
 # Archivos de caché de Python
 __pycache__/
 *.py[cod]

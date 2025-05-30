@@ -13,7 +13,7 @@ Asegúrate de tener instalado lo siguiente:
 1. **Clonar repositorio e instalar dependencias**:
 
 ```bash
-   git clone https://github.com/juan15377/TimeTables.git
+   git clone --depth 1 https://github.com/juan15377/TimeTables.git
    cd TimeTables
    pip install -r requirements.txt 
    ````
