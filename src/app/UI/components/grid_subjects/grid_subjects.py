@@ -106,11 +106,11 @@ class ScheduleGrid:
         self.create_themes()
         
         if self.mode == "PROFESSOR":
-            default_id = self.db.professors.get()[0]
+            default_id = None #self.db.professors.get()[0]
         elif self.mode == "CLASSROOM":
-            default_id = self.db.classrooms.get()[0]
+            default_id = None# self.db.classrooms.get()[0]
         else:
-            default_id = self.db.classrooms.get()[0]
+            default_id = None # self.db.classrooms.get()[0]
 
         
         subject_selector  = SubjectSelector(default_id, 
@@ -525,7 +525,8 @@ class ScheduleGrid:
                           height=total_height,
                           label=subject,
                           user_data = (day, hour, id_block, id_subject),
-                          callback = self.cell_clicked)
+                          callback = self.cell_clicked,
+                          )
         
 
         

@@ -12,9 +12,6 @@ sub_tags = ["PROFESSOR-GRID",
     "GROUP-GRID",
     "GROUP-LIST"]
 
-def print_me(sender, app_data, user_data):
-    pass 
-
 def on_change_route(sender, app_data, user_data):
         
     tab_tag = dpg.get_item_user_data(app_data)
@@ -69,7 +66,7 @@ class MainWindow(Window):
                 dpg.add_menu_item(label="Salir", callback=lambda s, a, u: windows_manager.notife("hola") )
 
             with dpg.menu(label="Ayuda"):
-                dpg.add_menu_item(label="Acerca de", callback=print_me)
+                dpg.add_menu_item(label="Acerca de", callback=lambda s, a, u : print("Hola Guapo"))
 
         # Contenedor principal
         with dpg.group(tag="main"):

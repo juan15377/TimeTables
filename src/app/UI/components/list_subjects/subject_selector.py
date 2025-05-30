@@ -168,7 +168,7 @@ class SubjectSelector:
                     self.update_subject_slots()
 
             with dpg.group():
-                dpg.add_button(label = "COMPM", width=100, height=41, tag = self.example_slot_tag)
+                dpg.add_button(label = "", width=100, height=41, tag = self.example_slot_tag)
                 pass
     def update_subject_slots(self):
         "after update subject selected update the allowed slots"

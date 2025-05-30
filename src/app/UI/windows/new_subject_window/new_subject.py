@@ -68,7 +68,7 @@ class SubjectRegistrationWindow(Window):
             window_tag="new_subject_window",
             label = "Nueva Materia",
             on_close= lambda s, a, u : print(10),
-            height=550,
+            height=560,
             width=990,
             no_resize=True
         ) 
@@ -271,7 +271,6 @@ class SubjectRegistrationWindow(Window):
         windows_manager.notification_system.show_notification("Materia Agregada correctamente", 3, "success")
 
         windows_manager.get_window(SUBJECTS_MANAGER_WINDOW_TAG).update()
-        
         
         
         pass 

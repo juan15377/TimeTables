@@ -76,5 +76,7 @@ from src.app.database import database_manager
 #database_manager.subjects.new_slot(3, 9, 5, 2)
 #database_manager.subjects.new_slot(3, 15, 5, 3)
 
-database_manager.export.pdf.grid_formats.individual_groups([12, 13], "/home/juan/Escritorio/")
+path = "/home/juan/Escritorio/"
+
+database_manager.export.pdf.grid_formats.individual_groups([12, 13], path)
 #print(database_manager.subjects.get_matrix_of_allocated_slots(2))
