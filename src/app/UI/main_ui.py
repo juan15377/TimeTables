@@ -11,9 +11,8 @@ def run_app():
 
     windows_manager.show_window(MAIN_WINDOW_TAG)
 
-    # Configuración del viewport
     dpg.create_viewport(title="Sistema de Horarios", width=1120, height=850)
-    dpg.set_primary_window("main_window", True)
+    dpg.set_primary_window(MAIN_WINDOW_TAG, True)
     dpg.set_viewport_resizable(False)  # <- Esta línea evita que el usuario cambie el tamaño
     dpg.setup_dearpygui()
     dpg.show_viewport()

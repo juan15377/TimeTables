@@ -67,8 +67,12 @@ class ImportDataBaseWindow(Window):
                 
                 print("FILE_PATH", file_path)
                 
-                database_manager.import_database(file_path)
-                windows_manager.get_window(MAIN_WINDOW_TAG).update()
+                try :
+                    database_manager.import_database(file_path)
+                    windows_manager.get_window(MAIN_WINDOW_TAG).update()
+                    windows_manager.notification_system.show_notification("Importacion Finalizada")
+                except:
+                    windows_manager.notification_system.show_notification("Error al importar la base de datos", notification_type="error")
                 
                 
             with dpg.group(horizontal=True):
