@@ -13,7 +13,7 @@ def run_app():
 
     dpg.create_viewport(title="Sistema de Horarios", width=1120, height=850)
     dpg.set_primary_window(MAIN_WINDOW_TAG, True)
-    dpg.set_viewport_resizable(False)  # <- Esta línea evita que el usuario cambie el tamaño
+    #dpg.set_viewport_resizable(False)  # <- Esta línea evita que el usuario cambie el tamaño
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.start_dearpygui()
