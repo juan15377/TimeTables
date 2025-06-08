@@ -21,5 +21,5 @@ Asegúrate de tener instalado lo siguiente:
 2. **Correr el fichero de arranque**:
 
 ````bash 
-    python src/main.py
+    python -m  src.main
 ````
