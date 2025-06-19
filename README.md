@@ -30,3 +30,12 @@ Asegúrate de tener instalado lo siguiente:
 hola
 ![Consulta el informe](./assets/ERD_TIMETABLE.png)
 
+
+![Consulta el informe](./assets/view_database.png)
+
+![Consulta el informe](./assets/main_window_classrooms_manager_view.png)
+
+
+![Consulta el informe](./assets/subjects_manager_window.png)
+![Consulta el informe](./assets/main_window_schedule_grid_view.png)
+![Consulta el informe](./assets/main_window_schedule_grid_view.png)
