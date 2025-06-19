@@ -37,5 +37,5 @@ hola
 
 
 ![Consulta el informe](./assets/subjects_manager_window.png)
-![Consulta el informe](./assets/main_window_schedule_grid_view.png)
+![Consulta el informe](./assets/window_new_subject.png)
 ![Consulta el informe](./assets/main_window_schedule_grid_view.png)
