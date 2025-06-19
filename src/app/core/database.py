@@ -193,7 +193,7 @@ def init_db():
 
     # Conectar a la base de datos SQLite
     if os.path.exists(DB_PATH):
-        os.remove(DB_PATH)
+        return None
         
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -207,6 +207,6 @@ def init_db():
 
     # Habilitar las restricciones de claves foráneas
 
-init_db()
+#init_db()
 
 db_connection = get_connection()

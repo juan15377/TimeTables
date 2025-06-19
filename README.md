@@ -21,5 +21,12 @@ Asegúrate de tener instalado lo siguiente:
 2. **Correr el fichero de arranque**:
 
 ````bash 
-    python src/main.py
+    python -m src
 ````
+
+
+![Consulta el informe](./assets/schedule_grid.png)
+
+hola
+![Consulta el informe](./assets/ERD_TIMETABLE.png)
+
