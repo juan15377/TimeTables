@@ -1,5 +1,3 @@
-from ..core import db_connection, DB_PATH
-
 from typing import Dict, Callable
 import random
 import sqlite3

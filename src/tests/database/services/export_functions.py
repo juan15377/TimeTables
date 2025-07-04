@@ -78,5 +78,5 @@ from src.app.database import database_manager
 
 path = "/home/juan/Escritorio/"
 
-database_manager.export.pdf.grid_formats.individual_groups([12, 13], path)
 #print(database_manager.subjects.get_matrix_of_allocated_slots(2))
+database_manager.export.pdf.grid_formats.complete_schedule_in_one_file(path, "HORARIOS")

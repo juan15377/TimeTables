@@ -1,8 +1,5 @@
-from .symbology import SymbologyLatex
-from .schedule_grid import GridLatex
-from .subject_latex import SubjectLatex
 
-
+from src.app.database.services.export_functions.PDF.grid_formats import SubjectLatex, GridLatex, SymbologyLatex
 
 class GroupLatex:
     def __init__(self, db, id_group):

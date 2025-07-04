@@ -1,6 +1,10 @@
 import dearpygui.dearpygui as dpg
 import random
 from typing import List, Dict, Tuple, Callable, Any, Optional
+from dearpygui.dearpygui import *
+
+
+
 
 class ListaGenericaApp:
     """Clase base para manejo de listas seleccionables (aulas, profesores, grupos)"""
@@ -76,20 +80,7 @@ class ListaGenericaApp:
                     label="Mostrar IDs Seleccionados",
                     callback=lambda: self.mostrar_ids_seleccionados()
                 )
-            
-            dpg.add_text(f"{self.entity_name.capitalize()} seleccionados:", bullet=True)
-            dpg.add_text(
-                f"Ningún {self.entity_name} seleccionado",
-                tag=self.selected_items_tag,
-                wrap=500
-            )
-            
-            dpg.add_text("IDs seleccionados:", bullet=True)
-            dpg.add_text(
-                "Ningún ID seleccionado",
-                tag=self.selected_ids_tag,
-                wrap=500
-            )
+
             
         # Inicializar tabla
         self._inicializar_datos()  # Asegurar que tenemos datos antes de ordenar
@@ -233,7 +224,7 @@ class ListaAulasApp(ListaGenericaApp):
     def __init__(self, db):
         super().__init__(db, entity_name="aula")
         self._inicializar_datos()
-
+        
     def _inicializar_datos(self):
         """Inicializa la lista de aulas y estructuras auxiliares."""
         # Ejemplo inicial de aulas
@@ -283,6 +274,7 @@ class ListaProfesoresApp(ListaGenericaApp):
     
     def __init__(self, db):
         super().__init__(db, entity_name="profesor")
+        self.db = db
         self.profesores_info = {}  # Diccionario para almacenar información adicional
         self._inicializar_datos()
 
@@ -320,9 +312,17 @@ class ListaProfesoresApp(ListaGenericaApp):
         # Si queremos mostrar más información, podríamos hacer un parse del nombre
         # o tener una estructura de datos más compleja para cada aula
         
-    def exportar(self, sender=None, app_data=None, user_data=None):
-        """Exporta los horarios de las aulas seleccionadas."""
-        ids_seleccionados = self.obtener_ids_seleccionados()
-        print(f"Exportando horarios de {len(ids_seleccionados)} aulas...")
-        # Aquí iría la lógica para exportar los horarios de las aulas
 
+
+    def exportar(self, sender=None, app_data=None, user_data=None):
+        """Mostrar el diálogo de guardado"""
+        show_item("save_dialog")
+
+    def guardar_pdf(self, sender=None, app_data=None, user_data=None):
+        """Callback cuando el usuario elige dónde guardar el archivo"""
+        save_path = app_data['file_path_name']
+        ids_seleccionados = self.obtener_ids_seleccionados()
+        print(f"Exportando horarios de {len(ids_seleccionados)} aulas a: {save_path}")
+        
+        # Exportar
+        self.db.export.pdf.grid_formats.individual_classrooms(ids_seleccionados, save_path)

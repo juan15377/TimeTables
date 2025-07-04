@@ -1,1 +1,1 @@
-from .professor_classroom_group_selector import * 
+from .professor_classroom_group_selector import *

@@ -8,6 +8,8 @@ import concurrent.futures
 import numpy as np
 from ..switch_button import SwitchButton
 
+from src.app.UI.components import switch_button
+
 class ScheduleGrid:
     """
     Clase principal para gestionar una cuadrícula de horarios con materias personalizables.
@@ -231,10 +233,21 @@ class ScheduleGrid:
         with dpg.group(parent = f"scrollable_grid_container_{self.mode}"):
             with dpg.table(header_row=True, resizable=True, policy=dpg.mvTable_SizingStretchProp):
                 # Agrega las columnas (una para cada día)
-                    dias = ["Hora", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+                    dias = ["Hora", " Lunes  ", " Martes ", "Miércoles", " Jueves ", "Viernes", "Sábado ", "Domingo"]
                     for dia in dias:
-                        dpg.add_table_column(label=dia, indent_disable=True)
-                        
+                        if dia == "Hora":
+                            dpg.add_table_column(
+                                label=dia, 
+                                width_fixed=True,           # Indica que es ancho fijo
+                                init_width_or_weight=120,    # Tamaño en píxeles
+                                no_resize=True              # Evita redimensionamiento manual
+                            )
+                        else:
+                            dpg.add_table_column(
+                                label=dia, 
+                                width_stretch=True,         # Permite que se estire
+                                no_resize=False             # Permite redimensionamiento manual
+                            )
 
                     with dpg.table_row():   
                         with dpg.group(horizontal=False):       
@@ -252,61 +265,10 @@ class ScheduleGrid:
                                                    user_data=(column, row, None, None))
                                     dpg.bind_item_theme(cell_tag, self.themes["default"])
 
-        return None 
                             
                 
-        # SECCIÓN 1: ENCABEZADOS FIJOS (no scrollables)
-        with dpg.group(horizontal=True, parent=f"fixed_headers_container_{self.mode}"):
-            # Espacio para alinear con la columna de horas
-            dpg.add_button(
-                label="Hora",
-                height=self.cell_height,
-                width=self.cell_width,
-                enabled=False,
-            )
-            
-            # Encabezados de días fijos
-            for day_idx, day_name in enumerate(self.weekdays):
-                tag_day = f"day_{self.mode}_{day_name}"
-                dpg.add_button(
-                    label=day_name,
-                    height=self.cell_height,
-                    width=self.cell_width,
-                    enabled=False,
-                    tag=tag_day
-                )
-        
-        with dpg.group(horizontal=True, parent=f"scrollable_grid_container_{self.mode}"):
-            # Columna de horas
 
-            return None
-            with dpg.group():
-                # Sin encabezado (ya está en la sección fija)
-                # Celdas de hora
-                for i, hour in enumerate(self.hours):
-                    tag_hour = f"hora_{self.mode}_{i}"
-                    dpg.add_button(
-                        label=hour,
-                        width=70,
-                        height=self.cell_height,
-                        enabled=False,
-                        tag=tag_hour
-                    )
-            
-            for day_idx, day_name in enumerate(self.weekdays):
-                with dpg.group():
-
-                    for hour_idx in range(len(self.hours)):
-                        cell_id = f"cell_{self.mode}_{day_idx}_{hour_idx}"
-                        dpg.add_button(
-                            label="",
-                            width=self.cell_width,
-                            height=self.cell_height,
-                            tag=cell_id,
-                            callback=self.cell_clicked,
-                            user_data=(day_idx, hour_idx, None, None)
-                        )
-                        dpg.bind_item_theme(cell_id, self.themes["default"])                        
+                     
         
     def cell_clicked(self, sender: str, app_data: Any, user_data: Tuple[int, int]):
         """

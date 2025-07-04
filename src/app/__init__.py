@@ -1,3 +1,1 @@
-from .UI import run_app
-
-
+from src.app.UI import run_app

@@ -6,6 +6,8 @@ from src.app.UI.components.items_groups_manager import get_id
 from src.app.UI.components.windows_manager import Window, windows_manager
 from src.app.UI.windows_tags import NEW_SUBJECT_WINDOW_TAG, SUBJECTS_MANAGER_WINDOW_TAG
 
+
+
 class SubjectRegistrationWindow(Window):
     
     __reference = None
@@ -253,6 +255,14 @@ class SubjectRegistrationWindow(Window):
             windows_manager.notification_system.show_notification("Error: No se ah Seleccionado ningun Profesor", 3, "error")
             return None
         
+        if min_slots > max_slots :
+            windows_manager.notification_system.show_notification("Error: Max Slots  > Min Slots", 3, "error")
+            return None
+    
+        if group_ids is None or group_ids == []:
+            windows_manager.notification_system.show_notification("Error: La lista de grupos esta vacia ", 3, "error")
+            return None
+            
         self.db.subjects.new(
         name,
         code,
@@ -264,6 +274,7 @@ class SubjectRegistrationWindow(Window):
         total_slots,
         online
         )
+            
         
         dpg.set_value(self.input_name_tag, "")
         dpg.set_value(self.input_code_tag, "")

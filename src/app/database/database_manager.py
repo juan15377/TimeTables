@@ -1,10 +1,10 @@
-from ..core import db_connection, DB_PATH
+from src.app.core import db_connection, DB_PATH
 
 import sqlite3
-from .services import ExportFunctions
+from src.app.database.services import ExportFunctions
         
-from .professors_classrooms_groups_manager import ProfessorsManager, ClassroomManager, GroupsManager
-from .subjects_manager import SubjectsManager 
+from src.app.database.professors_classrooms_groups_manager import ProfessorsManager, ClassroomManager, GroupsManager
+from src.app.database.subjects_manager import SubjectsManager 
 
 class DataBaseManager:
 

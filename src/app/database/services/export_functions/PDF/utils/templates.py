@@ -62,7 +62,7 @@ def LATEX_TEMPLATE(input_content, table_of_contents=True):
 \\pagenumbering{{roman}}
 %\\setcounter{{page}}{{1}}
 
-{f"\\\\tableofcontents" if table_of_contents else ""}
+{f"\\tableofcontents" if table_of_contents else ""}
 
 \\clearpage % Asegura un salto de página limpio
 

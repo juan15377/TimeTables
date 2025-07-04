@@ -1,6 +1,5 @@
 from .subject_latex import SubjectLatex 
 from .schedule_grid import GridLatex 
-from .utils import *
 from .symbology import SymbologyLatex
 from .professors_latex import ProfessorLatex, create_professors_latex
 from .classroom_latex import *
@@ -12,8 +11,6 @@ from .group_latex import *
 from .professors_latex import ProfessorLatex, create_professors_latex
 from .classroom_latex import ClassroomLatex, create_classrooms_latex
 from .group_latex import GroupLatex, create_groups_latex
-from .schedule_grid import GridLatex
-from .subject_latex import SubjectLatex
 
 import os
 import subprocess
@@ -21,7 +18,6 @@ from pylatex import Document
 from pathlib import Path
 
 from ..utils import *
-    
 
 def save_latex_to_file_and_compile(latex_content, save_path, file_name):
     """
@@ -78,10 +74,12 @@ class ExportGridFormats:
         {create_classrooms_latex(self.db)}
         
         """
-        latex_content = LATEX_TEMPLATE(input_text)
-        latex_content_filter = replace_exceptions(latex_content)
+        latex_content_filter = replace_exceptions(input_text)
+        latex_content = LATEX_TEMPLATE(latex_content_filter)
         
-        save_latex_to_file_and_compile(latex_content_filter, save_path, file_name)
+        print(latex_content)
+        
+        save_latex_to_file_and_compile(latex_content, save_path, file_name)
         
         pass
         
@@ -89,10 +87,7 @@ class ExportGridFormats:
         folder_path = os.path.join(save_path, folder_name)
         os.makedirs(folder_path, exist_ok=True)
         
-        # crear dentro de save_path una carpeta llamada Professors
-        careers = self.db.groups.careers.get()
-        
-        self.complete_schedule_in_one_file(folder_path, "schedule_completed")
+        # crear dentro de save_path una carpeta llamada Professors        
         
         folders = ["professors", "classrooms", "groups"]
         
@@ -109,9 +104,18 @@ class ExportGridFormats:
         all_classrooms = self.db.classrooms.get()
         all_groups = self.db.groups.get()
         
+        print("iniciando profesores")
         self.individual_professors(all_professors, path_professors)
+        
+        print("iniciando aulas")
         self.individual_classrooms(all_classrooms, path_classrooms)
+        
+        print("iniciando grupos")
         self.individual_groups(all_groups, path_groups)
+        
+        
+        self.complete_schedule_in_one_file(folder_path, "schedule_completed")
+        
     
     def individual_professors(self, professors, save_path):
         
