@@ -23,12 +23,18 @@ class SymbologyLatex:
         return table
 
     def _convert_subject_row(self, subject, type_):
-        """Convert a SubjectLatex instance to a LaTeX string based on the type."""
-        r, g, b = subject.color 
-        r, g, b = r/255, g/255, b/255 
+        r, g, b = subject.color
+        r_normalized, g_normalized, b_normalized = r / 255, g / 255, b / 255
 
-        symbol = f"\\cellcolor[rgb]{{{r},{g},{b}}} \\textbf{{{subject.code}}}"
-        
+        # Cálculo de luminancia para decidir el color del texto
+        luminance = 0.299 * r + 0.587 * g + 0.114 * b
+        text_color = "white" if luminance < 128 else "black"
+
+        # Generación del símbolo con color adaptativo de texto
+        symbol = (
+            f"\\cellcolor[rgb]{{{r_normalized:.3f},{g_normalized:.3f},{b_normalized:.3f}}} "
+            f"\\textcolor{{{text_color}}}{{\\textbf{{{subject.code}}}}}"
+        )
         
         careers_names = subject.careers_names
         semesters_names = subject.semesters_names

@@ -5,16 +5,15 @@
 import numpy as np  
 from typing import List
 
-HOURS_LABELS = ["7:00AM", "7:30AM", "8:00AM", "8:30AM", "9:00AM", "9:30AM", "10:00AM", 
-                "10:30AM", "11:00AM", "11:30AM", "12:00PM", "12:30PM", "1:00PM", "1:30PM", 
-                "2:00PM", "2:30PM", "3:00PM", "3:30PM", "4:00PM", "4:30PM", "5:00PM", 
-                "5:30PM", "6:00PM", "6:30PM", "7:00PM", "7:30PM", "8:00PM", "8:30PM", 
-                "9:00PM", "9:30PM", "10:00PM", "10:30PM"]
+HOURS_LABELS = [
+            "",
+            "7:00-7:30 am", "7:30-8:00 am", "8:00-8:30 am", "8:30-9:00 am", "9:00-9:30 am", "9:30-10:00 am",
+            "10:00-10:30 am", "10:30-11:00 am", "11:00-11:30 am", "11:30-12:00 pm", "12:00-12:30 pm", "12:30-1:00 pm",
+            "1:00-1:30 pm", "1:30-2:00 pm", "2:00-2:30 pm", "2:30-3:00 pm", "3:00-3:30 pm", "3:30-4:00 pm",
+            "4:00-4:30 pm", "4:30-5:00 pm", "5:00-5:30 pm", "5:30-6:00 pm", "6:00-6:30 pm", "6:30-7:00 pm",
+            "7:00-7:30 pm", "7:30-8:00 pm", "8:00-8:30 pm", "8:30-9:00 pm", "9:00-9:30 pm", "9:30-10:00 pm"
+        ]
 
-DAYS_LABELS = ["", "7:00-7:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00", "10:00-10:30",
-                        "10:30-11:00", "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-1:00", "1:00-1:30", "1:30-2:00",
-                        "2:00-2:30", "2:30-3:00", "3:00-3:30", "3:30-4:00", "4:00-4:30", "4:30-5:00", "5:00-5:30", 
-                        "5:30-6:00", "6:00-6:30", "6:30-7:00", "7:00-7:30", "7:30-8:00", "8:00-8:30", "8:30-9:00", "9:00-9:30", "9:30-10:00"]
 
 
 class GridLatex:
@@ -26,14 +25,7 @@ class GridLatex:
             "5:30PM", "6:00PM", "6:30PM", "7:00PM", "7:30PM", "8:00PM", "8:30PM", 
             "9:00PM", "9:30PM", "10:00PM", "10:30PM"]
         
-        hours_labels = [
-            "",
-            "7:00-7:30 am", "7:30-8:00 am", "8:00-8:30 am", "8:30-9:00 am", "9:00-9:30 am", "9:30-10:00 am",
-            "10:00-10:30 am", "10:30-11:00 am", "11:00-11:30 am", "11:30-12:00 pm", "12:00-12:30 pm", "12:30-1:00 pm",
-            "1:00-1:30 pm", "1:30-2:00 pm", "2:00-2:30 pm", "2:30-3:00 pm", "3:00-3:30 pm", "3:30-4:00 pm",
-            "4:00-4:30 pm", "4:30-5:00 pm", "5:00-5:30 pm", "5:30-6:00 pm", "6:00-6:30 pm", "6:30-7:00 pm",
-            "7:00-7:30 pm", "7:30-8:00 pm", "8:00-8:30 pm", "8:30-9:00 pm", "9:00-9:30 pm", "9:30-10:00 pm"
-        ]
+        hours_labels = HOURS_LABELS
 
         self.hours_labels = [f"\\textbf{{{x}}}" for x in hours_labels]
         days_labels = ["Horas", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
@@ -53,30 +45,36 @@ class GridLatex:
         hours_matrix = subject_latex.hours_matrix
         color = subject_latex.color
         red, green, blue = color
-        print("COLOR = ", color)
+
 
         days_block_hours = decompose_days_into_hour_blocks(hours_matrix)
 
-        def principal(tamaño_bloque, initiaL_hour, end_hour):
-            # Escapando correctamente las llaves para f-string
+        def principal(length_block, initial_hour, end_hour):
+            # Determina el color del texto basado en la luminosidad del fondo
+            luminance = 0.299 * red + 0.587 * green + 0.114 * blue
+            text_color = "white" if luminance < 128 else "black"
+
             if length_block == 1:
                 return (
-                    "\\multirow{" + f"{-length_block}" + "}{*}{" +
-                    f"\\cellcolor[RGB]{{{red},{green},{blue}}}" +
-                    "\\textbf{"  + "\\small{" f"{code}" + "}}" 
-                    "}"
+                    f"\\multirow{{{-length_block}}}{{*}}{{"
+                    f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
+                    f"\\textcolor{{{text_color}}}{{\\textbf{{\\small{{{code}}}}}}}"
+                    f"}}"
                 )
 
             return (
-                "\\multirow{" + f"{-length_block}""}{*}{" + f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
-                " \\stackunder{"
-                "\\stackon{"
-                "\\textbf{" + f"{code}" + "}" + "}"
-                "{\\scalebox{0.9}{\\tiny " + f"{initiaL_hour}" + "}}"
-                "}"
-                "{\\scalebox{0.9}{\\tiny " + f"{end_hour}" + "}}"
-                "}" 
+                f"\\multirow{{{-length_block}}}{{*}}{{"
+                f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
+                f"\\textcolor{{{text_color}}}{{"
+                f"\\stackunder{{"
+                f"\\stackon{{"
+                f"\\textbf{{{code}}}"
+                f"}}{{\\scalebox{{0.9}}{{\\tiny {initial_hour}}}}}"
+                f"}}{{\\scalebox{{0.9}}{{\\tiny {end_hour}}}}}"
+                f"}}"
+                f"}}"
             )
+
 
         def secundary():
             return f"\\cellcolor[RGB]{{{red},{green},{blue}}}"
@@ -206,8 +204,6 @@ def decompose_days_into_hour_blocks(schedule_matrix: np.ndarray) -> dict[int, li
     return day_blocks
 
 
-
-
 def lineas_fila(vector_bool):
     valores = split_vector_into_blocks(vector_bool)
     cadena = ""
@@ -237,6 +233,3 @@ def convertir_stringlatex(cuadricula):
 
     cadena += "\\end{tabular}\\end{table}"
     return cadena
-
-
-

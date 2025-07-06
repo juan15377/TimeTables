@@ -7,6 +7,51 @@ from src.app.UI.components.windows_manager import Window, windows_manager
 from src.app.UI.windows_tags import NEW_SUBJECT_WINDOW_TAG, SUBJECTS_MANAGER_WINDOW_TAG
 
 
+import re
+import unicodedata
+
+def normalizar(palabra):
+    # Quita acentos y convierte a ASCII
+    return ''.join(
+        c for c in unicodedata.normalize('NFD', palabra)
+        if unicodedata.category(c) != 'Mn'
+    )
+
+def generar_codigo_materia(nombre_materia):
+    palabras_omitidas = {"de", "la", "el", "y", "en", "del", "los", "las", "por", "para", "a", "al"}
+
+    # Tokenizar y normalizar palabras
+    palabras = re.findall(r'\w+', nombre_materia.lower())
+    palabras = [normalizar(p) for p in palabras]
+
+    # Extraer número final si existe
+    sufijo = '0'
+    if palabras and palabras[-1].isdigit():
+        sufijo = palabras.pop()
+
+    # Filtrar palabras útiles
+    significativas = [p for p in palabras if p not in palabras_omitidas]
+
+    # Construir código de 4 letras
+    codigo = ''
+    for palabra in significativas:
+        if len(codigo) < 4:
+            codigo += palabra[0].upper()
+
+    # Si faltan letras, seguir tomando más letras de las mismas palabras
+    if len(codigo) < 4:
+        for palabra in significativas:
+            for letra in palabra[1:]:
+                if len(codigo) < 4:
+                    codigo += letra.upper()
+                else:
+                    break
+
+    # Rellenar si aún faltan letras
+    codigo = (codigo + 'XXXX')[:4]
+
+    return codigo + sufijo
+
 
 class SubjectRegistrationWindow(Window):
     
@@ -129,11 +174,19 @@ class SubjectRegistrationWindow(Window):
         
     def _create_content(self):
         
+        
+        def generate_tag():
+            name = dpg.get_value(self.input_name_tag)
+            generate_code = generar_codigo_materia(name)
+            dpg.set_value(self.input_code_tag, generate_code)
+
         dpg.add_separator()
         with dpg.group():
             with dpg.group(horizontal=True):
                 dpg.add_input_text(label="Código", tag=self.input_code_tag, width=120)
                 dpg.add_input_text(label="Nombre", tag=self.input_name_tag, width=400)
+                
+                dpg.add_button(label ="generar_codigo", tag = "generate_tag", callback= lambda s, a, u: generate_tag())
                 
             with dpg.group(horizontal=True):
                 dpg.add_input_int(label="Mín. Slots", tag=self.input_min_slots_tag, width=120, min_value=1, min_clamped=True, default_value=5)
