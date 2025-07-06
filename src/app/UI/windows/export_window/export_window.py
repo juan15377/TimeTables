@@ -89,7 +89,7 @@ class ExportWindow(Window):
         dpg.add_button(label="Seleccionar Directorio", callback=show_directory_selector)
         
         with dpg.group(horizontal=True):
-            dpg.add_button(label="Exportar Horario Completo", callback = lambda s, a, u : self.db.export.pdf.grid_formats.complete_schedule(selected_directory, "HORARIOS")),
+            dpg.add_button(label="Exportar Horario Completo", callback = lambda s, a, u : self.db.export.pdf.grid_formats.complete_schedule_async(selected_directory, "HORARIOS")),
             dpg.add_button(label="Exportar Horario Completo en un solo archivo")
             dpg.add_spacing()
         

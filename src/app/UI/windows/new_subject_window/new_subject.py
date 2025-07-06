@@ -279,7 +279,8 @@ class SubjectRegistrationWindow(Window):
             dpg.set_value(selector_tag, current_selection)
             
         # Update progress bar after selection change
-        pass 
+        pass
+
         
 
     def register_new_subject(self):

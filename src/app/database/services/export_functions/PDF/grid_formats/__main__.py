@@ -59,11 +59,22 @@ def save_latex_to_file_and_compile(latex_content, save_path, file_name):
         os.chdir(original_directory)  # Restaurar el directorio original
 
 
+
+import threading
+
+def run_in_thread(target_function, *args, **kwargs):
+    thread = threading.Thread(target=target_function, args=args, kwargs=kwargs, daemon=True)
+    thread.start()
+    
+    
 class ExportGridFormats:
     
     def __init__(self, db):
         self.db = db
         
+    def complete_schedule_in_one_file_async(self, save_path, file_name):
+        run_in_thread(self.complete_schedule_in_one_file, save_path, file_name)        
+
     def complete_schedule_in_one_file(self, save_path, file_name):
         
         input_text = f"""
@@ -81,7 +92,10 @@ class ExportGridFormats:
         
         save_latex_to_file_and_compile(latex_content, save_path, file_name)
         
-        pass
+            
+    def complete_schedule_async(self, save_path, folder_path):
+        run_in_thread(self.complete_schedule, save_path, folder_path)
+    
         
     def complete_schedule(self, save_path, folder_name):
         folder_path = os.path.join(save_path, folder_name)
