@@ -23,8 +23,6 @@ schedule_availability_window = ScheduleAvailabilityWindow(database_manager)
 
 export_window = ExportWindow(database_manager)
 
-
-
 windows_manager.register_window(main_window)
 windows_manager.register_window(subjects_manager)
 windows_manager.register_window(new_subject_window)

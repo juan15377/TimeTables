@@ -266,7 +266,7 @@ class ScheduleGrid:
                     dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 2, 10)  # Más padding para encabezados
                     dpg.add_theme_color(dpg.mvThemeCol_Button, (70, 100, 200))
                     dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, (120, 104, 220, 255))
-                    dpg.add_theme_color(dpg.mvThemeCol_TableHeaderBg, (70, 100, 200))  # Azul
+                    dpg.add_theme_color(dpg.mvThemeCol_TableHeaderBg, (110, 110, 200))  # Azul
 
                     
         
