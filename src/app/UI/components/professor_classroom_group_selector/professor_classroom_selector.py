@@ -43,21 +43,22 @@ class SelectorBase:
             dpg.add_text("Filtrar:")
             dpg.add_input_text(
                 tag=self.filter_input_tag,
-                width=500,
+                width=-380,
+                height=200,
                 hint=f"Buscar por nombre o ID...",
                 callback=self._filter_items
             )
             dpg.add_button(
                 label="Limpiar",
-                callback=self._clear_filter
+                callback=self._clear_filter,
+                width=100
             )
             
             dpg.add_spacer()
-                    
             dpg.add_text("Progresso :")
             dpg.add_progress_bar(
                 default_value=0.0,
-                width=200,
+                width=-1,
                 tag=self.progress_bar_tag,
                 overlay="0%"
             )
@@ -74,7 +75,7 @@ class SelectorBase:
                 items=self.items,
                 default_value=defaul_item_selected, 
                 tag=self.selector_tag,
-                width=600,
+                width=-1,
                 height_mode=10,
                 user_data=defaul_item_selected, 
                 callback=self._on_selection_change

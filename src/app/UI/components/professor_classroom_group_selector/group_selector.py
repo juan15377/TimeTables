@@ -37,36 +37,53 @@ class GroupSelector:
         
             
         # Filtros en una fila
-        with dpg.group(horizontal=True):
-            # Filtro por carrera
-            dpg.add_text("Carrera:")
-            dpg.add_combo(
-                items=[""] + sorted(self.items.get_careers()),
-                default_value="",
-                tag=self.career_filter_tag,
-                width=250,
-                callback=self._apply_filters
-            )
+        with dpg.table(header_row=False, resizable=True, policy=dpg.mvTable_SizingStretchProp, width=-1):
+            # Crear columnas de igual tamaño
+            
+            dpg.add_table_column( width_stretch=True,         # Permite que se estire
+                            no_resize=False )
+            dpg.add_table_column( width_stretch=True,         # Permite que se estire
+                            no_resize=False )
+            dpg.add_table_column( width_stretch=True,         # Permite que se estire
+                            no_resize=False )
+            
+            with dpg.table_row():
+                # Filtro por carrera
+                with dpg.table_cell():
+                    with dpg.group(horizontal=True):
+                        dpg.add_text("Carrera:")
+                        dpg.add_combo(
+                            items=[""] + sorted(self.items.get_careers()),
+                            default_value="",
+                            tag=self.career_filter_tag,
+                            width=-1,  # Toma todo el espacio de la celda
+                            callback=self._apply_filters
+                        )
                 
                 # Filtro por semestre
-            dpg.add_text("Semestre:")
-            dpg.add_combo(
-                items=[""] + sorted(self.items.get_semesters()),
-                default_value="",  
-                tag=self.semester_filter_tag,
-                width=250,
-                callback=self._apply_filters
-            )
+                with dpg.table_cell():
+                    with dpg.group(horizontal=True):
+                        dpg.add_text("Semestre:")
+                        dpg.add_combo(
+                            items=[""] + sorted(self.items.get_semesters()),
+                            default_value="",
+                            tag=self.semester_filter_tag,
+                            width=-1,  # Toma todo el espacio de la celda
+                            callback=self._apply_filters
+                        )
                 
                 # Filtro por subgrupo
-            dpg.add_text("Subgrupo:")
-            dpg.add_combo(
-                items=[""] + sorted(self.items.get_subgroups()),
-                default_value="",
-                tag=self.subgroup_filter_tag,
-                width=250,
-                callback=self._apply_filters
-            )
+                with dpg.table_cell():
+                    with dpg.group(horizontal=True):
+                        dpg.add_text("Subgrupo:")
+                        dpg.add_combo(
+                            items=[""] + sorted(self.items.get_subgroups()),
+                            default_value="",
+                            tag=self.subgroup_filter_tag,
+                            width=-1,  # Toma todo el espacio de la celda
+                            callback=self._apply_filters
+                        )
+                
             
             # Campo de búsqueda
         with dpg.group(horizontal=True):

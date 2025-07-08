@@ -60,11 +60,16 @@ class MainWindow(Window):
                 # Barra de menú principal
         with dpg.menu_bar():
             with dpg.menu(label="Archivo"):
-                dpg.add_menu_item(label="Guardar", callback = lambda s, a, u : windows_manager.show_window(SAVE_FILE_WINDOW_TAG))
-                dpg.add_menu_item(label="Cargar", callback=lambda s, a, u : windows_manager.show_window(IMPORT_DATABASE_WINDOW_TAG))
-                dpg.add_menu_item(label="export", callback= lambda s, a, u : windows_manager.show_window(EXPORT_WINDOW_TAG))
+                dpg.add_menu_item(label="Guardar archivo", callback = lambda s, a, u : windows_manager.show_window(SAVE_FILE_WINDOW_TAG))
+                dpg.add_menu_item(label="Cargar archivo", callback=lambda s, a, u : windows_manager.show_window(IMPORT_DATABASE_WINDOW_TAG))
+                dpg.add_menu_item(label="exportar", callback= lambda s, a, u : windows_manager.show_window(EXPORT_WINDOW_TAG))
                 dpg.add_menu_item(label="Salir", callback=lambda s, a, u: windows_manager.notife("hola") )
 
+
+            with dpg.menu(label="Opciones"):
+                dpg.add_menu_item(label="Acerca de", callback=lambda s, a, u : print("Hola Guapo"))
+                
+                
             with dpg.menu(label="Ayuda"):
                 dpg.add_menu_item(label="Acerca de", callback=lambda s, a, u : print("Hola Guapo"))
 

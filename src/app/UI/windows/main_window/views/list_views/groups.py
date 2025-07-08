@@ -465,8 +465,6 @@ class GroupsManager:
             get_id(self.filtros["subgrupo"])
         )
         
-        print(self.grupos_filtrados)
-
         # Actualizar total de páginas
         self.total_paginas = max(1, (len(self.grupos_filtrados) + self.elementos_por_pagina - 1) // self.elementos_por_pagina)
         
@@ -480,8 +478,6 @@ class GroupsManager:
         # Actualizar indicador de página
         dpg.set_value("texto_pagina", f"Página: {self.pagina_actual}/{self.total_paginas}")
         
-        
-  
 
     
     def actualizar_lista_grupos(self):
@@ -531,7 +527,7 @@ class GroupsManager:
                     group_id = grupo["id"]
                     print(group_id)
                     
-                    dpg.add_progress_bar(width=-1,  default_value=grupo["progress"], overlay=f"{grupo["progress"]*100}%")  
+                    dpg.add_progress_bar(width=-1,  default_value=grupo["progress"], overlay=f"{round(grupo["progress"], 2)*100}%")  
                     
                     def show_subjects_window(mode_id):
                         windows_manager.show_window(SUBJECTS_MANAGER_WINDOW_TAG, mode = "GROUP", mode_id = mode_id)   
@@ -559,19 +555,6 @@ class GroupsManager:
                     
                     dpg.bind_item_theme(btn, self.tema_eliminar)
                     
-                    
-                        #
-                    ## Columna de acciones
-                    #with dpg.group(horizontal=True):
-                        #    btn_ver = dpg.add_button(label="Ver", width=70, callback=lambda s, a, u: self.ver_detalles(u), user_data=dato)
-                        #    dpg.add_spacer(width=5)
-                        #    btn_eliminar = dpg.add_button(label="Eliminar", width=70, callback=lambda s, a, u: self.eliminar_fila(u), user_data=dato['id'])
-                        #    
-                        #    # Aplicar temas a los botones
-                        #    dpg.bind_item_theme(btn_ver, self.theme_btn_ver)
-                        #    dpg.bind_item_theme(btn_eliminar, self.theme_btn_eliminar)
-
-            return None 
 
         
         # Actualizar estado de los botones de navegación

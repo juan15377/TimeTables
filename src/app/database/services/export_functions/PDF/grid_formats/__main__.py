@@ -118,18 +118,20 @@ class ExportGridFormats:
         all_classrooms = self.db.classrooms.get()
         all_groups = self.db.groups.get()
         
-        print("iniciando profesores")
         self.individual_professors(all_professors, path_professors)
         
-        print("iniciando aulas")
         self.individual_classrooms(all_classrooms, path_classrooms)
         
-        print("iniciando grupos")
         self.individual_groups(all_groups, path_groups)
         
         
         self.complete_schedule_in_one_file(folder_path, "schedule_completed")
         
+    
+    def individual_professors_async(self, professors, save_path):
+        run_in_thread(self.individual_professors, professors, save_path)
+        pass 
+    
     
     def individual_professors(self, professors, save_path):
         
@@ -141,6 +143,9 @@ class ExportGridFormats:
             os.makedirs(save_path, exist_ok=True) # crea el directorio en caso de que no exista
             save_latex_to_file_and_compile(latex_content_filter, save_path, professor_name)
             
+    def individual_classrooms_async(self, classrooms, save_path):
+        run_in_thread(self.individual_classrooms, classrooms, save_path)
+        pass
 
     def individual_classrooms(self, classrooms, save_path):
         
@@ -152,6 +157,10 @@ class ExportGridFormats:
             os.makedirs(save_path, exist_ok=True) # crea el directorio en caso de que no exista
             save_latex_to_file_and_compile(latex_content_filter, save_path, classroom_name)
         pass
+
+    def individual_groups_async(self, groups, save_path):
+        run_in_thread(self.individual_groups, save_path)
+        pass 
 
     def individual_groups(self, groups, save_path):
         

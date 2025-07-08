@@ -150,10 +150,6 @@ class GestorEntidad:
         # Limpiar la tabla existente
         dpg.delete_item(f"tabla_container_{self.nombre_entidad}", children_only=True)
         
-        # Actualizar contadores
-        #dpg.set_value("total_materias", str(len(self.datos_tabla)))
-        #dpg.set_value("materias_mostradas", str(len(self.datos_filtrados)))
-        # Agregar encabezados de tabla
         with dpg.table(header_row=True, borders_innerH=True, borders_outerH=True,
                       borders_innerV=True, borders_outerV=True, tag=f"tabla_items_{self.nombre_entidad}", 
                       parent=f"tabla_container_{self.nombre_entidad}"):
@@ -312,7 +308,6 @@ class GestorEntidad:
         self.actualizar_lista(force=True)
         
         info_tag = self.get_tag("info_item")
-        dpg.set_value(info_tag, f"Agregado: {valor} (Total: {len(self.items)})")
     
     def confirmar_eliminar(self, item_id: int) -> None:
         """Muestra confirmación antes de eliminar"""
@@ -372,14 +367,15 @@ class GestorEntidad:
         """Crea la interfaz de usuario para gestionar la entidad"""
         with dpg.group(horizontal=False, parent=parent_tag):
             # Sección de búsqueda
-            with dpg.child_window(height=80, label="Búsqueda"):
+            with dpg.child_window(height=90, label="Búsqueda"):
                 with dpg.group(horizontal=True):
+                    dpg.add_text(f"Buscar {self.nombre_entidad.lower()}")
                     dpg.add_input_text(
-                        label=f"Buscar {self.nombre_entidad.lower()}", 
                         tag=self.get_tag("filtro"),
-                        width=300,
+                        width=-120,
                         callback=lambda: self.actualizar_lista(force=True)
                     )
+                    
                     btn_limpiar = dpg.add_button(
                         label="Limpiar filtro",
                         callback=lambda: [
@@ -387,21 +383,25 @@ class GestorEntidad:
                             self.actualizar_lista(force=True)
                         ]
                     )
+                
+                dpg.add_separator()
+                
                 with dpg.group(horizontal=True):
                     # Texto descriptivo según la entidad
-                    campo_principal = self.campos[0] if self.campos else "nombre"
-                    label_text = f"{campo_principal.capitalize()}"
+                    label_text = f"Nombre "
+                    
+                    dpg.add_text(label_text)
                     
                     dpg.add_input_text(
-                        label=label_text,
                         tag=self.get_tag("nuevo_item"),
-                        width=500,
+                        width=-100,
                         on_enter=True,
                         callback=self.agregar_item
                     )
                     btn_agregar = dpg.add_button(
                         label="Agregar",
-                        callback=self.agregar_item
+                        callback=self.agregar_item,
+                        width=-1
                     )
                     dpg.bind_item_theme(btn_agregar, self.tema_accion)
             
@@ -438,10 +438,6 @@ class GestorEntidad:
                     dpg.add_spacer(width=20)
                     # Añadir contador total
                     dpg.add_text(f"Total {self.nombre_plural}: 0", tag=self.get_tag("contador_total"))
-            
-            # Información de selección
-            with dpg.child_window(height=40):
-                dpg.add_text(f"Ningún {self.nombre_entidad.lower()} seleccionado", tag=self.get_tag("info_item"))
             
             # Lista de items
             with dpg.child_window(label=f"Lista de {self.nombre_plural}", height=-1, border=True, tag = f"tabla_container_{self.nombre_entidad}"):

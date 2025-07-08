@@ -27,7 +27,7 @@ class GridLatex:
         
         hours_labels = HOURS_LABELS
 
-        self.hours_labels = [f"\\textbf{{{x}}}" for x in hours_labels]
+        self.hours_labels = [f"\\textbf{{\\scriptsize {x}}}" for x in hours_labels]
         days_labels = ["Horas", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
         
         self.days_labels = [f"\\cellcolor{{headercolor}}\\textcolor{{white}}{{{x}}}" for x in days_labels]

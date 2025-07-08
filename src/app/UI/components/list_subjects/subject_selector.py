@@ -136,7 +136,7 @@ class SubjectSelector:
                         items=[""],
                         default_value="",
                         tag=self.subject_selector_tag,
-                        width=530,
+                        width=-540,
                         callback=self.on_change_subject_selected,
                         user_data=None,
                     )
@@ -168,8 +168,9 @@ class SubjectSelector:
                     self.update_subject_slots()
 
             with dpg.group():
-                dpg.add_button(label = "", width=100, height=41, tag = self.example_slot_tag)
+                dpg.add_button(label = "", width=-1, height=50, tag = self.example_slot_tag)
                 pass
+            
     def update_subject_slots(self):
         "after update subject selected update the allowed slots"
         id_subject_selected = self.get_id()

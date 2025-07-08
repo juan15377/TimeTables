@@ -124,11 +124,24 @@ class ScheduleGrid:
             
         self.subject_selector = subject_selector
 
+
+        def restart(sender, app_data, user_data):
+            self.db.subjects.restart_slots(self.subject_selector.get_id())
+
+            self.update()
+
+
+
         with dpg.group(horizontal=False):
                 
             # Segunda fila de herramientas
-                    
+            dpg.add_spacing()
+            dpg.add_separator()
             subject_selector.setup_ui() 
+            dpg.add_separator()
+            dpg.add_spacing()
+            
+            
                         
             with dpg.group(horizontal=True):
                                 
@@ -141,6 +154,10 @@ class ScheduleGrid:
                 dpg.add_text("Mostrar Celdas disponibles")
                 switch_button_show_availability_cells = SwitchButton(ancho = 30, alto = 15, callback=lambda estado : self.on_change_show_availability_cell(estado))
                 switch_button_show_availability_cells.setup_ui()
+                
+                dpg.add_spacing()
+                
+                dpg.add_button(label = "Reiniciar Slots", callback= restart)
 
             dpg.add_separator()
             dpg.add_spacer()
@@ -175,6 +192,8 @@ class ScheduleGrid:
         with dpg.theme_component(dpg.mvButton, parent=self.themes["default"]):
             dpg.add_theme_color(dpg.mvThemeCol_Button, (120, 120, 120))
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (160, 160, 160))
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10.0)  # También puedes usar esto
+
         
         # Tema para la columna de horas
         self.themes["hours"] = dpg.add_theme()
@@ -182,6 +201,8 @@ class ScheduleGrid:
             dpg.add_theme_color(dpg.mvThemeCol_Button, (200, 200, 200))
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (220, 220, 220))
             dpg.add_theme_color(dpg.mvThemeCol_Text, (0, 0, 0))
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10.0)  # También puedes usar esto
+
         
         # Tema para celdas seleccionadas
         self.themes["selected"] = dpg.add_theme()
@@ -189,24 +210,32 @@ class ScheduleGrid:
             dpg.add_theme_color(dpg.mvThemeCol_Button, (0, 120, 200))
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (30, 150, 230))
             dpg.add_theme_color(dpg.mvThemeCol_Text, (255, 255, 255))
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10.0)  # También puedes usar esto
+
 
         self.themes["available"] = dpg.add_theme()
         with dpg.theme_component(dpg.mvButton, parent=self.themes["available"]):
             dpg.add_theme_color(dpg.mvThemeCol_Button, (10, 200, 10, 150))
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (0, 180, 5))
             dpg.add_theme_color(dpg.mvThemeCol_Text, (255, 255, 255))
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10.0)  # También puedes usar esto
+
             
         self.themes["strong_constraint"] = dpg.add_theme()
         with dpg.theme_component(dpg.mvButton, parent=self.themes["strong_constraint"]):
             dpg.add_theme_color(dpg.mvThemeCol_Button, (200, 10, 10))
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (185, 5, 5))
             dpg.add_theme_color(dpg.mvThemeCol_Text, (185, 0, 0))
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 10.0)  # También puedes usar esto
+
     
         self.themes["weak_constraint"] = dpg.add_theme()
         with dpg.theme_component(dpg.mvButton, parent=self.themes["weak_constraint"]):
             dpg.add_theme_color(dpg.mvThemeCol_Button, (255, 255, 0))
             dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, (240, 245, 0))
             dpg.add_theme_color(dpg.mvThemeCol_Text, (240, 105, 0))
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 0)  # También puedes usar esto
+
     
     def create_subject_theme(self, color: Tuple[int, int, int]):
         """Crear un tema para una materia con el color especificado"""
@@ -230,45 +259,55 @@ class ScheduleGrid:
     
     def build_grid(self):
         """Construir la cuadrícula del horario con encabezados fijos"""
-        with dpg.group(parent = f"scrollable_grid_container_{self.mode}"):
+        with dpg.group(parent=f"scrollable_grid_container_{self.mode}"):
+            # Crear tema para la tabla con encabezados bonitos
+            with dpg.theme() as table_theme:
+                with dpg.theme_component(dpg.mvTable):
+                    dpg.add_theme_style(dpg.mvStyleVar_CellPadding, 2, 10)  # Más padding para encabezados
+                    dpg.add_theme_color(dpg.mvThemeCol_Button, (70, 100, 200))
+                    dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered, (120, 104, 220, 255))
+                    dpg.add_theme_color(dpg.mvThemeCol_TableHeaderBg, (70, 100, 200))  # Azul
+
+                    
+        
             with dpg.table(header_row=True, resizable=True, policy=dpg.mvTable_SizingStretchProp):
-                # Agrega las columnas (una para cada día)
-                    dias = ["Hora", " Lunes  ", " Martes ", "Miércoles", " Jueves ", "Viernes", "Sábado ", "Domingo"]
-                    for dia in dias:
-                        if dia == "Hora":
-                            dpg.add_table_column(
-                                label=dia, 
-                                width_fixed=True,           # Indica que es ancho fijo
-                                init_width_or_weight=120,    # Tamaño en píxeles
-                                no_resize=True              # Evita redimensionamiento manual
-                            )
-                        else:
-                            dpg.add_table_column(
-                                label=dia, 
-                                width_stretch=True,         # Permite que se estire
-                                no_resize=False             # Permite redimensionamiento manual
-                            )
-
-                    with dpg.table_row():   
-                        with dpg.group(horizontal=False):       
-                            for _ in self.hours:
-                                btn = dpg.add_button(label = _, width=-1, height=self.cell_height)
-                                #dpg.bind_item_theme(btn, self.themes["default"])
-                        
-                        for column in range(7):
-                            with dpg.group(horizontal=False):       
-                                for row in range(30):
-                                    cell_tag = self.get_cell_tag(column, row)
-                                    dpg.add_button(label = f"", width=-1,
-                                                   height=self.cell_height, tag = cell_tag,
-                                                   callback= self.cell_clicked,
-                                                   user_data=(column, row, None, None))
-                                    dpg.bind_item_theme(cell_tag, self.themes["default"])
-
-                            
+                # Aplicar tema a la tabla
+                dpg.bind_item_theme(dpg.last_item(), table_theme)
                 
-
-                     
+                # Agrega las columnas (una para cada día) con nombres centrados
+                dias = ["    HORA  ", "    LUNES", "     MARTES", "  MIÉRCOLES", "    JUEVES", "   VIERNES", "   SÁBADO", "  DOMINGO"]
+                
+                for dia in dias:
+                    if "HORA" in dia:
+                        dpg.add_table_column(
+                            label=dia,
+                            width_fixed=True,           # Indica que es ancho fijo
+                            init_width_or_weight=120,   # Tamaño en píxeles
+                            no_resize=True              # Evita redimensionamiento manual
+                        )
+                    else:
+                        dpg.add_table_column(
+                            label=dia,
+                            width_stretch=True,         # Permite que se estire
+                            no_resize=False             # Permite redimensionamiento manual
+                        )
+                
+                with dpg.table_row():
+                    with dpg.group(horizontal=False):
+                        for _ in self.hours:
+                            btn = dpg.add_button(label=_, width=-1, height=self.cell_height)
+                            #dpg.bind_item_theme(btn, self.themes["default"])
+                    
+                    for column in range(7):
+                        with dpg.group(horizontal=False):
+                            for row in range(30):
+                                cell_tag = self.get_cell_tag(column, row)
+                                dpg.add_button(label=f"", width=-1,
+                                            height=self.cell_height, tag=cell_tag,
+                                            callback=self.cell_clicked,
+                                            user_data=(column, row, None, None))
+                                dpg.bind_item_theme(cell_tag, self.themes["default"])
+                            
         
     def cell_clicked(self, sender: str, app_data: Any, user_data: Tuple[int, int]):
         """
@@ -284,7 +323,8 @@ class ScheduleGrid:
             height = self.subject_selector.get_subject_slot()
             
                         
-            # Verificar si el espacio está disponible
+            # Verificar si el espacio está disponible 
+            
             if self.check_space_available(day_idx, hour_idx, width, height):
                 # Obtener información de la materia
                 subject_id = self.subject_selector.get_id()
@@ -395,24 +435,6 @@ class ScheduleGrid:
 
                 # Mover el bloque seleccionado a la nueva posición
                 return None 
-                
-                if self.check_space_available(day_idx, hour_idx, width, height, exclude_block=self.selected_block):
-                    # Eliminar el bloque anterior
-                    self.clear_block(self.selected_block)
-                    
-                    # Crear el nuevo bloque en la nueva posición
-                    self.add_subject_block(
-                        day_idx, hour_idx, width, height,
-                        id_block, id_subject,
-
-                        self.selected_block["subject"],
-                        self.selected_block["color"],
-                        self.selected_block.get("details", {})
-                    )
-                    self.selected_block = None
-                    self.update_status("Bloque movido")
-                else:
-                    self.update_status("Error: No se puede mover a esa posición")
     
     def add_subject_block(self, day: int, hour: int, width: int, height: int, id_block : int, id_subject : int,
                         subject: str, color: Tuple[int, int, int], details: Dict = None, add_in_database = True):
@@ -488,6 +510,7 @@ class ScheduleGrid:
                           label=subject,
                           user_data = (day, hour, id_block, id_subject),
                           callback = self.cell_clicked,
+
                           )
         
 

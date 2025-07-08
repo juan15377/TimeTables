@@ -191,10 +191,27 @@ class BaseManager:
         """)
         
         result = list(map(lambda x : x[0], cursor.fetchall()))
-
+        
         cursor.close()
         
         return result
+    
+    def restart_subjects_slots(self, id_type):
+        cursor = self.db_connection.cursor()
+        
+        cursor.execute(f"""
+        DELETE FROM SUBJECT_SLOTS
+        WHERE ID_SUBJECT IN (
+                        SELECT ID_SUBJECT 
+                        FROM {self.type_}_SUBJECT
+                        WHERE ID_{self.type_} = {id_type}
+                    )    
+        """)
+        
+        cursor.close()
+        
+        self.db_connection.commit()
+        
         
         
 
@@ -281,7 +298,6 @@ def check_exists_group(db_connection, id_career, id_semester, id_subgroup):
 
     # Si first_row es None, no existe; si tiene un valor, entonces existe
     return first_row is not None
-
 
 
 class GroupsManager(BaseManager): 

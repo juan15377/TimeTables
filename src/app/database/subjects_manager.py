@@ -614,3 +614,17 @@ class SubjectsManager:
                        WHERE ID = {id_subject}
                        """)
         return cursor.fetchone()[0]
+    
+    
+    def restart_slots(self, subject_id):
+        
+        cursor = self.db_connection.cursor()
+        
+        cursor.execute(f"""
+            DELETE FROM SUBJECT_SLOTS
+            WHERE ID_SUBJECT = {subject_id} 
+        """)
+        
+        cursor.close()
+        self.db_connection.commit()
+        

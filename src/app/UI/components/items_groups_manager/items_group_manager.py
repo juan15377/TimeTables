@@ -189,9 +189,7 @@ class ItemsGroupsManager():
         
         return filter_groups
         
-        
-        pass 
-
+    
 
 def get_group_name(id_group, name_career, name_semester, name_subgroup):
     return f"{name_career} | {name_semester} | {name_subgroup} ( id = {id_group} )"
